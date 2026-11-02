@@ -19,27 +19,31 @@ export default function OfferCollectionSection({ initialData }: { initialData?: 
   const products = response?.data || [];
 
   return (
-    <section className="flex flex-col items-center bg-background px-4 md:px-8 lg:px-[120px] py-10 md:py-[60px] w-full">
+    <section className="flex flex-col items-center bg-transparent px-4 md:px-8 lg:px-[120px] py-12 md:py-20 w-full">
       
       {/* Header Container */}
-      <div className="flex flex-col items-center justify-center w-full max-w-[1038px] mb-8">
-        <h2 className="font-signature font-normal text-3xl md:text-4xl leading-tight md:leading-[45px] text-center text-primary uppercase">
+      <div className="flex flex-col items-center justify-center w-full max-w-[1038px] mb-8 text-center">
+        <span className="font-poppins uppercase tracking-[0.22em] text-[10px] font-medium text-[#71865B] mb-2">
+          CURATED ARCHIVE EDITIONS
+        </span>
+        <h2 className="font-inria font-normal text-3xl md:text-5xl text-[#203C2B] tracking-tight">
           Offer Collection
         </h2>
-        <p className="font-inria italic font-normal text-base md:text-xl leading-snug md:leading-[24px] text-center text-primary mt-2">
-          Timeless silhouettes. Refined details. Effortless confidence.
+        <p className="font-inria italic font-light text-base md:text-xl text-[#71865B] mt-1.5">
+          Exceptional formulations with special limited release privileges.
         </p>
       </div>
 
       {/* Explore More Link */}
-      <div className="flex justify-end items-center w-full max-w-[1038px] mb-8 md:mb-[60px]">
+      <div className="flex justify-end items-center w-full max-w-[1040px] mb-6">
         <Link 
           href="/sale" 
-          className="flex items-center justify-center gap-[10px] pb-1 border-b border-primary"
+          className="group flex items-center gap-2 pb-1 border-b border-[#203C2B]/30 hover:border-[#203C2B] transition-all"
         >
-          <span className="font-signature font-normal text-sm md:text-base leading-[22px] text-primary">
-            Explore more
+          <span className="font-poppins font-medium text-xs md:text-sm tracking-wider uppercase text-[#203C2B]">
+            Explore archive
           </span>
+          <span className="transition-transform duration-300 group-hover:translate-x-1 text-[#203C2B]">→</span>
         </Link>
       </div>
 

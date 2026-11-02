@@ -25,25 +25,33 @@ export default function CuratedCollectionsSection() {
   }
 
   return (
-    <section className="w-full h-auto px-4 md:px-8 lg:px-[120px] py-10 md:py-[60px] bg-stone-50">
+    <section 
+      aria-label="Curated Featured Collections"
+      className="w-full h-auto px-4 md:px-8 lg:px-[120px] py-14 md:py-[90px] m-0"
+      style={{
+        background: "linear-gradient(180deg, #F9F6EE 0%, #F5EFEB 100%)",
+        borderTop: "1px solid rgba(32, 60, 43, 0.06)",
+        borderBottom: "1px solid rgba(32, 60, 43, 0.06)",
+      }}
+    >
       <div className="flex flex-col items-center text-center mb-10 w-full max-w-[1280px] mx-auto">
-        <span className="text-sm md:text-base font-poppins text-stone-500 block mb-2 uppercase tracking-widest">
+        <span className="text-xs md:text-sm font-poppins text-[#203C2B]/60 uppercase tracking-[0.25em] font-medium block mb-2">
           Curated For You
         </span>
-        <h2 className="text-3xl md:text-[36px] font-signature text-stone-900 tracking-wide mb-2">
+        <h2 className="text-3xl md:text-4xl lg:text-[44px] font-inria font-light text-[#203C2B] tracking-wide mb-2">
           Featured Collections
         </h2>
-        <div className="w-12 h-[1px] bg-stone-300 mt-4 mb-2" />
+        <div className="w-16 h-[2px] bg-[#203C2B]/15 mt-3 mb-2 rounded-full" />
       </div>
 
-      <div className="max-w-[1280px] mx-auto w-full flex flex-col md:flex-row justify-center gap-4 md:gap-6">
+      <div className="max-w-[1280px] mx-auto w-full flex flex-col md:flex-row justify-center gap-6 md:gap-8">
         {displayCollections.map((collection, idx) => {
           const img = collection.imageUrl || fallbacks[idx % fallbacks.length];
           return (
           <Link 
             key={collection.id} 
             href={`/collections/${collection.slug}`}
-            className="group relative w-full md:w-1/2 aspect-[4/5] md:aspect-square lg:aspect-[4/3] overflow-hidden rounded-sm"
+            className="group relative w-full md:w-1/2 aspect-[4/5] md:aspect-square lg:aspect-[4/3] overflow-hidden rounded-2xl shadow-[0_12px_32px_rgba(32,60,43,0.08)] border border-white/60"
           >
             <Image 
               src={img}

@@ -35,19 +35,20 @@ export default async function TestimonialSection() {
   }
 
   return (
-    <section className="flex flex-col items-center justify-center w-full bg-background py-20 px-4 md:px-12 lg:px-24">
+    <section className="flex flex-col items-center justify-center w-full bg-transparent py-16 md:py-24 px-4 md:px-12 lg:px-24">
       <div className="flex flex-col items-center w-full max-w-[1280px]">
         
         {/* Header */}
-        <div className="flex flex-col items-center text-center mb-16 max-w-[800px]">
-          <span className="font-urbanist font-medium text-sm text-accent uppercase tracking-[0.2em] mb-4">
+        <div className="flex flex-col items-center text-center mb-14 max-w-[720px]">
+          <span className="font-poppins font-medium text-xs md:text-sm text-[#203C2B]/60 uppercase tracking-[0.25em] mb-3">
             Customer Testimonials
           </span>
-          <h2 className="font-poppins font-semibold text-4xl md:text-[42px] text-primary leading-tight mb-4">
-            Loved by Thousands
+          <h2 className="font-inria font-light text-3xl md:text-4xl lg:text-[44px] text-[#203C2B] leading-tight mb-4">
+            Loved by Connoisseurs
           </h2>
-          <p className="font-poppins text-base text-stone-600">
-            Discover why our community loves MASKY PRODUCT. Real reviews from our verified customers who have experienced the difference in quality and style.
+          <div className="w-16 h-[2px] bg-[#203C2B]/15 mb-4 rounded-full" />
+          <p className="font-poppins font-light text-sm md:text-base text-[#203C2B]/75 leading-relaxed">
+            Discover why our community treasures MASKY PRODUCT. Real expressions from patrons who have experienced our purity and craftsmanship.
           </p>
         </div>
 

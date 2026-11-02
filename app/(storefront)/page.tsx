@@ -1,4 +1,5 @@
 import Hero from "@/components/Hero";
+import StatsSection, { PublicStats } from "@/components/StatsSection";
 import CollectionsSection from "@/components/CollectionsSection";
 import NewArrivalsSection from "@/components/NewArrivalsSection";
 import CuratedCollectionsSection from "@/components/CuratedCollectionsSection";
@@ -18,11 +19,12 @@ export const dynamic = 'force-dynamic';
 
 export default async function Home() {
   // Fetch SEO-critical data on the server in parallel
-  const [categoriesRes, newArrivalsRes, offersRes, sectionsRes] = await Promise.all([
+  const [categoriesRes, newArrivalsRes, offersRes, sectionsRes, statsRes] = await Promise.all([
     serverFetch<PaginatedResponse<Category>>("/categories", { tags: ["categories"], revalidate: 0 }).catch(() => undefined),
     serverFetch<PaginatedResponse<Product>>("/products", { tags: ["products"], revalidate: 60 }).catch(() => undefined),
     serverFetch<PaginatedResponse<Product>>("/products?skip=0&take=8", { tags: ["products"], revalidate: 60 }).catch(() => undefined),
     serverFetch<any>("/cms/sections", { revalidate: 60 }).catch(() => undefined),
+    serverFetch<PublicStats>("/analytics/public-stats", { revalidate: 30 }).catch(() => undefined),
   ]);
 
   // /cms/sections returns a plain array (not paginated)
@@ -42,6 +44,7 @@ export default async function Home() {
   return (
     <div className="min-h-screen bg-transparent">
       <Hero />
+      <StatsSection initialStats={statsRes} />
       {/* Infinite Scroll Ribbon */}
       <div className="w-full bg-[#1A1A1A] py-3 overflow-hidden flex items-center">
         <div className="flex animate-marquee whitespace-nowrap w-max">

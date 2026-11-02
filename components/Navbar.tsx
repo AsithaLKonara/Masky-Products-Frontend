@@ -49,22 +49,22 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Styling based on route and scroll state
-  const isTransparent = isHome && !isScrolled;
-  
+  const isHeroState = isHome && !isScrolled;
+
+  // Styling: transparent on hero section, frosted cream glass blur when scrolled passing hero
   const navBgClass = isAuth
     ? "bg-black/20 backdrop-blur-md border-b border-white/5"
-    : isTransparent
-    ? "bg-transparent"
-    : "bg-background shadow-sm border-b border-stone-200";
+    : isHeroState
+    ? "bg-transparent border-b border-transparent shadow-none"
+    : "bg-[#FEF6E4]/85 backdrop-blur-md border-b border-[#203C2B]/8 shadow-[0_4px_20px_rgba(32,60,43,0.04)]";
 
   const textColorClass = isAuth
     ? "text-stone-50"
-    : "text-stone-900";
+    : "text-[#203C2B]";
 
   const hoverBgClass = isAuth
     ? "hover:bg-white/10"
-    : "hover:bg-stone-100";
+    : "hover:bg-[#203C2B]/10";
 
   const logoImage = isAuth
     ? "/logo-white.png"
@@ -74,7 +74,7 @@ export default function Navbar() {
   const authHref = mounted && isAuthenticated ? (isAdmin() ? "/admin" : "/account") : "/login";
 
   return (
-    <nav className={`w-full z-[50] transition-colors duration-300 ${navBgClass}`}>
+    <nav className={`w-full z-[50] transition-all duration-500 ease-out ${navBgClass}`}>
       <div className="w-full px-4 md:px-6 lg:px-12 xl:px-[100px] h-[76px] flex justify-between items-center relative gap-4">
         
         {/* Left: Brand Logo & Mobile Hamburger */}

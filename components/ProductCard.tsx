@@ -100,12 +100,24 @@ export default function ProductCard({ product, imageUrl = "/products/default.jpg
 
   return (
     <div 
-      className="group flex flex-col w-full max-w-[245px] bg-white rounded-lg cursor-pointer overflow-hidden border border-stone-100 hover:shadow-md transition-all duration-300"
+      className="group flex flex-col w-full max-w-[245px] rounded-2xl cursor-pointer overflow-hidden transition-all duration-300 hover:-translate-y-1"
+      style={{
+        background: "rgba(255, 252, 244, 0.62)",
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        border: "1px solid rgba(255, 255, 255, 0.75)",
+        boxShadow: "0 8px 30px rgba(32, 60, 43, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.8)",
+      }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Top Image Container */}
-      <div className="relative w-full aspect-[221/281] bg-stone-100 flex flex-col justify-between overflow-hidden">
+      <div 
+        className="relative w-full aspect-[221/270] flex flex-col justify-between overflow-hidden"
+        style={{
+          background: "linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(240,235,225,0.25) 100%)",
+        }}
+      >
         
         {/* Default Image */}
         <Link href={productUrl} className="absolute inset-0 z-0">
@@ -131,9 +143,9 @@ export default function ProductCard({ product, imageUrl = "/products/default.jpg
         
         {/* Discount Tag */}
         {discountPercentage > 0 && (
-          <div className="absolute top-2 right-2 z-10">
-            <div className="flex justify-center items-center px-2 py-1 bg-white/95 backdrop-blur-sm shadow-sm rounded">
-              <span className="font-poppins font-medium text-[9px] tracking-[0.1em] text-red-500 uppercase">
+          <div className="absolute top-2.5 right-2.5 z-10">
+            <div className="flex justify-center items-center px-2 py-0.5 bg-[#203C2B]/85 backdrop-blur-md shadow-sm rounded-full">
+              <span className="font-poppins font-medium text-[9px] tracking-[0.1em] text-[#FFFCF4] uppercase">
                 {discountPercentage}% off
               </span>
             </div>
@@ -240,13 +252,13 @@ export default function ProductCard({ product, imageUrl = "/products/default.jpg
                 );
               }
             }}
-            className={`flex justify-center items-center w-full py-2.5 transition-colors pointer-events-auto ${
+            className={`flex justify-center items-center w-full py-2.5 transition-all duration-300 pointer-events-auto ${
               inStock 
-                ? (needsSelection && showVariantSelector ? 'bg-accent hover:bg-accent/90' : 'bg-stone-900 hover:bg-black') 
-                : 'bg-stone-400 cursor-not-allowed'
+                ? (needsSelection && showVariantSelector ? 'bg-[#71865B] text-white hover:bg-[#62695A]' : 'bg-[#203C2B] text-[#FFFCF4] hover:bg-[#16281D]') 
+                : 'bg-stone-300 text-stone-500 cursor-not-allowed'
             }`}
           >
-            <span className="font-poppins font-medium text-[11px] text-white uppercase tracking-[0.1em]">
+            <span className="font-poppins font-medium text-[11px] uppercase tracking-[0.12em]">
               {addToCart.isPending ? 'Adding...' : !inStock ? 'Out of stock' : (needsSelection && showVariantSelector) ? 'Select Options' : 'Add to cart'}
             </span>
           </button>
@@ -254,30 +266,30 @@ export default function ProductCard({ product, imageUrl = "/products/default.jpg
       </div>
 
       {/* Product Details Container */}
-      <div className="flex flex-col items-center gap-2 w-full p-4 pt-3">
+      <div className="flex flex-col items-center gap-1.5 w-full p-4 pt-3">
         
         {/* Pricing & Title Block */}
         <div className="flex flex-col items-center justify-center w-full">
-          <Link href={productUrl} className="hover:text-stone-500 transition-colors">
-            <h3 className="font-poppins font-bold text-sm text-stone-900 text-center tracking-wide mb-1.5 line-clamp-1">
+          <Link href={productUrl} className="hover:text-[#71865B] transition-colors">
+            <h3 className="font-inria font-normal text-[15px] text-[#203C2B] text-center tracking-tight mb-1 line-clamp-1">
               {title}
             </h3>
           </Link>
           
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             {discountPercentage > 0 ? (
               <>
                 {/* Old Price */}
-                <span className="font-inter font-medium text-[12px] line-through text-stone-400">
+                <span className="font-poppins font-light text-[11px] line-through text-[#62695A]/70">
                   Rs. {oldPrice}
                 </span>
                 {/* New Price */}
-                <span className="font-inter font-black text-[14px] text-red-500">
+                <span className="font-poppins font-medium text-[13px] text-[#71865B]">
                   Rs. {currentPrice}
                 </span>
               </>
             ) : (
-              <span className="font-inter font-black text-[14px] text-stone-900">
+              <span className="font-poppins font-medium text-[13px] text-[#203C2B]">
                 Rs. {currentPrice}
               </span>
             )}
@@ -285,9 +297,9 @@ export default function ProductCard({ product, imageUrl = "/products/default.jpg
         </div>
 
         {/* Payment Integrations */}
-        <div className="flex flex-col items-center justify-center w-full mt-1.5 border-t border-stone-100 pt-3">
-          <div className="flex items-center gap-1.5 flex-wrap justify-center opacity-70 group-hover:opacity-100 transition-opacity">
-            <span className="font-inter font-medium text-[10px] text-stone-500 tracking-tight">
+        <div className="flex flex-col items-center justify-center w-full mt-1 border-t border-[#71865B]/15 pt-2.5">
+          <div className="flex items-center gap-1.5 flex-wrap justify-center opacity-75 group-hover:opacity-100 transition-opacity">
+            <span className="font-poppins font-light text-[10px] text-[#62695A] tracking-tight">
               3 X Rs. {installment} with
             </span>
             <div className="flex items-center gap-1">

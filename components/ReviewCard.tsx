@@ -10,8 +10,8 @@ interface ReviewCardProps {
 
 export default function ReviewCard({ name, rating, text, date, verified = true }: ReviewCardProps) {
   return (
-    <div className="flex flex-col items-start p-8 gap-6 w-full bg-white border border-stone-100 rounded-lg hover:shadow-lg transition-shadow duration-500">
-      <div className="flex flex-col w-full gap-5">
+    <div className="flex flex-col items-start p-7 sm:p-8 gap-5 w-full rounded-2xl backdrop-blur-xl bg-white/65 border border-white/75 shadow-[0_8px_30px_rgba(32,60,43,0.06)] hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(32,60,43,0.1)] transition-all duration-300">
+      <div className="flex flex-col w-full gap-4">
         
         {/* Star Rating */}
         <div className="flex flex-row gap-1">

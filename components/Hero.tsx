@@ -260,7 +260,7 @@ export default function Hero() {
   return (
     <section
       aria-label="Featured products carousel"
-      className="relative w-full overflow-hidden pt-2 md:pt-4 pb-4 md:pb-6 min-h-0 md:min-h-[clamp(500px,78vh,740px)]"
+      className="relative w-full overflow-hidden pt-20 sm:pt-24 md:pt-28 pb-4 md:pb-6 min-h-0 md:min-h-[clamp(520px,80vh,760px)]"
       style={{
         background: "transparent",
         userSelect: "none",

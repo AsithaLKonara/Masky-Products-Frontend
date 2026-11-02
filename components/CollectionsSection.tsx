@@ -18,38 +18,56 @@ export default function CollectionsSection({ initialData }: { initialData?: Pagi
   ];
 
   return (
-    <section className="relative w-full h-auto px-4 md:px-8 lg:px-[120px] py-10 md:py-[60px] bg-background">
+    <section 
+      aria-label="Shop by Category Collections"
+      className="relative w-full overflow-hidden px-4 md:px-8 lg:px-[120px] py-14 md:py-20 m-0"
+      style={{
+        background: "linear-gradient(180deg, #182C20 0%, #112017 100%)",
+      }}
+    >
+      {/* Subtle organic green glow */}
+      <div 
+        aria-hidden="true" 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse at 50% 15%, rgba(113,134,91,0.28) 0%, transparent 60%)",
+        }}
+      />
+
       <div className="relative z-10 w-full h-full flex flex-col max-w-[1280px] mx-auto">
       
-      {/* Header Area */}
-      <div className="flex flex-col items-center text-center mb-6 w-full">
-        <span className="text-sm md:text-base font-poppins text-stone-500 block mb-2 uppercase tracking-widest">
-          Shop by Category
-        </span>
-        <h2 className="text-3xl md:text-4xl font-signature text-stone-900 tracking-wide mb-2">
-          Collections
-        </h2>
-        <p className="text-sm md:text-base font-inria text-stone-600 italic">
-          Pieces edited for quiet luxury — cut clean, worn easy.
-        </p>
-      </div>
+        {/* Header Area */}
+        <div className="flex flex-col items-center text-center mb-8 w-full">
+          <span className="font-poppins uppercase tracking-[0.24em] text-[10px] font-medium text-[#A8B995] mb-2">
+            SHOP BY CATEGORY
+          </span>
+          <h2 className="font-inria font-normal text-3xl md:text-5xl text-[#FFFCF4] tracking-tight mb-2">
+            Collections
+          </h2>
+          <p className="font-inria italic font-light text-base md:text-xl text-[#DDE5CC]/80">
+            Pieces edited for quiet luxury — cut clean, worn easy.
+          </p>
+        </div>
 
-      {/* Explore More */}
-      <div className="flex justify-end w-full mb-6">
-        <Link 
-          href="/shop" 
-          className="text-sm md:text-base font-signature text-stone-900 hover:text-stone-500 transition-colors tracking-wider border-b border-stone-900 pb-0.5"
-        >
-          Explore more
-        </Link>
-      </div>
+        {/* Explore More */}
+        <div className="flex justify-end w-full mb-4">
+          <Link 
+            href="/shop" 
+            className="group flex items-center gap-2 pb-1 border-b border-[#A8B995]/40 hover:border-[#FFFCF4] transition-all"
+          >
+            <span className="font-poppins font-medium text-xs md:text-sm tracking-wider uppercase text-[#FFFCF4]">
+              Explore all collections
+            </span>
+            <span className="transition-transform duration-300 group-hover:translate-x-1 text-[#FFFCF4]">→</span>
+          </Link>
+        </div>
 
-      {/* Cards Row */}
-        <div className="flex flex-wrap justify-center gap-3 md:gap-[20px] w-full mt-4 md:mt-8">
+        {/* Single Row of Category Cards - Always 1 Line Responsively */}
+        <div className="flex flex-nowrap items-stretch justify-start md:justify-between gap-2.5 sm:gap-3 md:gap-4 lg:gap-5 w-full mt-4 md:mt-8 overflow-x-auto md:overflow-x-visible no-scrollbar pb-2 md:pb-0">
           {categories.slice(0, 6).map((category: Category, idx: number) => {
             const imageUrl = category.imageUrl || placeholderImages[idx % placeholderImages.length];
             return (
-              <div key={category.id} className="flex justify-center w-full max-w-[245px]">
+              <div key={category.id} className="flex-shrink-0 w-[112px] sm:w-[130px] md:flex-1 md:w-auto min-w-0">
                 <CategoryCard
                   title={category.name}
                   imageUrl={imageUrl}
