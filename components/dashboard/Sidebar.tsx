@@ -258,6 +258,10 @@ export default function Sidebar({
     if ((item.href === "/pos" || item.href === "/admin/pos-sales") && !FEATURES.ENABLE_POS) {
       return false;
     }
+    // Multi-branch feature gating: preserve code but hide admin management when disabled
+    if (item.href === "/admin/branches" && !FEATURES.ENABLE_MULTI_BRANCH) {
+      return false;
+    }
     return true;
   };
 

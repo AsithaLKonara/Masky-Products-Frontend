@@ -6,6 +6,7 @@ import { useBranches, useInventory, useTransfers, useAdjustStock, useCreateTrans
 import { Button } from '@/components/ui/Button';
 import StatCard from '@/components/dashboard/StatCard';
 import InventoryAdjustmentModal from '@/components/admin/InventoryAdjustmentModal';
+import { FEATURES } from '@/config/features';
 
 export default function InventoryDashboard() {
   const [activeTab, setActiveTab] = useState<'STOCK' | 'TRANSFERS' | 'BRANCHES'>('STOCK');
@@ -81,7 +82,9 @@ export default function InventoryDashboard() {
       <div className="flex gap-4 mb-6 border-b border-border pb-2">
         <button className={`pb-2 font-inter text-sm transition-colors ${activeTab === 'STOCK' ? 'border-b-2 border-foreground text-foreground font-semibold' : 'text-muted hover:text-foreground'}`} onClick={() => setActiveTab('STOCK')}>Stock Levels</button>
         <button className={`pb-2 font-inter text-sm transition-colors ${activeTab === 'TRANSFERS' ? 'border-b-2 border-foreground text-foreground font-semibold' : 'text-muted hover:text-foreground'}`} onClick={() => setActiveTab('TRANSFERS')}>Stock Transfers</button>
-        <button className={`pb-2 font-inter text-sm transition-colors ${activeTab === 'BRANCHES' ? 'border-b-2 border-foreground text-foreground font-semibold' : 'text-muted hover:text-foreground'}`} onClick={() => setActiveTab('BRANCHES')}>Branches</button>
+        {FEATURES.ENABLE_MULTI_BRANCH && (
+          <button className={`pb-2 font-inter text-sm transition-colors ${activeTab === 'BRANCHES' ? 'border-b-2 border-foreground text-foreground font-semibold' : 'text-muted hover:text-foreground'}`} onClick={() => setActiveTab('BRANCHES')}>Branches</button>
+        )}
       </div>
 
       {activeTab === 'STOCK' && (

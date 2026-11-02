@@ -9,6 +9,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { useAuthStore } from "@/store/auth.store";
 import { Shield, Download, ChevronDown } from "lucide-react";
+import { FEATURES } from "@/config/features";
 
 const DashboardData = dynamic(() => import("@/components/dashboard/DashboardData"), { ssr: false });
 
@@ -132,7 +133,9 @@ export default function SuperAdminDashboard() {
             Business Overview
           </h1>
           <p className="font-inter text-xs md:text-sm text-muted leading-relaxed">
-            Global performance across all branches, channels, and payment gateways
+            {FEATURES.ENABLE_MULTI_BRANCH
+              ? "Global performance across all branches, channels, and payment gateways"
+              : "Overview of e-commerce store performance, sales channels, and payment gateways"}
           </p>
         </div>
 
@@ -164,24 +167,26 @@ export default function SuperAdminDashboard() {
         </div>
       </div>
 
-      {/* Branch Filter Segmented Tabs */}
-      <div className="flex items-center overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
-        <div className="inline-flex items-center gap-1 p-1 bg-surface border border-border rounded-xl">
-          {displayBranches.map((branch: string) => (
-            <button
-              key={branch}
-              onClick={() => setActiveBranch(branch)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-inter font-medium transition-all cursor-pointer shrink-0 ${
-                activeBranch === branch
-                  ? "bg-foreground text-background font-semibold shadow-xs"
-                  : "text-muted hover:text-foreground hover:bg-surface-elevated"
-              }`}
-            >
-              {branch}
-            </button>
-          ))}
+      {/* Branch Filter Segmented Tabs - only shown when multi-branch feature is enabled */}
+      {FEATURES.ENABLE_MULTI_BRANCH && (
+        <div className="flex items-center overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+          <div className="inline-flex items-center gap-1 p-1 bg-surface border border-border rounded-xl">
+            {displayBranches.map((branch: string) => (
+              <button
+                key={branch}
+                onClick={() => setActiveBranch(branch)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-inter font-medium transition-all cursor-pointer shrink-0 ${
+                  activeBranch === branch
+                    ? "bg-foreground text-background font-semibold shadow-xs"
+                    : "text-muted hover:text-foreground hover:bg-surface-elevated"
+                }`}
+              >
+                {branch}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       <ErrorBoundary>
         <Suspense fallback={<DashboardSkeleton />}>

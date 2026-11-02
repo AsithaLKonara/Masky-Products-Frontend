@@ -51,6 +51,19 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(targetUrl);
   }
 
+  // Feature Flag: Multi-branch admin management disabled (only active for e-commerce website orders)
+  const isMultiBranchDisabled = process.env.NEXT_PUBLIC_ENABLE_MULTI_BRANCH !== "true";
+  const isBranchAdminSpecificRoute =
+    pathname.startsWith("/admin/branches") ||
+    pathname.startsWith("/admin/reports/branches") ||
+    pathname.startsWith("/branch-admin");
+
+  if (isBranchAdminSpecificRoute && isMultiBranchDisabled) {
+    const targetUrl = new URL("/admin", request.url);
+    targetUrl.searchParams.set("notice", "branches_disabled");
+    return NextResponse.redirect(targetUrl);
+  }
+
   const isStaffRoute = isAdminRoute || isBranchAdminRoute || isPosRoute;
 
   // 1. Unauthenticated or expired user trying to access protected routes
