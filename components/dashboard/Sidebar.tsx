@@ -32,6 +32,8 @@ import {
   ChevronDown,
   ChevronRight,
   ExternalLink,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from "lucide-react";
 
 interface NavItem {
@@ -49,9 +51,13 @@ interface NavGroup {
 export default function Sidebar({
   isOpen,
   setIsOpen,
+  isCollapsed = false,
+  onToggleCollapse,
 }: {
   isOpen?: boolean;
   setIsOpen?: (v: boolean) => void;
+  isCollapsed?: boolean;
+  onToggleCollapse?: () => void;
 }) {
   const pathname = usePathname();
   const { user, hasPermission, isSuperAdmin } = useAuthStore();
@@ -294,37 +300,127 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`fixed left-0 top-0 bottom-0 w-[240px] bg-surface border-r border-border flex flex-col z-50 text-muted transition-transform duration-300 md:translate-x-0 ${
-        isOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
+      className={`fixed left-0 top-0 bottom-0 bg-surface border-r border-border flex flex-col z-50 text-muted transition-[width,transform] duration-300 ease-in-out ${
+        isOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full md:translate-x-0"
+      } ${
+        isCollapsed ? "w-[240px] md:w-[68px]" : "w-[240px]"
       }`}
     >
       {/* Brand Header */}
-      <div className="h-[64px] flex items-center justify-between px-5 border-b border-border shrink-0 bg-surface">
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
-            M
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="font-inter font-bold tracking-tight text-foreground text-sm uppercase">
-              MASKY PRODUCT
-            </span>
-          </div>
-        </Link>
-        {setIsOpen && (
+      <div className={`h-[64px] flex items-center border-b border-border shrink-0 bg-surface ${
+        isCollapsed ? "justify-center px-2" : "justify-between px-4"
+      }`}>
+        {!isCollapsed ? (
+          <>
+            <Link href="/" className="flex items-center gap-2.5 group overflow-hidden">
+              <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform shrink-0">
+                M
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="font-inter font-bold tracking-tight text-foreground text-sm uppercase whitespace-nowrap">
+                  MASKY PRODUCT
+                </span>
+              </div>
+            </Link>
+
+            <div className="flex items-center gap-1">
+              {onToggleCollapse && (
+                <button
+                  type="button"
+                  onClick={onToggleCollapse}
+                  className="hidden md:flex items-center justify-center w-7 h-7 text-muted hover:text-foreground hover:bg-surface-elevated rounded-lg transition-colors border border-transparent hover:border-border cursor-pointer"
+                  title="Collapse sidebar"
+                  aria-label="Collapse sidebar"
+                >
+                  <PanelLeftClose size={16} />
+                </button>
+              )}
+              {setIsOpen && (
+                <button
+                  className="md:hidden text-muted hover:text-foreground p-1 rounded-lg hover:bg-surface-elevated cursor-pointer"
+                  onClick={() => setIsOpen(false)}
+                  aria-label="Close menu"
+                >
+                  <X size={18} />
+                </button>
+              )}
+            </div>
+          </>
+        ) : (
           <button
-            className="md:hidden text-muted hover:text-foreground p-1"
-            onClick={() => setIsOpen(false)}
-            aria-label="Close menu"
+            type="button"
+            onClick={onToggleCollapse}
+            className="relative group/expand flex items-center justify-center w-9 h-9 rounded-xl hover:bg-surface-elevated transition-colors border border-transparent hover:border-border cursor-pointer"
+            title="Expand sidebar"
+            aria-label="Expand sidebar"
           >
-            <X size={18} />
+            <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-blue-500/20 group-hover/expand:scale-105 transition-transform shrink-0">
+              M
+            </div>
+            {/* Tooltip on hover */}
+            <div className="fixed left-[76px] px-2.5 py-1 bg-surface text-foreground border border-border rounded-lg text-xs font-inter font-medium shadow-lg pointer-events-none opacity-0 invisible group-hover/expand:opacity-100 group-hover/expand:visible transition-all duration-150 z-50 whitespace-nowrap">
+              Expand sidebar
+            </div>
           </button>
         )}
       </div>
 
-      {/* Navigation Groups with Accordion */}
-      <div className="flex-1 overflow-y-auto py-5 px-3 flex flex-col gap-3 scrollbar-hide">
+      {/* Navigation Body */}
+      <div className={`flex-1 overflow-y-auto py-4 scrollbar-hide flex flex-col ${
+        isCollapsed ? "px-2 gap-2" : "px-3 gap-3"
+      }`}>
         {visibleGroups.map((group, idx) => {
           const isExpanded = expandedGroups.includes(group.label);
+
+          if (isCollapsed) {
+            // Collapsed Rail View: Icons with floating tooltips
+            return (
+              <div key={idx} className="flex flex-col gap-1">
+                {idx > 0 && <div className="my-1.5 mx-auto w-6 border-t border-border/80" />}
+                {group.items.map((item) => {
+                  const Icon = item.icon;
+                  const isActive =
+                    item.href === "/admin"
+                      ? pathname === "/admin"
+                      : pathname === item.href ||
+                        (item.href !== "/" && pathname?.startsWith(item.href));
+
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      onClick={() => {
+                        if (setIsOpen && window.innerWidth < 768) setIsOpen(false);
+                      }}
+                      className={`relative group/railitem flex items-center justify-center w-10 h-10 mx-auto rounded-xl text-xs font-inter font-medium transition-all ${
+                        isActive
+                          ? "bg-surface-elevated text-accent font-semibold border border-border shadow-2xs"
+                          : "text-muted hover:text-foreground hover:bg-surface-elevated/70"
+                      }`}
+                      aria-label={item.name}
+                    >
+                      <Icon
+                        size={17}
+                        className={`shrink-0 transition-colors ${
+                          isActive ? "text-accent" : "text-muted group-hover/railitem:text-foreground"
+                        }`}
+                      />
+
+                      {/* Floating tooltip menu */}
+                      <div className="fixed left-[76px] px-3 py-1.5 bg-surface text-foreground border border-border rounded-lg text-xs font-inter font-medium shadow-xl pointer-events-none opacity-0 invisible group-hover/railitem:opacity-100 group-hover/railitem:visible transition-all duration-150 z-50 whitespace-nowrap flex items-center gap-2">
+                        <span>{item.name}</span>
+                        {isActive && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                        )}
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            );
+          }
+
+          // Expanded View: Accordion Groups
           return (
             <div key={idx} className="flex flex-col gap-1">
               {/* Group Accordion Header */}
@@ -385,29 +481,57 @@ export default function Sidebar({
       </div>
 
       {/* User Profile Footer */}
-      <div className="p-3 border-t border-border shrink-0 bg-surface flex items-center justify-between">
-        <div className="flex items-center gap-2.5 min-w-0 flex-1 px-1">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-slate-800 to-slate-700 text-slate-100 flex items-center justify-center font-inter font-bold text-xs shadow-inner border border-slate-600/30 shrink-0">
-            {getInitials(user?.name)}
+      {!isCollapsed ? (
+        <div className="p-3 border-t border-border shrink-0 bg-surface flex items-center justify-between">
+          <div className="flex items-center gap-2.5 min-w-0 flex-1 px-1">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-slate-800 to-slate-700 text-slate-100 flex items-center justify-center font-inter font-bold text-xs shadow-inner border border-slate-600/30 shrink-0">
+              {getInitials(user?.name)}
+            </div>
+            <div className="flex flex-col min-w-0">
+              <span className="font-inter font-semibold text-xs text-foreground truncate leading-tight">
+                {user?.name || "Staff Member"}
+              </span>
+              <span className="font-inter text-[10px] text-muted truncate">
+                {primaryRole}
+              </span>
+            </div>
           </div>
-          <div className="flex flex-col min-w-0">
-            <span className="font-inter font-semibold text-xs text-foreground truncate leading-tight">
-              {user?.name || "Staff Member"}
-            </span>
-            <span className="font-inter text-[10px] text-muted truncate">
-              {primaryRole}
-            </span>
-          </div>
+          <button
+            onClick={() => useAuthStore.getState().logout("/login")}
+            className="p-1.5 text-muted hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors ml-1 shrink-0 cursor-pointer"
+            title="Sign Out"
+            aria-label="Sign Out"
+          >
+            <LogOut size={16} />
+          </button>
         </div>
-        <button
-          onClick={() => useAuthStore.getState().logout("/login")}
-          className="p-1.5 text-muted hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors ml-1 shrink-0"
-          title="Sign Out"
-          aria-label="Sign Out"
-        >
-          <LogOut size={16} />
-        </button>
-      </div>
+      ) : (
+        <div className="p-2 border-t border-border shrink-0 bg-surface flex flex-col items-center gap-2">
+          {/* Centered Avatar with Tooltip */}
+          <div className="relative group/user flex items-center justify-center cursor-default">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-slate-800 to-slate-700 text-slate-100 flex items-center justify-center font-inter font-bold text-xs shadow-inner border border-slate-600/30">
+              {getInitials(user?.name)}
+            </div>
+            <div className="fixed left-[76px] bottom-3 px-3 py-2 bg-surface text-foreground border border-border rounded-lg text-xs font-inter shadow-xl pointer-events-none opacity-0 invisible group-hover/user:opacity-100 group-hover/user:visible transition-all duration-150 z-50 whitespace-nowrap">
+              <div className="font-semibold">{user?.name || "Staff Member"}</div>
+              <div className="text-[10px] text-muted">{primaryRole}</div>
+            </div>
+          </div>
+
+          {/* Centered Sign Out Icon Button */}
+          <button
+            onClick={() => useAuthStore.getState().logout("/login")}
+            className="relative group/logout flex items-center justify-center w-8 h-8 text-muted hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer"
+            title="Sign Out"
+            aria-label="Sign Out"
+          >
+            <LogOut size={15} />
+            <div className="fixed left-[76px] px-2.5 py-1 bg-surface text-rose-500 border border-border rounded-lg text-xs font-inter font-medium shadow-md pointer-events-none opacity-0 invisible group-hover/logout:opacity-100 group-hover/logout:visible transition-all duration-150 z-50 whitespace-nowrap">
+              Sign Out
+            </div>
+          </button>
+        </div>
+      )}
     </aside>
   );
 }

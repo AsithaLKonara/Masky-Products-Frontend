@@ -17,7 +17,9 @@ import {
   Info,
   AlertTriangle,
   Layers,
-  Sparkles
+  Sparkles,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth.store";
@@ -28,9 +30,11 @@ import { formatDistanceToNow } from "date-fns";
 
 export default function Header({
   onMenuClick,
+  isCollapsed,
   session,
 }: {
   onMenuClick?: () => void;
+  isCollapsed?: boolean;
   session?: any;
 }) {
   const router = useRouter();
@@ -73,10 +77,16 @@ export default function Header({
         {/* Mobile / Sidebar Toggle */}
         <button
           onClick={onMenuClick}
-          className="p-2 -ml-1 text-muted hover:text-foreground hover:bg-surface-elevated rounded-xl transition-colors border border-transparent hover:border-border"
-          aria-label="Toggle navigation"
+          className="p-2 -ml-1 text-muted hover:text-foreground hover:bg-surface-elevated rounded-xl transition-colors border border-transparent hover:border-border cursor-pointer"
+          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          <Menu size={18} />
+          {isCollapsed ? (
+            <PanelLeftOpen size={18} className="text-primary hidden md:block" />
+          ) : (
+            <PanelLeftClose size={18} className="hidden md:block" />
+          )}
+          <Menu size={18} className="md:hidden" />
         </button>
 
         {/* Global Omnisearch Bar matching screenshot */}
