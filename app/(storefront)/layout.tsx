@@ -5,7 +5,7 @@ import { CartProvider } from "@/components/CartProvider";
 import PromoBanner from "@/components/PromoBanner";
 
 export const metadata: Metadata = {
-  title: "SERAMAADUWEN.LK",
+  title: "MASKY PRODUCT",
   description: "Pieces edited for quiet luxury — cut clean, worn easy.",
 };
 

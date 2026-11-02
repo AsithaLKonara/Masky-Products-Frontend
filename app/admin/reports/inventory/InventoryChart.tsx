@@ -2,7 +2,7 @@
 
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from "recharts";
 
-const COLORS = ['#1c1917', '#44403c', '#78716c', '#a8a29e', '#d6d3d1', '#f5f5f4'];
+const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899', '#06B6D4'];
 
 interface InventoryChartProps {
   data: any[];
@@ -29,7 +29,7 @@ export default function InventoryChart({ data }: InventoryChartProps) {
           </Pie>
           <Tooltip 
             formatter={(value: any) => [`Rs. ${Number(value).toLocaleString()}`, "Valuation"]}
-            contentStyle={{ borderRadius: '8px', border: '1px solid #e7e5e4', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+            contentStyle={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--foreground)', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.3)' }}
           />
           <Legend iconType="circle" />
         </PieChart>

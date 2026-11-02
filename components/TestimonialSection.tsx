@@ -47,7 +47,7 @@ export default async function TestimonialSection() {
             Loved by Thousands
           </h2>
           <p className="font-poppins text-base text-stone-600">
-            Discover why our community loves SERAMAADUWEN.LK. Real reviews from our verified customers who have experienced the difference in quality and style.
+            Discover why our community loves MASKY PRODUCT. Real reviews from our verified customers who have experienced the difference in quality and style.
           </p>
         </div>
 

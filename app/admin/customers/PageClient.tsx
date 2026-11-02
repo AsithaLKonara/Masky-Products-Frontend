@@ -53,7 +53,7 @@ export default function CustomersPage() {
       <select 
         value={typeFilter}
         onChange={e => { setTypeFilter(e.target.value); setPage(1); }}
-        className="bg-stone-50 border border-stone-200 rounded-lg py-2 px-3 text-sm font-inter text-stone-700 outline-none focus:ring-1 focus:ring-stone-400"
+        className="bg-surface border border-border rounded-lg py-2 px-3 text-sm font-inter text-foreground outline-none focus:ring-1 focus:ring-primary hover:bg-surface-elevated transition-colors"
       >
         <option value="">All Types</option>
         <option value="Registered">Registered</option>
@@ -62,7 +62,7 @@ export default function CustomersPage() {
       <select 
         value={sortFilter}
         onChange={e => { setSortFilter(e.target.value); setPage(1); }}
-        className="bg-stone-50 border border-stone-200 rounded-lg py-2 px-3 text-sm font-inter text-stone-700 outline-none focus:ring-1 focus:ring-stone-400"
+        className="bg-surface border border-border rounded-lg py-2 px-3 text-sm font-inter text-foreground outline-none focus:ring-1 focus:ring-primary hover:bg-surface-elevated transition-colors"
       >
         <option value="Sort By: Newest">Sort By: Newest</option>
         <option value="Sort By: Highest Spend">Sort By: Highest Spend</option>

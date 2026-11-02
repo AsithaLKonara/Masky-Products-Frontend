@@ -1,15 +1,15 @@
 export default function OrganizationSchema() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://seramaaduwen.lk';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://masky.space';
 
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'SERAMAADUWEN.LK',
+    name: 'MASKY PRODUCT',
     url: baseUrl,
     logo: `${baseUrl}/logo.png`, // Assuming a logo exists at the root
     sameAs: [
-      'https://www.facebook.com/seramaaduwen',
-      'https://www.instagram.com/seramaaduwen',
+      'https://www.facebook.com/maskyproduct',
+      'https://www.instagram.com/maskyproduct',
       // Add other social media URLs
     ],
     contactPoint: {
@@ -24,7 +24,7 @@ export default function OrganizationSchema() {
   const webSiteSchema = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'SERAMAADUWEN.LK',
+    name: 'MASKY PRODUCT',
     url: baseUrl,
     potentialAction: {
       '@type': 'SearchAction',

@@ -28,11 +28,11 @@ export default function DataTable<T>({
 }: DataTableProps<T>) {
   
   return (
-    <div className="flex flex-col overflow-hidden w-full">
+    <div className="flex flex-col w-full bg-surface border border-border rounded-xl overflow-hidden">
       <div className="overflow-x-auto w-full">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-background border-b border-border">
+            <tr className="bg-surface-subtle border-b border-border">
               {columns.map((col, idx) => (
                 <th 
                   key={idx} 
@@ -44,13 +44,13 @@ export default function DataTable<T>({
             </tr>
           </thead>
           <tbody>
-            {data.map((row, rowIdx) => (
+            {data.map((row) => (
               <tr 
                 key={keyExtractor(row)}
                 onClick={() => onRowClick && onRowClick(row)}
-                className={`border-b border-border/50 last:border-0 transition-colors ${
-                  onRowClick ? 'cursor-pointer hover:bg-background' : 'hover:bg-background/50'
-                } ${rowIdx % 2 === 0 ? 'bg-surface' : 'bg-background/30'}`}
+                className={`border-b border-border/40 last:border-0 transition-colors bg-surface ${
+                  onRowClick ? 'cursor-pointer hover:bg-surface-elevated/70' : 'hover:bg-surface-elevated/40'
+                }`}
               >
                 {columns.map((col, idx) => (
                   <td 
@@ -78,17 +78,17 @@ export default function DataTable<T>({
 
       {/* Pagination Footer */}
       {pagination && (
-        <div className="px-4 sm:px-6 py-4 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0 bg-background shrink-0">
+        <div className="px-4 sm:px-6 py-3.5 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0 bg-surface-subtle shrink-0">
           <span className="font-inter text-xs text-muted">
             Page {pagination.currentPage} of {pagination.totalPages}
           </span>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <button 
               disabled={pagination.currentPage <= 1}
               onClick={() => pagination.onPageChange?.(pagination.currentPage - 1)}
-              className="p-1.5 rounded-lg border border-border text-muted hover:bg-surface hover:border-primary hover:text-primary hover:shadow-sm disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              className="p-1.5 rounded-lg border border-border text-muted hover:bg-surface hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
-              <ChevronLeft size={16} />
+              <ChevronLeft size={15} />
             </button>
             
             {/* Page numbers */}
@@ -96,25 +96,25 @@ export default function DataTable<T>({
               <button
                 key={page}
                 onClick={() => pagination.onPageChange?.(page)}
-                className={`w-8 h-8 rounded-lg text-xs font-medium font-inter transition-all ${
+                className={`w-7 h-7 rounded-lg text-xs font-medium font-inter transition-colors ${
                   page === pagination.currentPage
-                    ? "bg-primary text-white shadow-sm"
-                    : "border border-border text-muted hover:bg-surface hover:border-primary hover:text-primary"
+                    ? "bg-foreground text-background font-semibold"
+                    : "text-muted hover:text-foreground hover:bg-surface border border-transparent"
                 }`}
               >
                 {page}
               </button>
             ))}
             {pagination.totalPages > 5 && (
-              <span className="text-muted text-xs">…{pagination.totalPages}</span>
+              <span className="text-muted text-xs px-1">…{pagination.totalPages}</span>
             )}
             
             <button 
               disabled={pagination.currentPage >= pagination.totalPages}
               onClick={() => pagination.onPageChange?.(pagination.currentPage + 1)}
-              className="p-1.5 rounded-lg border border-border text-muted hover:bg-surface hover:border-primary hover:text-primary hover:shadow-sm disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              className="p-1.5 rounded-lg border border-border text-muted hover:bg-surface hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
-              <ChevronRight size={16} />
+              <ChevronRight size={15} />
             </button>
           </div>
         </div>

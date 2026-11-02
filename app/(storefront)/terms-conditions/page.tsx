@@ -2,8 +2,8 @@ import React from "react";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Terms & Conditions - SERAMAADUWEN.LK",
-  description: "Terms & Conditions page for SERAMAADUWEN.LK."
+  title: "Terms & Conditions - MASKY PRODUCT",
+  description: "Terms & Conditions page for MASKY PRODUCT."
 };
 
 
@@ -28,7 +28,7 @@ export default function TermsConditionsPage() {
         <section className="flex flex-col gap-4">
           <h2 className="font-poppins font-medium text-2xl text-primary">1. General Conditions</h2>
           <p className="font-poppins text-sm leading-[26px] text-stone-600">
-            By accessing and placing an order with SERAMAADUWEN.LK, you confirm that you are in agreement with and bound by the terms of service contained in the Terms & Conditions outlined below. These terms apply to the entire website and any email or other type of communication between you and SERAMAADUWEN.LK.
+            By accessing and placing an order with MASKY PRODUCT, you confirm that you are in agreement with and bound by the terms of service contained in the Terms & Conditions outlined below. These terms apply to the entire website and any email or other type of communication between you and MASKY PRODUCT.
           </p>
         </section>
 
@@ -56,7 +56,7 @@ export default function TermsConditionsPage() {
         <section className="flex flex-col gap-4">
           <h2 className="font-poppins font-medium text-2xl text-primary">5. Intellectual Property</h2>
           <p className="font-poppins text-sm leading-[26px] text-stone-600">
-            The website and its original content, features, and functionality are owned by SERAMAADUWEN.LK and are protected by international copyright, trademark, patent, trade secret, and other intellectual property or proprietary rights laws.
+            The website and its original content, features, and functionality are owned by MASKY PRODUCT and are protected by international copyright, trademark, patent, trade secret, and other intellectual property or proprietary rights laws.
           </p>
         </section>
 

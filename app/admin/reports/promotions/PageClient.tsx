@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 
 const PromotionsChart = dynamic(() => import("./PromotionsChart"), { 
   ssr: false, 
-  loading: () => <div className="h-[300px] w-full flex items-center justify-center bg-stone-50 rounded-lg animate-pulse text-stone-400">Loading chart...</div> 
+  loading: () => <div className="h-[300px] w-full flex items-center justify-center bg-surface rounded-lg animate-pulse text-muted">Loading chart...</div> 
 });
 
 export default function PromotionsReportPage() {
@@ -47,7 +47,7 @@ export default function PromotionsReportPage() {
     { name: "Coupons", Issued: data.coupons.issued, Used: data.coupons.totalUsages },
   ] : [];
 
-  if (isPending) return <div className="p-10 font-poppins text-stone-500 flex flex-col gap-2"><span>Loading report data...</span><span className="text-xs text-stone-400">If this takes more than 10 seconds, check if the backend API is running.</span></div>;
+  if (isPending) return <div className="p-10 font-poppins text-muted flex flex-col gap-2"><span>Loading report data...</span><span className="text-xs text-muted/70">If this takes more than 10 seconds, check if the backend API is running.</span></div>;
   if (error || !data) return <div className="p-10 font-poppins text-red-500">Failed to load report. {(error as any)?.message || "Unknown error"}</div>;
 
   return (
@@ -61,74 +61,74 @@ export default function PromotionsReportPage() {
           <select 
             value={dateRange} 
             onChange={(e) => setDateRange(e.target.value)}
-            className="h-10 px-4 border border-stone-200 rounded-lg bg-white text-sm font-inter text-stone-700 outline-none focus:border-primary"
+            className="h-10 px-4 border border-border rounded-lg bg-surface text-sm font-inter text-foreground outline-none focus:border-primary hover:bg-surface-elevated transition-colors"
           >
             <option value="7">Last 7 Days</option>
             <option value="30">Last 30 Days</option>
             <option value="90">Last 90 Days</option>
           </select>
-          <button onClick={handleDownloadCSV} className="h-10 px-4 bg-primary text-white text-sm font-medium rounded-lg flex items-center gap-2 hover:bg-stone-800 transition-colors">
+          <button onClick={handleDownloadCSV} className="h-10 px-4 bg-primary text-primary-foreground text-sm font-medium rounded-lg flex items-center gap-2 hover:bg-primary-hover transition-colors">
             <Download size={16} />
             Export CSV
           </button>
         </div>
       </div>
 
-      <div className="bg-white border border-stone-200 rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-primary font-poppins mb-6">Promotions Utilization</h3>
+      <div className="bg-surface border border-border rounded-xl p-6 shadow-2xs">
+        <h3 className="text-lg font-semibold text-foreground font-poppins mb-6">Promotions Utilization</h3>
         {chartData.some(d => d.Issued > 0 || d.Used > 0) ? (
           <PromotionsChart data={chartData} />
         ) : (
-          <div className="h-[300px] w-full flex items-center justify-center bg-stone-50 rounded-lg border border-dashed border-stone-200">
-            <p className="text-stone-500 font-inter font-medium">0 Data Available</p>
+          <div className="h-[300px] w-full flex items-center justify-center bg-surface-subtle rounded-lg border border-dashed border-border">
+            <p className="text-muted font-inter font-medium">0 Data Available</p>
           </div>
         )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Vouchers Block */}
-        <div className="bg-white border border-stone-200 rounded-xl p-6 relative overflow-hidden flex flex-col gap-6">
+        <div className="bg-surface border border-border rounded-xl p-6 relative overflow-hidden flex flex-col gap-6 shadow-2xs">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-stone-100 flex items-center justify-center text-stone-600">
+            <div className="w-10 h-10 rounded-lg bg-surface-subtle border border-border flex items-center justify-center text-muted">
               <Tag size={20} />
             </div>
-            <h3 className="text-lg font-semibold text-stone-900 font-poppins">Exchange Vouchers</h3>
+            <h3 className="text-lg font-semibold text-foreground font-poppins">Exchange Vouchers</h3>
           </div>
           
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-stone-50 p-4 rounded-lg">
-              <p className="text-sm font-medium text-stone-500 font-inter">Issued</p>
-              <p className="text-2xl font-semibold text-primary font-poppins mt-1">{data.vouchers.issued.toLocaleString()}</p>
+            <div className="bg-surface-subtle border border-border p-4 rounded-lg">
+              <p className="text-sm font-medium text-muted font-inter">Issued</p>
+              <p className="text-2xl font-semibold text-foreground font-poppins mt-1">{data.vouchers.issued.toLocaleString()}</p>
             </div>
-            <div className="bg-stone-50 p-4 rounded-lg">
-              <p className="text-sm font-medium text-stone-500 font-inter">Redeemed</p>
-              <p className="text-2xl font-semibold text-emerald-600 font-poppins mt-1">{data.vouchers.used.toLocaleString()}</p>
+            <div className="bg-surface-subtle border border-border p-4 rounded-lg">
+              <p className="text-sm font-medium text-muted font-inter">Redeemed</p>
+              <p className="text-2xl font-semibold text-emerald-500 font-poppins mt-1">{data.vouchers.used.toLocaleString()}</p>
             </div>
           </div>
           
-          <div className="bg-stone-900 text-white p-5 rounded-lg">
-             <p className="text-sm font-medium font-inter text-stone-300">Outstanding Financial Liability</p>
-             <p className="text-3xl font-semibold font-poppins mt-2">Rs. {data.vouchers.outstandingLiability.toLocaleString()}</p>
+          <div className="bg-surface-elevated border border-border text-foreground p-5 rounded-lg">
+             <p className="text-sm font-medium font-inter text-muted">Outstanding Financial Liability</p>
+             <p className="text-3xl font-semibold font-poppins mt-2 text-foreground">Rs. {data.vouchers.outstandingLiability.toLocaleString()}</p>
           </div>
         </div>
 
         {/* Coupons Block */}
-        <div className="bg-white border border-stone-200 rounded-xl p-6 relative overflow-hidden flex flex-col gap-6">
+        <div className="bg-surface border border-border rounded-xl p-6 relative overflow-hidden flex flex-col gap-6 shadow-2xs">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-stone-100 flex items-center justify-center text-stone-600">
+            <div className="w-10 h-10 rounded-lg bg-surface-subtle border border-border flex items-center justify-center text-muted">
               <Tag size={20} />
             </div>
-            <h3 className="text-lg font-semibold text-stone-900 font-poppins">Discount Coupons</h3>
+            <h3 className="text-lg font-semibold text-foreground font-poppins">Discount Coupons</h3>
           </div>
           
           <div className="grid grid-cols-1 gap-4">
-            <div className="bg-stone-50 p-4 rounded-lg">
-              <p className="text-sm font-medium text-stone-500 font-inter">Total Coupons Created</p>
-              <p className="text-2xl font-semibold text-primary font-poppins mt-1">{data.coupons.issued.toLocaleString()}</p>
+            <div className="bg-surface-subtle border border-border p-4 rounded-lg">
+              <p className="text-sm font-medium text-muted font-inter">Total Coupons Created</p>
+              <p className="text-2xl font-semibold text-foreground font-poppins mt-1">{data.coupons.issued.toLocaleString()}</p>
             </div>
-            <div className="bg-stone-50 p-4 rounded-lg">
-              <p className="text-sm font-medium text-stone-500 font-inter">Total Redemptions</p>
-              <p className="text-2xl font-semibold text-primary font-poppins mt-1">{data.coupons.totalUsages.toLocaleString()}</p>
+            <div className="bg-surface-subtle border border-border p-4 rounded-lg">
+              <p className="text-sm font-medium text-muted font-inter">Total Redemptions</p>
+              <p className="text-2xl font-semibold text-foreground font-poppins mt-1">{data.coupons.totalUsages.toLocaleString()}</p>
             </div>
           </div>
         </div>

@@ -84,7 +84,7 @@ export default function LoyaltyPointsModal({ isOpen, onClose, onApplyPoints }: L
             {step === "search" ? "Loyalty Points" : `You have ${availablePoints.toLocaleString()} points`}
           </h2>
           <p className="font-poppins text-xs md:text-sm text-stone-500">
-            Earn 1% in loyalty points on every order you place at Seramaaduwen. 1 point = Rs. 1 discount.
+            Earn 1% in loyalty points on every order you place at Masky Product. 1 point = Rs. 1 discount.
           </p>
         </div>
 

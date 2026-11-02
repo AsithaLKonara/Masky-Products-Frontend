@@ -109,7 +109,7 @@ const ZReportSlip = forwardRef<HTMLDivElement, ZReportProps>((props, ref) => {
       {/* Footer */}
       <div className="text-center flex flex-col items-center gap-2 text-[10px] mt-6">
         <span>--- END OF REPORT ---</span>
-        <span className="text-stone-400">Powered by SERAMAADUWEN.LK POS</span>
+        <span className="text-stone-400">Powered by MASKY PRODUCT POS</span>
       </div>
 
     </div>

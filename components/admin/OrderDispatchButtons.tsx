@@ -21,14 +21,14 @@ export default function OrderDispatchButtons({ orderId, customerName, address, p
       <div className="flex gap-2">
         <button 
           onClick={() => setShowLabelModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-stone-100 text-stone-900 text-sm font-semibold font-inter rounded-lg transition-colors border border-stone-200"
+          className="flex items-center gap-2 px-4 py-2 bg-surface hover:bg-surface-elevated text-foreground text-sm font-semibold font-inter rounded-lg transition-colors border border-border"
         >
           <Printer size={14} /> Print Label
         </button>
 
         <button 
           onClick={() => setShowFardarModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-stone-900 hover:bg-stone-800 text-white text-sm font-semibold font-inter rounded-lg transition-colors shadow-sm"
+          className="flex items-center gap-2 px-4 py-2 bg-foreground hover:bg-foreground/90 text-white text-sm font-semibold font-inter rounded-lg transition-colors shadow-sm"
         >
           <Truck size={14} /> Dispatch via Fardar
         </button>

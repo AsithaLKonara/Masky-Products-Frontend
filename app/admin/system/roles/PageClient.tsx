@@ -92,9 +92,9 @@ export default function AccessControlPage() {
       className: "whitespace-nowrap",
       accessor: (row: RoleItem) => (
         <div className="flex items-center gap-2">
-          <span className="font-semibold text-stone-900">{row.name}</span>
+          <span className="font-semibold text-foreground">{row.name}</span>
           {row.isSystem && (
-            <span className="text-[10px] bg-stone-100 text-stone-600 px-2 py-0.5 rounded font-mono font-medium">
+            <span className="text-[10px] bg-surface-elevated text-muted px-2 py-0.5 rounded font-mono font-medium">
               System
             </span>
           )}
@@ -106,7 +106,7 @@ export default function AccessControlPage() {
       header: "Assigned Users",
       className: "whitespace-nowrap",
       accessor: (row: RoleItem) => (
-        <span className="font-medium text-stone-700">{row.users || 0} user(s)</span>
+        <span className="font-medium text-foreground/80">{row.users || 0} user(s)</span>
       ),
     },
     {
@@ -167,7 +167,7 @@ export default function AccessControlPage() {
       header: "Name",
       className: "whitespace-nowrap",
       accessor: (row: SystemUserItem) => (
-        <span className="font-semibold text-stone-900">{row.name}</span>
+        <span className="font-semibold text-foreground">{row.name}</span>
       ),
     },
     { header: "Email", accessor: "email" as const, className: "whitespace-nowrap" },
@@ -175,7 +175,7 @@ export default function AccessControlPage() {
       header: "Role",
       className: "whitespace-nowrap",
       accessor: (row: SystemUserItem) => (
-        <span className="font-semibold text-stone-700">{row.role}</span>
+        <span className="font-semibold text-foreground/80">{row.role}</span>
       ),
     },
     { header: "Branch", accessor: "branch" as const, className: "whitespace-nowrap" },
@@ -214,7 +214,7 @@ export default function AccessControlPage() {
     <div className="flex items-center gap-2">
       <button
         onClick={() => fetchData()}
-        className="p-2 border border-stone-200 hover:bg-stone-100 rounded-lg text-stone-700 transition-colors"
+        className="p-2 border border-border hover:bg-surface-elevated rounded-lg text-foreground/80 transition-colors"
         title="Refresh Data"
       >
         <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
@@ -229,7 +229,7 @@ export default function AccessControlPage() {
             setUserModalOpen(true);
           }
         }}
-        className="bg-stone-900 text-white hover:bg-stone-800 active:scale-95 px-5 py-2 rounded-lg font-inter text-sm font-semibold transition-all whitespace-nowrap shadow-md shadow-stone-900/20 flex items-center gap-2"
+        className="bg-foreground text-white hover:bg-foreground/90 active:scale-95 px-5 py-2 rounded-lg font-inter text-sm font-semibold transition-all whitespace-nowrap shadow-md shadow-stone-900/20 flex items-center gap-2"
       >
         <Plus size={16} /> {activeTab === "roles" ? "Create Role" : "Invite User"}
       </button>
@@ -245,13 +245,13 @@ export default function AccessControlPage() {
       />
 
       {/* Tabs */}
-      <div className="flex items-center gap-6 border-b border-stone-200 mb-6">
+      <div className="flex items-center gap-6 border-b border-border mb-6">
         <button
           onClick={() => setActiveTab("roles")}
           className={`pb-3 font-inter text-sm font-semibold border-b-2 transition-colors flex items-center gap-2 ${
             activeTab === "roles"
-              ? "border-stone-900 text-stone-900"
-              : "border-transparent text-stone-500 hover:text-stone-700"
+              ? "border-foreground text-foreground font-semibold"
+              : "border-transparent text-muted hover:text-foreground"
           }`}
         >
           <Shield size={16} /> Roles & Permissions ({roles.length})
@@ -260,8 +260,8 @@ export default function AccessControlPage() {
           onClick={() => setActiveTab("users")}
           className={`pb-3 font-inter text-sm font-semibold border-b-2 transition-colors flex items-center gap-2 ${
             activeTab === "users"
-              ? "border-stone-900 text-stone-900"
-              : "border-transparent text-stone-500 hover:text-stone-700"
+              ? "border-foreground text-foreground font-semibold"
+              : "border-transparent text-muted hover:text-foreground"
           }`}
         >
           <Users size={16} /> System Users ({users.length})
@@ -297,7 +297,7 @@ export default function AccessControlPage() {
               <select
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value)}
-                className="bg-stone-50 border border-stone-200 rounded-lg py-2 px-3 text-sm font-inter text-stone-700 outline-none focus:ring-1 focus:ring-stone-400"
+                className="bg-surface border border-border rounded-lg py-2 px-3 text-sm font-inter text-foreground outline-none focus:ring-1 focus:ring-primary"
               >
                 <option value="All">All Roles</option>
                 {roles.map((r) => (
@@ -309,7 +309,7 @@ export default function AccessControlPage() {
               <select
                 value={branchFilter}
                 onChange={(e) => setBranchFilter(e.target.value)}
-                className="bg-stone-50 border border-stone-200 rounded-lg py-2 px-3 text-sm font-inter text-stone-700 outline-none focus:ring-1 focus:ring-stone-400"
+                className="bg-surface border border-border rounded-lg py-2 px-3 text-sm font-inter text-foreground outline-none focus:ring-1 focus:ring-primary"
               >
                 <option value="All">All Branches</option>
                 {branches.map((b: any) => (
@@ -329,10 +329,10 @@ export default function AccessControlPage() {
         </div>
       )}
 
-      <div className="bg-white border border-stone-200 rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden">
         {loading ? (
-          <div className="py-20 flex flex-col items-center justify-center gap-3 text-stone-400">
-            <Loader2 className="w-8 h-8 animate-spin text-stone-900" />
+          <div className="py-20 flex flex-col items-center justify-center gap-3 text-muted/70">
+            <Loader2 className="w-8 h-8 animate-spin text-foreground" />
             <p className="font-inter text-sm font-medium">Loading access control matrix...</p>
           </div>
         ) : activeTab === "roles" ? (

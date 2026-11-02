@@ -21,7 +21,7 @@ export default function ShippingLabelModal({ orderIds, isOpen, onClose }: Shippi
   const { data: settingsData } = useSettings();
   const settings = settingsData || [];
   
-  const storeName = settings.find(s => s.key === 'store_name')?.value || 'SERAMAADUWEN.LK Ltd.';
+  const storeName = settings.find(s => s.key === 'store_name')?.value || 'MASKY PRODUCT Ltd.';
   const storeAddress = settings.find(s => s.key === 'store_address')?.value || '123 Fashion Avenue\nColombo 07';
   const storePhone = settings.find(s => s.key === 'support_phone')?.value || '+94 11 234 5678';
 

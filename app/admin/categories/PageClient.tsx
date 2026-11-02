@@ -38,20 +38,20 @@ export default function CategoriesPage() {
   };
 
   const columns = [
-    { header: "ID", accessor: (row: any) => row.id.substring(0, 8), className: "font-mono text-stone-500 text-xs" },
+    { header: "ID", accessor: (row: any) => row.id.substring(0, 8), className: "font-mono text-muted text-xs" },
     { 
       header: "Category Name", 
       accessor: (row: any) => (
-        <button onClick={() => handleEdit(row)} className="font-semibold text-stone-900 hover:text-accent transition-colors text-left">
+        <button onClick={() => handleEdit(row)} className="font-semibold text-foreground hover:text-accent transition-colors text-left">
           {row.name}
         </button>
       )
     },
-    { header: "Slug", accessor: "slug" as const, className: "font-mono text-xs text-stone-500" },
+    { header: "Slug", accessor: "slug" as const, className: "font-mono text-xs text-muted" },
     { 
       header: "Products", 
       accessor: (row: any) => row._count?.products || 0,
-      className: "font-bold text-stone-800" 
+      className: "font-bold text-foreground/90" 
     },
     {
       header: "Status",
@@ -67,7 +67,7 @@ export default function CategoriesPage() {
       accessor: (row: any) => (
         <div className="flex items-center gap-2">
           <button onClick={() => handleEdit(row)} className="text-xs text-blue-600 hover:underline font-medium">Edit</button>
-          <span className="text-stone-300">·</span>
+          <span className="text-border">·</span>
           <button onClick={() => handleDelete(row.id)} disabled={deleteCategoryMutation.isPending} className="text-xs text-red-500 hover:underline font-medium disabled:opacity-50">Delete</button>
         </div>
       ),
@@ -79,7 +79,7 @@ export default function CategoriesPage() {
       {/* Category status filter doesn't currently exist in schema. Hiding static mock for now. */}
       <button 
         onClick={handleAdd}
-        className="bg-stone-900 text-white hover:bg-stone-800 active:scale-95 px-5 py-2 rounded-lg font-inter text-sm font-semibold transition-all whitespace-nowrap ml-auto shadow-md shadow-stone-900/20 flex items-center gap-2"
+        className="bg-foreground text-background hover:opacity-90 active:scale-95 px-5 py-2 rounded-lg font-inter text-sm font-semibold transition-all whitespace-nowrap ml-auto shadow-md flex items-center gap-2"
       >
         + Add Category
       </button>
@@ -94,16 +94,16 @@ export default function CategoriesPage() {
       />
 
       {/* Stats Row */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           { label: "Total Categories", value: categories.length.toString() },
           { label: "Active", value: categories.length.toString() },
           { label: "Draft", value: "0" },
           { label: "Total Products Categorized", value: categories.reduce((sum: number, c: any) => sum + (c._count?.products || 0), 0).toString() },
         ].map((s) => (
-          <div key={s.label} className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
-            <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider font-inter">{s.label}</p>
-            <p className="text-3xl font-bold text-stone-900 mt-1 font-inter">{s.value}</p>
+          <div key={s.label} className="bg-surface border border-border rounded-xl p-5 shadow-sm">
+            <p className="text-xs font-semibold text-muted uppercase tracking-wider font-inter">{s.label}</p>
+            <p className="text-3xl font-bold text-foreground mt-1 font-inter">{s.value}</p>
           </div>
         ))}
       </div>
@@ -120,7 +120,7 @@ export default function CategoriesPage() {
         filters={filters} 
       />
 
-      <div className="bg-white border border-stone-200 rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden">
         <DataTable
           data={categories}
           columns={columns}

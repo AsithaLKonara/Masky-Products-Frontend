@@ -2,8 +2,8 @@ import React from "react";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Privacy Policy - SERAMAADUWEN.LK",
-  description: "Privacy Policy page for SERAMAADUWEN.LK."
+  title: "Privacy Policy - MASKY PRODUCT",
+  description: "Privacy Policy page for MASKY PRODUCT."
 };
 
 
@@ -18,7 +18,7 @@ export default function PrivacyPolicyPage() {
           Privacy Policy
         </h1>
         <p className="font-poppins text-sm text-background/70 max-w-[600px]">
-          Last updated: August 2026. Your privacy is critically important to us at SERAMAADUWEN.LK.
+          Last updated: August 2026. Your privacy is critically important to us at MASKY PRODUCT.
         </p>
       </div>
 

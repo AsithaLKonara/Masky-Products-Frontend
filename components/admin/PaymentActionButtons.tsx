@@ -22,7 +22,7 @@ export default function PaymentActionButtons({ transactionId, status, totalAmoun
         {status === "paid" && (
           <button 
             onClick={() => setShowRefundModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-900 text-sm font-semibold font-inter rounded-lg transition-colors border border-stone-200"
+            className="flex items-center gap-2 px-4 py-2 bg-surface-elevated hover:bg-border text-foreground text-sm font-semibold font-inter rounded-lg transition-colors border border-border"
           >
             <RefreshCcw size={14} /> Process Refund
           </button>

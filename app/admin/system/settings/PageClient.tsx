@@ -96,7 +96,7 @@ export default function SettingsPage() {
   if (isLoading) {
     return (
       <div className="flex flex-col p-4 md:p-10 max-w-[1280px] mx-auto w-full min-h-[400px] items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-stone-900"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-foreground"></div>
       </div>
     );
   }
@@ -123,75 +123,75 @@ export default function SettingsPage() {
         <div className="w-full md:w-64 shrink-0 flex flex-col space-y-1">
           <button 
             onClick={() => setActiveTab("general")}
-            className={`text-left px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === "general" ? "bg-stone-100 text-stone-900" : "text-stone-600 hover:bg-stone-50"}`}
+            className={`text-left px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === "general" ? "bg-surface-elevated text-foreground" : "text-muted hover:bg-surface-elevated"}`}
           >
             General Information
           </button>
           <button 
             onClick={() => setActiveTab("currency")}
-            className={`text-left px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === "currency" ? "bg-stone-100 text-stone-900" : "text-stone-600 hover:bg-stone-50"}`}
+            className={`text-left px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === "currency" ? "bg-surface-elevated text-foreground" : "text-muted hover:bg-surface-elevated"}`}
           >
             Currency & Tax
           </button>
           <button 
             onClick={() => setActiveTab("shipping")}
-            className={`text-left px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === "shipping" ? "bg-stone-100 text-stone-900" : "text-stone-600 hover:bg-stone-50"}`}
+            className={`text-left px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === "shipping" ? "bg-surface-elevated text-foreground" : "text-muted hover:bg-surface-elevated"}`}
           >
             Shipping Settings
           </button>
           <button 
             onClick={() => setActiveTab("payment")}
-            className={`text-left px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === "payment" ? "bg-stone-100 text-stone-900" : "text-stone-600 hover:bg-stone-50"}`}
+            className={`text-left px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === "payment" ? "bg-surface-elevated text-foreground" : "text-muted hover:bg-surface-elevated"}`}
           >
             Payment Gateways
           </button>
           <button 
             onClick={() => setActiveTab("notifications")}
-            className={`text-left px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === "notifications" ? "bg-stone-100 text-stone-900" : "text-stone-600 hover:bg-stone-50"}`}
+            className={`text-left px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === "notifications" ? "bg-surface-elevated text-foreground" : "text-muted hover:bg-surface-elevated"}`}
           >
             Notifications
           </button>
           <button 
             onClick={() => setActiveTab("advanced")}
-            className={`text-left px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === "advanced" ? "bg-stone-100 text-stone-900" : "text-stone-600 hover:bg-stone-50"}`}
+            className={`text-left px-4 py-2 text-sm font-medium rounded-lg transition-colors ${activeTab === "advanced" ? "bg-surface-elevated text-foreground" : "text-muted hover:bg-surface-elevated"}`}
           >
             Advanced Custom Settings
           </button>
         </div>
 
-        <div className="flex-1 bg-white border border-stone-200 rounded-xl p-8 shadow-sm">
+        <div className="flex-1 bg-surface border border-border rounded-xl p-8">
           {activeTab !== "advanced" ? (
             <form onSubmit={handleSubmit(onSubmit)}>
               {activeTab === "general" && (
                 <>
-                  <h3 className="text-lg font-semibold font-poppins text-stone-900 mb-6">General Information</h3>
+                  <h3 className="text-lg font-semibold font-poppins text-foreground mb-6">General Information</h3>
                   <div className="space-y-6 max-w-2xl">
                     <div>
-                      <label className="block text-sm font-medium text-stone-700 mb-1">Store Name</label>
+                      <label className="block text-sm font-medium text-foreground mb-1">Store Name</label>
                       <input 
                         type="text" 
                         {...register("store_name")}
-                        className="w-full h-10 px-3 border border-stone-300 rounded-md outline-none focus:border-stone-900 focus:ring-1 focus:ring-stone-900 text-sm font-inter" 
+                        className="w-full h-10 px-3 border border-border rounded-md outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm font-inter bg-surface text-foreground" 
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-stone-700 mb-1">Support Email</label>
+                      <label className="block text-sm font-medium text-foreground mb-1">Support Email</label>
                       <input 
                         type="email" 
                         {...register("support_email")}
-                        className="w-full h-10 px-3 border border-stone-300 rounded-md outline-none focus:border-stone-900 focus:ring-1 focus:ring-stone-900 text-sm font-inter" 
+                        className="w-full h-10 px-3 border border-border rounded-md outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm font-inter bg-surface text-foreground" 
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-stone-700 mb-1">Support Phone</label>
+                      <label className="block text-sm font-medium text-foreground mb-1">Support Phone</label>
                       <input 
                         type="text" 
                         {...register("support_phone")}
-                        className="w-full h-10 px-3 border border-stone-300 rounded-md outline-none focus:border-stone-900 focus:ring-1 focus:ring-stone-900 text-sm font-inter" 
+                        className="w-full h-10 px-3 border border-border rounded-md outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm font-inter bg-surface text-foreground" 
                       />
                     </div>
-                    <div className="pt-4 border-t border-stone-100 flex justify-end">
-                      <button type="submit" disabled={updateSettings.isPending} className="px-6 py-2 bg-stone-900 hover:bg-stone-800 transition-colors text-white text-sm font-medium rounded-md shadow-sm disabled:opacity-50">
+                    <div className="pt-4 border-t border-border flex justify-end">
+                      <button type="submit" disabled={updateSettings.isPending} className="px-6 py-2 bg-foreground hover:opacity-80 transition-colors text-background text-sm font-medium rounded-md shadow-sm disabled:opacity-50">
                         {updateSettings.isPending ? "Saving..." : "Save Changes"}
                       </button>
                     </div>
@@ -201,29 +201,29 @@ export default function SettingsPage() {
 
               {activeTab === "currency" && (
                 <>
-                  <h3 className="text-lg font-semibold font-poppins text-stone-900 mb-6">Currency & Tax</h3>
+                  <h3 className="text-lg font-semibold font-poppins text-foreground mb-6">Currency & Tax</h3>
                   <div className="space-y-6 max-w-2xl">
                     <div>
-                      <label className="block text-sm font-medium text-stone-700 mb-1">Default Currency</label>
+                      <label className="block text-sm font-medium text-foreground mb-1">Default Currency</label>
                       <select 
                         {...register("default_currency")}
-                        className="w-full h-10 px-3 border border-stone-300 rounded-md outline-none focus:border-stone-900 focus:ring-1 focus:ring-stone-900 text-sm font-inter bg-white"
+                        className="w-full h-10 px-3 border border-border rounded-md outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm font-inter bg-surface text-foreground"
                       >
                         <option value="LKR">Sri Lankan Rupee (LKR)</option>
                         <option value="USD">US Dollar (USD)</option>
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-stone-700 mb-1">Tax Rate (%)</label>
+                      <label className="block text-sm font-medium text-foreground mb-1">Tax Rate (%)</label>
                       <input 
                         type="number" 
                         step="0.01"
                         {...register("tax_rate")}
-                        className="w-full h-10 px-3 border border-stone-300 rounded-md outline-none focus:border-stone-900 focus:ring-1 focus:ring-stone-900 text-sm font-inter" 
+                        className="w-full h-10 px-3 border border-border rounded-md outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm font-inter bg-surface text-foreground" 
                       />
                     </div>
-                    <div className="pt-4 border-t border-stone-100 flex justify-end">
-                      <button type="submit" disabled={updateSettings.isPending} className="px-6 py-2 bg-stone-900 hover:bg-stone-800 transition-colors text-white text-sm font-medium rounded-md shadow-sm disabled:opacity-50">
+                    <div className="pt-4 border-t border-border flex justify-end">
+                      <button type="submit" disabled={updateSettings.isPending} className="px-6 py-2 bg-foreground hover:opacity-80 transition-colors text-background text-sm font-medium rounded-md shadow-sm disabled:opacity-50">
                         {updateSettings.isPending ? "Saving..." : "Save Settings"}
                       </button>
                     </div>
@@ -233,22 +233,22 @@ export default function SettingsPage() {
 
               {activeTab === "shipping" && (
                 <>
-                  <h3 className="text-lg font-semibold font-poppins text-stone-900 mb-6">Shipping Settings</h3>
+                  <h3 className="text-lg font-semibold font-poppins text-foreground mb-6">Shipping Settings</h3>
                   <div className="space-y-6 max-w-2xl">
-                    <p className="text-sm text-stone-500 font-inter">Configure default shipping rates and zones here.</p>
+                    <p className="text-sm text-muted font-inter">Configure default shipping rates and zones here.</p>
                     
                     <div>
-                      <label className="block text-sm font-medium text-stone-700 mb-1">Base Shipping Cost (LKR)</label>
+                      <label className="block text-sm font-medium text-foreground mb-1">Base Shipping Cost (LKR)</label>
                       <input 
                         type="number" 
                         step="0.01"
                         {...register("base_shipping_cost")}
-                        className="w-full h-10 px-3 border border-stone-300 rounded-md outline-none focus:border-stone-900 focus:ring-1 focus:ring-stone-900 text-sm font-inter" 
+                        className="w-full h-10 px-3 border border-border rounded-md outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm font-inter bg-surface text-foreground" 
                       />
                     </div>
                     
-                    <div className="pt-4 border-t border-stone-100 flex justify-end">
-                      <button type="submit" disabled={updateSettings.isPending} className="px-6 py-2 bg-stone-900 hover:bg-stone-800 transition-colors text-white text-sm font-medium rounded-md shadow-sm disabled:opacity-50">
+                    <div className="pt-4 border-t border-border flex justify-end">
+                      <button type="submit" disabled={updateSettings.isPending} className="px-6 py-2 bg-foreground hover:opacity-80 transition-colors text-background text-sm font-medium rounded-md shadow-sm disabled:opacity-50">
                         Save
                       </button>
                     </div>
@@ -258,36 +258,36 @@ export default function SettingsPage() {
 
               {activeTab === "payment" && (
                 <>
-                  <h3 className="text-lg font-semibold font-poppins text-stone-900 mb-6">Payment Gateways</h3>
+                  <h3 className="text-lg font-semibold font-poppins text-foreground mb-6">Payment Gateways</h3>
                   <div className="space-y-6 max-w-2xl">
-                    <p className="text-sm text-stone-500 font-inter">Manage payment method integrations.</p>
+                    <p className="text-sm text-muted font-inter">Manage payment method integrations.</p>
                     
-                    <label className="flex items-center gap-3 cursor-pointer p-4 border border-stone-200 rounded-lg">
+                    <label className="flex items-center gap-3 cursor-pointer p-4 border border-border rounded-lg">
                       <input 
                         type="checkbox" 
                         {...register("enable_cod")}
                         className="w-4 h-4 accent-stone-900" 
                       />
                       <div className="flex flex-col">
-                        <span className="text-sm font-medium text-stone-900">Cash on Delivery (COD)</span>
-                        <span className="text-xs text-stone-500">Allow customers to pay on delivery</span>
+                        <span className="text-sm font-medium text-foreground">Cash on Delivery (COD)</span>
+                        <span className="text-xs text-muted">Allow customers to pay on delivery</span>
                       </div>
                     </label>
                     
-                    <label className="flex items-center gap-3 cursor-pointer p-4 border border-stone-200 rounded-lg">
+                    <label className="flex items-center gap-3 cursor-pointer p-4 border border-border rounded-lg">
                       <input 
                         type="checkbox" 
                         {...register("enable_card_payments")}
                         className="w-4 h-4 accent-stone-900" 
                       />
                       <div className="flex flex-col">
-                        <span className="text-sm font-medium text-stone-900">Card Payments</span>
-                        <span className="text-xs text-stone-500">Enable Visa, Mastercard processing</span>
+                        <span className="text-sm font-medium text-foreground">Card Payments</span>
+                        <span className="text-xs text-muted">Enable Visa, Mastercard processing</span>
                       </div>
                     </label>
 
-                    <div className="pt-4 border-t border-stone-100 flex justify-end">
-                      <button type="submit" disabled={updateSettings.isPending} className="px-6 py-2 bg-stone-900 hover:bg-stone-800 transition-colors text-white text-sm font-medium rounded-md shadow-sm disabled:opacity-50">
+                    <div className="pt-4 border-t border-border flex justify-end">
+                      <button type="submit" disabled={updateSettings.isPending} className="px-6 py-2 bg-foreground hover:opacity-80 transition-colors text-background text-sm font-medium rounded-md shadow-sm disabled:opacity-50">
                         Save
                       </button>
                     </div>
@@ -297,7 +297,7 @@ export default function SettingsPage() {
 
               {activeTab === "notifications" && (
                 <>
-                  <h3 className="text-lg font-semibold font-poppins text-stone-900 mb-6">Notification Preferences</h3>
+                  <h3 className="text-lg font-semibold font-poppins text-foreground mb-6">Notification Preferences</h3>
                   <div className="space-y-6 max-w-2xl">
                     <label className="flex items-center gap-3 cursor-pointer">
                       <input 
@@ -305,7 +305,7 @@ export default function SettingsPage() {
                         {...register("email_new_orders")}
                         className="w-4 h-4 accent-stone-900" 
                       />
-                      <span className="text-sm font-inter text-stone-700">Email alerts for new orders</span>
+                      <span className="text-sm font-inter text-foreground/80">Email alerts for new orders</span>
                     </label>
                     
                     <label className="flex items-center gap-3 cursor-pointer">
@@ -314,11 +314,11 @@ export default function SettingsPage() {
                         {...register("email_low_stock")}
                         className="w-4 h-4 accent-stone-900" 
                       />
-                      <span className="text-sm font-inter text-stone-700">Email alerts for low stock</span>
+                      <span className="text-sm font-inter text-foreground/80">Email alerts for low stock</span>
                     </label>
 
-                    <div className="pt-4 border-t border-stone-100 flex justify-end">
-                      <button type="submit" disabled={updateSettings.isPending} className="px-6 py-2 bg-stone-900 hover:bg-stone-800 transition-colors text-white text-sm font-medium rounded-md shadow-sm disabled:opacity-50">
+                    <div className="pt-4 border-t border-border flex justify-end">
+                      <button type="submit" disabled={updateSettings.isPending} className="px-6 py-2 bg-foreground hover:opacity-80 transition-colors text-background text-sm font-medium rounded-md shadow-sm disabled:opacity-50">
                         Save Preferences
                       </button>
                     </div>
@@ -328,37 +328,37 @@ export default function SettingsPage() {
             </form>
           ) : (
             <div>
-              <h3 className="text-lg font-semibold font-poppins text-stone-900 mb-2">Advanced Custom Settings</h3>
-              <p className="text-sm text-stone-500 font-inter mb-6">Dynamically add and manage custom configuration keys, API tokens, and integrations.</p>
+              <h3 className="text-lg font-semibold font-poppins text-foreground mb-2">Advanced Custom Settings</h3>
+              <p className="text-sm text-muted font-inter mb-6">Dynamically add and manage custom configuration keys, API tokens, and integrations.</p>
 
               {/* Create new setting */}
-              <div className="bg-stone-50 border border-stone-200 rounded-lg p-5 mb-8">
-                <h4 className="text-sm font-medium text-stone-900 mb-4">Add New Key-Value Pair</h4>
+              <div className="bg-surface-elevated border border-border rounded-lg p-5 mb-8">
+                <h4 className="text-sm font-medium text-foreground mb-4">Add New Key-Value Pair</h4>
                 <div className="flex flex-col md:flex-row gap-4 items-end">
                   <div className="flex-1">
-                    <label className="block text-xs font-medium text-stone-500 mb-1">Key (e.g. tracking_script)</label>
+                    <label className="block text-xs font-medium text-muted mb-1">Key (e.g. tracking_script)</label>
                     <input 
                       type="text" 
                       value={newKey}
                       onChange={(e) => setNewKey(e.target.value)}
-                      className="w-full h-10 px-3 border border-stone-300 rounded-md outline-none focus:border-stone-900 focus:ring-1 focus:ring-stone-900 text-sm font-inter" 
+                      className="w-full h-10 px-3 border border-border rounded-md outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm font-inter bg-surface text-foreground" 
                     />
                   </div>
                   <div className="flex-[2]">
-                    <label className="block text-xs font-medium text-stone-500 mb-1">Value</label>
+                    <label className="block text-xs font-medium text-muted mb-1">Value</label>
                     <input 
                       type="text" 
                       value={newValue}
                       onChange={(e) => setNewValue(e.target.value)}
-                      className="w-full h-10 px-3 border border-stone-300 rounded-md outline-none focus:border-stone-900 focus:ring-1 focus:ring-stone-900 text-sm font-inter" 
+                      className="w-full h-10 px-3 border border-border rounded-md outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm font-inter bg-surface text-foreground" 
                     />
                   </div>
                   <div className="w-32">
-                    <label className="block text-xs font-medium text-stone-500 mb-1">Type</label>
+                    <label className="block text-xs font-medium text-muted mb-1">Type</label>
                     <select 
                       value={newType}
                       onChange={(e) => setNewType(e.target.value)}
-                      className="w-full h-10 px-3 border border-stone-300 rounded-md outline-none focus:border-stone-900 focus:ring-1 focus:ring-stone-900 text-sm font-inter bg-white"
+                      className="w-full h-10 px-3 border border-border rounded-md outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm font-inter bg-surface text-foreground"
                     >
                       <option value="string">String</option>
                       <option value="number">Number</option>
@@ -370,7 +370,7 @@ export default function SettingsPage() {
                     type="button" 
                     onClick={handleCreateCustom}
                     disabled={createSetting.isPending}
-                    className="h-10 px-4 bg-primary text-white text-sm font-medium rounded-md hover:bg-stone-800 transition-colors flex items-center gap-2"
+                    className="h-10 px-4 bg-primary text-white text-sm font-medium rounded-md hover:bg-foreground/90 transition-colors flex items-center gap-2"
                   >
                     <Plus size={16} />
                     Add
@@ -380,9 +380,9 @@ export default function SettingsPage() {
 
               {/* Existing custom settings */}
               <div className="space-y-4">
-                <h4 className="text-sm font-medium text-stone-900">Custom Entries</h4>
+                <h4 className="text-sm font-medium text-foreground">Custom Entries</h4>
                 {customSettings.length === 0 ? (
-                  <p className="text-sm text-stone-500 italic">No custom settings configured yet.</p>
+                  <p className="text-sm text-muted italic">No custom settings configured yet.</p>
                 ) : (
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="space-y-4">
@@ -393,12 +393,12 @@ export default function SettingsPage() {
                               type="text" 
                               value={s.key} 
                               readOnly 
-                              className="w-full h-10 px-3 border border-stone-200 bg-stone-50 rounded-md text-sm font-inter text-stone-500 cursor-not-allowed" 
+                              className="w-full h-10 px-3 border border-border bg-surface-elevated rounded-md text-sm font-inter text-muted cursor-not-allowed" 
                             />
                           </div>
                           <div className="flex-[2]">
                             {s.type === "boolean" ? (
-                              <div className="h-10 flex items-center px-3 border border-stone-300 rounded-md">
+                              <div className="h-10 flex items-center px-3 border border-border rounded-md">
                                 <label className="flex items-center gap-2 cursor-pointer">
                                   <input 
                                     type="checkbox" 
@@ -412,7 +412,7 @@ export default function SettingsPage() {
                               <input 
                                 type="text" 
                                 {...register(s.key)}
-                                className="w-full h-10 px-3 border border-stone-300 rounded-md outline-none focus:border-stone-900 focus:ring-1 focus:ring-stone-900 text-sm font-inter" 
+                                className="w-full h-10 px-3 border border-border rounded-md outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm font-inter bg-surface text-foreground" 
                               />
                             )}
                           </div>
@@ -426,8 +426,8 @@ export default function SettingsPage() {
                           </button>
                         </div>
                       ))}
-                      <div className="pt-4 border-t border-stone-100 flex justify-end">
-                        <button type="submit" disabled={updateSettings.isPending} className="px-6 py-2 bg-stone-900 hover:bg-stone-800 transition-colors text-white text-sm font-medium rounded-md shadow-sm disabled:opacity-50">
+                      <div className="pt-4 border-t border-border flex justify-end">
+                        <button type="submit" disabled={updateSettings.isPending} className="px-6 py-2 bg-foreground hover:opacity-80 transition-colors text-background text-sm font-medium rounded-md shadow-sm disabled:opacity-50">
                           {updateSettings.isPending ? "Saving..." : "Save Custom Settings"}
                         </button>
                       </div>

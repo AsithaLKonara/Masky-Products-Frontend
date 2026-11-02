@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Eye, EyeOff, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, CheckCircle2, ShieldAlert, Sparkles, Copy, Check, Shield, Store, CreditCard, ShoppingBag, Terminal } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod" ;
 import {
@@ -20,6 +20,59 @@ import { generateDeviceFingerprint } from "@/lib/fingerprint";
 import { Turnstile, TurnstileInstance } from "@marsidev/react-turnstile";
 
 type AuthView = "login" | "register" | "forgot-password" | "otp" | "change-password";
+
+const DEV_CREDENTIALS = [
+  {
+    role: "Super Admin",
+    email: "superadmin@masky.space",
+    password: "Password123!",
+    badge: "Full System Access",
+    desc: "Unrestricted access across all system modules",
+    icon: Shield,
+    color: "border-amber-500/40 bg-amber-500/10 text-amber-300 hover:border-amber-400 hover:bg-amber-500/20",
+    pillColor: "bg-amber-400/20 text-amber-300 border-amber-500/30",
+  },
+  {
+    role: "Store Admin",
+    email: "admin@masky.space",
+    password: "Password123!",
+    badge: "Operations Admin",
+    desc: "Catalog, orders, customers & inventory",
+    icon: Store,
+    color: "border-blue-500/40 bg-blue-500/10 text-blue-300 hover:border-blue-400 hover:bg-blue-500/20",
+    pillColor: "bg-blue-400/20 text-blue-300 border-blue-500/30",
+  },
+  {
+    role: "Branch Manager",
+    email: "manager@masky.space",
+    password: "Password123!",
+    badge: "Main Flagship",
+    desc: "Store shifts, staff & inventory transfers",
+    icon: ShieldAlert,
+    color: "border-purple-500/40 bg-purple-500/10 text-purple-300 hover:border-purple-400 hover:bg-purple-500/20",
+    pillColor: "bg-purple-400/20 text-purple-300 border-purple-500/30",
+  },
+  {
+    role: "Cashier",
+    email: "cashier@masky.space",
+    password: "Password123!",
+    badge: "POS Register",
+    desc: "Point of Sale checkouts & transactions",
+    icon: CreditCard,
+    color: "border-emerald-500/40 bg-emerald-500/10 text-emerald-300 hover:border-emerald-400 hover:bg-emerald-500/20",
+    pillColor: "bg-emerald-400/20 text-emerald-300 border-emerald-500/30",
+  },
+  {
+    role: "Customer",
+    email: "customer@masky.space",
+    password: "Password123!",
+    badge: "Storefront Shopper",
+    desc: "E-commerce client with 1,250 loyalty pts",
+    icon: ShoppingBag,
+    color: "border-stone-500/40 bg-stone-500/10 text-stone-300 hover:border-stone-300 hover:bg-stone-500/20",
+    pillColor: "bg-stone-400/20 text-stone-300 border-stone-500/30",
+  },
+];
 
 export default function AuthForm() {
   const [view, setView] = useState<AuthView>("login");
@@ -47,7 +100,7 @@ export default function AuthForm() {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center w-full max-w-[380px] mx-auto h-full min-h-[400px]">
+    <div className="flex flex-col justify-center items-center w-full max-w-[420px] mx-auto h-full min-h-[400px]">
       {renderView()}
     </div>
   );
@@ -64,11 +117,28 @@ function LoginForm({ setView, mounted }: { setView: (v: AuthView) => void, mount
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [activeRole, setActiveRole] = useState<string | null>(null);
+  const [copiedRole, setCopiedRole] = useState<string | null>(null);
+  const [copiedPassword, setCopiedPassword] = useState(false);
+  const [showDevPanel, setShowDevPanel] = useState(true);
   const turnstileRef = useRef<TurnstileInstance>(null);
 
   const { register, handleSubmit, setValue, formState: { errors } } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
+
+  const handleQuickFill = (cred: typeof DEV_CREDENTIALS[0]) => {
+    setValue("email", cred.email, { shouldValidate: true });
+    setValue("password", cred.password, { shouldValidate: true });
+    setActiveRole(cred.role);
+    setError(null);
+  };
+
+  const handleCopy = (text: string, roleName: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedRole(roleName);
+    setTimeout(() => setCopiedRole(null), 2000);
+  };
 
   const onSubmit = async (data: LoginFormData) => {
     setError(null);
@@ -96,7 +166,7 @@ function LoginForm({ setView, mounted }: { setView: (v: AuthView) => void, mount
       }
     } catch (err: any) {
       const serverMsg = err.response?.data?.error?.message || err.response?.data?.message || err.response?.data?.error;
-      const msg = serverMsg || (err.isAxiosError ? "Network error. Please try again." : err.message) || "Failed to sign in. Please check your credentials.";
+      const msg = serverMsg || (err.isAxiosError && !err.response ? "Cannot reach the Backend API (port 5000). Please ensure the backend server is running." : err.message) || "Failed to sign in. Please check your credentials.";
       setError(msg);
       turnstileRef.current?.reset();
     } finally {
@@ -105,17 +175,125 @@ function LoginForm({ setView, mounted }: { setView: (v: AuthView) => void, mount
   };
 
   return (
-    <div className="flex flex-col items-center w-full gap-[36px] animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex flex-col items-center gap-[8px]">
-        <h2 className="font-inria text-4xl md:text-5xl leading-[1.2] text-center text-stone-50 tracking-wide">
+    <div className="flex flex-col items-center w-full gap-[28px] animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col items-center gap-[8px] text-center">
+        <h2 className="font-inria text-3xl md:text-4xl lg:text-5xl leading-[1.2] text-stone-50 tracking-wide">
           Welcome Back
         </h2>
-        <p className="font-poppins font-light text-sm text-stone-400 text-center">
-          Sign in to access your curated collections.
+        <p className="font-poppins font-light text-xs md:text-sm text-stone-400">
+          Sign in to access your curated dashboard or storefront collections.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full gap-[24px]">
+      {/* Developer Demo Credentials Card */}
+      <div className="w-full bg-stone-900/80 backdrop-blur-md border border-amber-500/30 rounded-lg p-3.5 shadow-xl relative overflow-hidden transition-all">
+        {/* Subtle decorative glow */}
+        <div className="absolute -top-12 -right-12 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
+
+        <div className="flex items-center justify-between pb-2 mb-2 border-b border-white/10">
+          <div className="flex items-center gap-2">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            <div className="flex items-center gap-1.5">
+              <Terminal className="w-3.5 h-3.5 text-amber-400" />
+              <span className="font-urbanist font-semibold text-xs tracking-wider uppercase text-amber-300">
+                Dev Login Credentials
+              </span>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowDevPanel(!showDevPanel)}
+            className="text-[11px] text-stone-400 hover:text-stone-200 uppercase font-mono tracking-wider transition-colors"
+          >
+            {showDevPanel ? "Hide" : "Show"}
+          </button>
+        </div>
+
+        {showDevPanel && (
+          <div className="flex flex-col gap-2 pt-1 animate-in fade-in duration-300">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+              {DEV_CREDENTIALS.map((cred) => {
+                const Icon = cred.icon;
+                const isSelected = activeRole === cred.role;
+                return (
+                  <button
+                    key={cred.role}
+                    type="button"
+                    onClick={() => handleQuickFill(cred)}
+                    className={`group flex items-start gap-2 p-2 rounded text-left transition-all border ${cred.color} ${
+                      isSelected ? "ring-2 ring-white/50 shadow-md scale-[1.01]" : ""
+                    }`}
+                  >
+                    <Icon className="w-4 h-4 mt-0.5 shrink-0" />
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="font-urbanist font-bold text-xs truncate">
+                          {cred.role}
+                        </span>
+                        {isSelected && (
+                          <Check className="w-3 h-3 text-white shrink-0 animate-in zoom-in" />
+                        )}
+                      </div>
+                      <span className="font-mono text-[10px] opacity-75 truncate">
+                        {cred.email}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Quick autofill helper bar */}
+            <div className="mt-1 pt-2 border-t border-white/5 flex items-center justify-between text-[11px] text-stone-400 font-mono">
+              <span className="flex items-center gap-1">
+                Password: <code className="text-stone-200 font-bold bg-white/5 px-1 py-0.5 rounded">Password123!</code>
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText("Password123!");
+                  setCopiedPassword(true);
+                  setTimeout(() => setCopiedPassword(false), 2000);
+                }}
+                className="hover:text-amber-300 flex items-center gap-1 text-[10px] text-stone-400 transition-colors"
+                title="Copy default password"
+              >
+                {copiedPassword ? (
+                  <>
+                    <Check className="w-3 h-3 text-emerald-400" />
+                    <span className="text-emerald-400">Copied</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3 h-3" />
+                    <span>Copy</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {activeRole && (
+              <div className="mt-0.5 p-1.5 bg-emerald-500/10 border border-emerald-500/30 rounded text-[11px] text-emerald-300 flex items-center justify-between animate-in fade-in">
+                <span>✓ Loaded credentials for <strong>{activeRole}</strong></span>
+                <span className="text-[10px] opacity-75">Click "Sign In" below</span>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      <form 
+        method="POST" 
+        action="#" 
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit(onSubmit)(e);
+        }} 
+        className="flex flex-col w-full gap-[20px]"
+      >
         {/* Honeypot Field */}
         <div style={{ display: 'none' }} aria-hidden="true">
           <input type="text" {...register('_honeypot' as any)} tabIndex={-1} autoComplete="off" />
@@ -207,7 +385,7 @@ function LoginForm({ setView, mounted }: { setView: (v: AuthView) => void, mount
 
       <div className="flex flex-row justify-center items-center gap-[8px] w-full mt-4">
         <span className="font-poppins font-light text-sm text-stone-400">
-          New to SERAMAADUWEN.LK?
+          New to MASKY PRODUCT?
         </span>
         <button 
           type="button"
@@ -277,7 +455,7 @@ function RegisterForm({ setView, mounted }: { setView: (v: AuthView) => void, mo
     <div className="flex flex-col items-center w-full gap-[32px] animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col items-center gap-[8px]">
         <h2 className="font-inria text-4xl md:text-5xl leading-[1.2] text-center text-stone-50 tracking-wide">
-          Join SERAMAADUWEN.LK
+          Join MASKY PRODUCT
         </h2>
         <p className="font-poppins font-light text-sm text-stone-400 text-center">
           Discover pieces edited for quiet luxury.
@@ -287,11 +465,19 @@ function RegisterForm({ setView, mounted }: { setView: (v: AuthView) => void, mo
       {success ? (
         <div className="flex flex-col items-center gap-4 py-8 text-center animate-in fade-in">
           <CheckCircle2 className="w-12 h-12 text-emerald-400" />
-          <h3 className="font-inria text-2xl text-stone-50">Welcome to SERAMAADUWEN.LK</h3>
+          <h3 className="font-inria text-2xl text-stone-50">Welcome to MASKY PRODUCT</h3>
           <p className="font-urbanist text-stone-400 text-sm">Your account has been created. Redirecting you...</p>
         </div>
       ) : (
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-full gap-[16px]">
+        <form 
+          method="POST" 
+          action="#" 
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit(onSubmit)(e);
+          }} 
+          className="flex flex-col w-full gap-[16px]"
+        >
           {/* Honeypot Field */}
           <div style={{ display: 'none' }} aria-hidden="true">
             <input type="text" {...register('_honeypot' as any)} tabIndex={-1} autoComplete="off" />

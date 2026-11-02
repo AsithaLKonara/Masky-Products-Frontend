@@ -136,7 +136,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>((props, ref) => {
         <div style={{ marginTop: "6px", fontFamily: "monospace", fontSize: "9px", letterSpacing: "2px", wordBreak: "break-all" }}>
           {orderId}
         </div>
-        <div style={{ fontSize: "8px", color: "#888", marginTop: "6px" }}>Powered by SERAMAADUWEN.LK POS</div>
+        <div style={{ fontSize: "8px", color: "#888", marginTop: "6px" }}>Powered by MASKY PRODUCT POS</div>
       </div>
     </div>
   );

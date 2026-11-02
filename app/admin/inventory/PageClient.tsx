@@ -37,16 +37,16 @@ export default function InventoryDashboard() {
 
   return (
     <div className="p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold">Inventory Dashboard</h1>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <h1 className="text-2xl font-bold font-inter text-foreground">Inventory Dashboard</h1>
         {activeTab === 'STOCK' && (
-          <div className="flex space-x-3">
+          <div className="flex flex-wrap items-center gap-3">
             <input 
               type="text" 
               placeholder="Search SKU or Name..." 
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="border p-2 rounded"
+              className="bg-surface border border-border text-foreground placeholder:text-muted rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary font-inter"
             />
             <select 
               value={statusFilter} 
@@ -54,7 +54,7 @@ export default function InventoryDashboard() {
                 setStatusFilter(e.target.value);
                 setPage(1);
               }}
-              className="border p-2 rounded"
+              className="bg-surface border border-border text-foreground rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary font-inter"
             >
               <option value="">All Statuses</option>
               <option value="instock">In Stock</option>
@@ -67,7 +67,7 @@ export default function InventoryDashboard() {
                 setSelectedBranchId(e.target.value);
                 setPage(1);
               }}
-              className="border p-2 rounded"
+              className="bg-surface border border-border text-foreground rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-primary font-inter"
             >
               <option value="">All Branches</option>
               {branchesData?.map((b: any) => (
@@ -78,10 +78,10 @@ export default function InventoryDashboard() {
         )}
       </div>
 
-      <div className="flex gap-4 mb-6 border-b pb-2">
-        <button className={`pb-2 ${activeTab === 'STOCK' ? 'border-b-2 border-black font-semibold' : 'text-gray-500'}`} onClick={() => setActiveTab('STOCK')}>Stock Levels</button>
-        <button className={`pb-2 ${activeTab === 'TRANSFERS' ? 'border-b-2 border-black font-semibold' : 'text-gray-500'}`} onClick={() => setActiveTab('TRANSFERS')}>Stock Transfers</button>
-        <button className={`pb-2 ${activeTab === 'BRANCHES' ? 'border-b-2 border-black font-semibold' : 'text-gray-500'}`} onClick={() => setActiveTab('BRANCHES')}>Branches</button>
+      <div className="flex gap-4 mb-6 border-b border-border pb-2">
+        <button className={`pb-2 font-inter text-sm transition-colors ${activeTab === 'STOCK' ? 'border-b-2 border-foreground text-foreground font-semibold' : 'text-muted hover:text-foreground'}`} onClick={() => setActiveTab('STOCK')}>Stock Levels</button>
+        <button className={`pb-2 font-inter text-sm transition-colors ${activeTab === 'TRANSFERS' ? 'border-b-2 border-foreground text-foreground font-semibold' : 'text-muted hover:text-foreground'}`} onClick={() => setActiveTab('TRANSFERS')}>Stock Transfers</button>
+        <button className={`pb-2 font-inter text-sm transition-colors ${activeTab === 'BRANCHES' ? 'border-b-2 border-foreground text-foreground font-semibold' : 'text-muted hover:text-foreground'}`} onClick={() => setActiveTab('BRANCHES')}>Branches</button>
       </div>
 
       {activeTab === 'STOCK' && (
@@ -96,12 +96,12 @@ export default function InventoryDashboard() {
       )}
 
       {activeTab === 'STOCK' && (
-        <div className="bg-white rounded shadow overflow-hidden">
+        <div className="bg-surface border border-border rounded-xl overflow-hidden">
           {invLoading ? (
             <div className="p-4">Loading inventory...</div>
           ) : (
             <table className="w-full text-left">
-              <thead className="bg-gray-50">
+              <thead className="bg-surface-subtle border-b border-border">
                 <tr>
                   <th className="p-4">Variant</th>
                   <th className="p-4">Branch</th>
@@ -120,7 +120,7 @@ export default function InventoryDashboard() {
                     <td className="p-4">{item.branchName}</td>
                     <td className="p-4 font-medium">{item.quantity}</td>
                     <td className="p-4">
-                      <span className={`px-2 py-1 text-xs rounded-full ${item.isOutOfStock ? 'bg-red-100 text-red-700' : item.isLowStock ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'}`}>
+                      <span className={`text-xs font-inter uppercase tracking-wider ${item.isOutOfStock ? 'text-rose-500 font-semibold italic' : item.isLowStock ? 'text-amber-500 font-bold' : 'text-emerald-500 font-bold'}`}>
                         {item.stockStatus}
                       </span>
                     </td>
@@ -168,12 +168,12 @@ export default function InventoryDashboard() {
       )}
 
       {activeTab === 'TRANSFERS' && (
-        <div className="bg-white rounded shadow overflow-hidden">
+        <div className="bg-surface border border-border rounded-xl overflow-hidden">
            {transfersLoading ? (
             <div className="p-4">Loading transfers...</div>
           ) : (
             <table className="w-full text-left">
-              <thead className="bg-gray-50">
+              <thead className="bg-surface-subtle border-b border-border">
                 <tr>
                   <th className="p-4">Date</th>
                   <th className="p-4">Variant</th>
@@ -208,7 +208,7 @@ export default function InventoryDashboard() {
       )}
 
       {activeTab === 'BRANCHES' && (
-        <div className="bg-white rounded shadow overflow-hidden p-4">
+        <div className="bg-surface rounded shadow overflow-hidden p-4">
           <h2 className="font-semibold mb-4">Active Branches</h2>
           <ul className="space-y-2">
             {branchesData?.map((b: any) => (

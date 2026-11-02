@@ -96,17 +96,17 @@ export default function UserModal({
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6">
-      <div className="absolute inset-0 bg-stone-950/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-background/60 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative w-full max-w-[550px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden max-h-[90vh]">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-stone-200 bg-stone-50 shrink-0">
+      <div className="relative w-full max-w-[550px] bg-surface rounded-2xl shadow-2xl flex flex-col overflow-hidden max-h-[90vh]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-surface-elevated shrink-0">
           <div>
-            <h2 className="font-inter font-bold text-lg text-stone-900 flex items-center gap-2">
-              <UserPlus size={18} className="text-stone-900" />
+            <h2 className="font-inter font-bold text-lg text-foreground flex items-center gap-2">
+              <UserPlus size={18} className="text-foreground" />
               {initialData ? "Edit User Access" : "Invite System User"}
             </h2>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-stone-200 rounded-lg text-stone-600 transition-colors">
+          <button onClick={onClose} className="p-2 hover:bg-border rounded-lg text-muted transition-colors">
             <X size={20} />
           </button>
         </div>
@@ -120,58 +120,58 @@ export default function UserModal({
 
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="font-inter text-xs font-semibold text-stone-700">First Name <span className="text-red-500">*</span></label>
+              <label className="font-inter text-xs font-semibold text-foreground/80">First Name <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 placeholder="e.g. Jane"
-                className="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-stone-900 bg-white font-inter"
+                className="w-full border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-foreground bg-surface font-inter"
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="font-inter text-xs font-semibold text-stone-700">Last Name <span className="text-red-500">*</span></label>
+              <label className="font-inter text-xs font-semibold text-foreground/80">Last Name <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 placeholder="e.g. Doe"
-                className="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-stone-900 bg-white font-inter"
+                className="w-full border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-foreground bg-surface font-inter"
               />
             </div>
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="font-inter text-xs font-semibold text-stone-700">Email Address <span className="text-red-500">*</span></label>
+            <label className="font-inter text-xs font-semibold text-foreground/80">Email Address <span className="text-red-500">*</span></label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={!!initialData?.id}
-              placeholder="jane@seramaaduwen.lk"
-              className="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-stone-900 bg-white font-inter disabled:bg-stone-100"
+              placeholder="jane@masky.space"
+              className="w-full border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-foreground bg-surface font-inter disabled:bg-surface-elevated"
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="font-inter text-xs font-semibold text-stone-700">Phone (Optional)</label>
+            <label className="font-inter text-xs font-semibold text-foreground/80">Phone (Optional)</label>
             <input
               type="text"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="+94770000000"
-              className="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-stone-900 bg-white font-inter"
+              className="w-full border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-foreground bg-surface font-inter"
             />
           </div>
 
-          <div className="h-px bg-stone-100 w-full"></div>
+          <div className="h-px bg-surface-elevated w-full"></div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="font-inter text-xs font-semibold text-stone-700">Role Assignment</label>
+            <label className="font-inter text-xs font-semibold text-foreground/80">Role Assignment</label>
             <select
               value={selectedRoleId}
               onChange={(e) => setSelectedRoleId(e.target.value)}
-              className="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-stone-900 bg-white font-inter"
+              className="w-full border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-foreground bg-surface font-inter"
             >
               {availableRoles.map((r) => (
                 <option key={r.id} value={r.id}>
@@ -182,12 +182,12 @@ export default function UserModal({
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="font-inter text-xs font-semibold text-stone-700">Branch Scope</label>
+            <label className="font-inter text-xs font-semibold text-foreground/80">Branch Scope</label>
             <select
               value={selectedBranchId}
               onChange={(e) => setSelectedBranchId(e.target.value)}
               disabled={isSuperAdmin}
-              className="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-stone-900 bg-white font-inter disabled:bg-stone-100 disabled:text-stone-500"
+              className="w-full border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-foreground bg-surface font-inter disabled:bg-surface-elevated disabled:text-muted"
             >
               <option value="">Global (All Branches)</option>
               {availableBranches.map((b) => (
@@ -207,8 +207,8 @@ export default function UserModal({
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="font-inter text-xs font-semibold text-stone-700">Account Status</label>
-            <div className="flex items-center gap-4 bg-stone-50 border border-stone-200 p-3 rounded-lg">
+            <label className="font-inter text-xs font-semibold text-foreground/80">Account Status</label>
+            <div className="flex items-center gap-4 bg-surface-elevated border border-border p-3 rounded-lg">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="radio"
@@ -218,7 +218,7 @@ export default function UserModal({
                   onChange={() => setStatus("ACTIVE")}
                   className="w-4 h-4 accent-stone-900"
                 />
-                <span className="text-sm font-inter text-stone-800">Active</span>
+                <span className="text-sm font-inter text-foreground/90">Active</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -229,24 +229,24 @@ export default function UserModal({
                   onChange={() => setStatus("SUSPENDED")}
                   className="w-4 h-4 accent-stone-900"
                 />
-                <span className="text-sm font-inter text-stone-800 text-red-600 font-medium">Suspended</span>
+                <span className="text-sm font-inter text-foreground/90 text-red-600 font-medium">Suspended</span>
               </label>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-stone-200 px-6 py-4 bg-stone-50 shrink-0 flex items-center justify-end gap-3">
+        <div className="border-t border-border px-6 py-4 bg-surface-elevated shrink-0 flex items-center justify-end gap-3">
           <button
             onClick={onClose}
             disabled={loading}
-            className="px-4 py-2 bg-white border border-stone-300 rounded-lg font-inter font-medium text-sm text-stone-700 hover:bg-stone-50 transition-colors shadow-sm"
+            className="px-4 py-2 bg-surface border border-border rounded-lg font-inter font-medium text-sm text-foreground/80 hover:bg-surface-elevated transition-colors shadow-sm"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={loading || !firstName.trim() || !email.trim()}
-            className="px-5 py-2 bg-stone-900 text-white rounded-lg font-inter font-medium text-sm hover:bg-stone-800 transition-colors shadow-md shadow-stone-900/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-5 py-2 bg-foreground text-white rounded-lg font-inter font-medium text-sm hover:bg-foreground/90 transition-colors shadow-md shadow-foreground/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {loading && <Loader2 size={14} className="animate-spin" />}
             {initialData ? "Save Changes" : "Create User"}

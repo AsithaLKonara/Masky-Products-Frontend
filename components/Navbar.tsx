@@ -113,7 +113,7 @@ export default function Navbar() {
             <div className="relative w-[200px] md:w-[240px] lg:w-[280px] h-[30px] md:h-[36px] lg:h-[42px]">
               <Image 
                 src={logoImage}
-                alt="SERAMAADUWEN.LK"
+                alt="MASKY PRODUCT"
                 fill
                 sizes="200px"
                 className="object-contain"

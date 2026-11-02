@@ -17,10 +17,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const baseStyles = "inline-flex items-center justify-center font-poppins font-semibold uppercase tracking-widest transition-colors rounded-full focus:outline-none disabled:opacity-50 disabled:pointer-events-none";
     
     const variants = {
-      primary: "bg-primary text-background hover:bg-primary-hover disabled:bg-stone-300",
-      secondary: "bg-stone-100 text-primary hover:bg-stone-200",
-      outline: "bg-transparent border border-primary text-primary hover:bg-stone-100",
-      ghost: "bg-transparent text-primary hover:bg-stone-100",
+      primary: "bg-primary text-background hover:bg-primary-hover disabled:bg-border",
+      secondary: "bg-surface-elevated text-primary hover:bg-border",
+      outline: "bg-transparent border border-primary text-primary hover:bg-surface-elevated",
+      ghost: "bg-transparent text-primary hover:bg-surface-elevated",
       danger: "bg-red-500 text-white hover:bg-red-600",
     };
     

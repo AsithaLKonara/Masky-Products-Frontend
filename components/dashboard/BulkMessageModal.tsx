@@ -59,25 +59,25 @@ export default function BulkMessageModal({ isOpen, onClose }: BulkMessageModalPr
     if (fsId) {
       const fs = activeFlashSales.find((s: any) => s.id === fsId);
       if (fs && !message) {
-        setMessage(`Flash Sale: ${fs.name}! Shop now at seramaaduwen.lk`);
+        setMessage(`Flash Sale: ${fs.name}! Shop now at masky.space`);
       }
     }
   }
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6">
-      <div className="absolute inset-0 bg-stone-950/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-background/60 backdrop-blur-sm" onClick={onClose} />
       
-      <div className="relative w-full max-w-[600px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden max-h-[90vh]">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-stone-200 bg-stone-50 shrink-0">
+      <div className="relative w-full max-w-[600px] bg-surface rounded-2xl shadow-2xl flex flex-col overflow-hidden max-h-[90vh]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-surface-elevated shrink-0">
           <div>
-            <h2 className="font-inter font-bold text-lg text-stone-900 flex items-center gap-2">
+            <h2 className="font-inter font-bold text-lg text-foreground flex items-center gap-2">
               <Send size={18} className="text-blue-600" /> 
               Send Bulk SMS
             </h2>
-            <p className="font-inter text-xs text-stone-500 mt-0.5">Send a promotional text message to a list of numbers.</p>
+            <p className="font-inter text-xs text-muted mt-0.5">Send a promotional text message to a list of numbers.</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-stone-200 rounded-lg text-stone-600 transition-colors">
+          <button onClick={onClose} className="p-2 hover:bg-border rounded-lg text-muted transition-colors">
             <X size={20} />
           </button>
         </div>
@@ -85,24 +85,24 @@ export default function BulkMessageModal({ isOpen, onClose }: BulkMessageModalPr
         <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6 custom-scrollbar">
           
           <div className="flex flex-col gap-2">
-            <label className="font-inter text-xs font-semibold text-stone-700 flex justify-between">
+            <label className="font-inter text-xs font-semibold text-foreground/80 flex justify-between">
               Target Phone Numbers
-              <span className="text-stone-500 font-normal">{numberCount} numbers detected</span>
+              <span className="text-muted font-normal">{numberCount} numbers detected</span>
             </label>
             <textarea
               value={numbers}
               onChange={e => setNumbers(e.target.value)}
               rows={3}
               placeholder="+94771234567, 0719876543, ..."
-              className="w-full border border-stone-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-stone-400 focus:ring-2 focus:ring-stone-100 transition-all font-mono resize-none"
+              className="w-full border border-border rounded-lg px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-mono resize-none"
             />
-            <p className="text-xs text-stone-400 font-inter">Separate numbers with commas or spaces.</p>
+            <p className="text-xs text-muted/70 font-inter">Separate numbers with commas or spaces.</p>
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="font-inter text-xs font-semibold text-stone-700 flex justify-between">
+            <label className="font-inter text-xs font-semibold text-foreground/80 flex justify-between">
               Message Content
-              <span className={`font-normal ${smsCount > 1 ? 'text-amber-600' : 'text-stone-500'}`}>
+              <span className={`font-normal ${smsCount > 1 ? 'text-amber-600' : 'text-muted'}`}>
                 {messageLength} chars ({smsCount} SMS)
               </span>
             </label>
@@ -111,18 +111,18 @@ export default function BulkMessageModal({ isOpen, onClose }: BulkMessageModalPr
               onChange={e => setMessage(e.target.value)}
               rows={5}
               placeholder="Hi there! Get 20% off all oversized tees this weekend with code TEE20..."
-              className="w-full border border-stone-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-stone-400 focus:ring-2 focus:ring-stone-100 transition-all font-inter resize-none"
+              className="w-full border border-border rounded-lg px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-inter resize-none"
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="font-inter text-xs font-semibold text-stone-700 flex items-center gap-1.5">
+            <label className="font-inter text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
               <Link size={12} /> Link to Flash Sale (Optional)
             </label>
             <select
               value={selectedFlashSale}
               onChange={handleFlashSaleSelect}
-              className="w-full border border-stone-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-stone-400 focus:ring-2 focus:ring-stone-100 transition-all font-inter bg-white appearance-none"
+              className="w-full border border-border rounded-lg px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-inter bg-surface appearance-none"
             >
               <option value="">-- None --</option>
               {activeFlashSales.map((fs: any) => (
@@ -147,14 +147,14 @@ export default function BulkMessageModal({ isOpen, onClose }: BulkMessageModalPr
             </div>
           )}
 
-          <div className="bg-stone-50 border border-stone-200 rounded-xl p-4 flex flex-col gap-3">
-            <h3 className="font-inter text-xs font-bold text-stone-700 uppercase tracking-wider">Campaign Summary</h3>
+          <div className="bg-surface-elevated border border-border rounded-xl p-4 flex flex-col gap-3">
+            <h3 className="font-inter text-xs font-bold text-foreground/80 uppercase tracking-wider">Campaign Summary</h3>
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-stone-600">
+              <div className="flex items-center gap-2 text-muted">
                 <Users size={16} />
                 <span className="font-inter text-sm font-semibold">{numberCount} Recipients</span>
               </div>
-              <div className="flex items-center gap-2 text-stone-600">
+              <div className="flex items-center gap-2 text-muted">
                 <Send size={16} />
                 <span className="font-inter text-sm font-semibold">{numberCount * smsCount} Total SMS</span>
               </div>
@@ -162,22 +162,22 @@ export default function BulkMessageModal({ isOpen, onClose }: BulkMessageModalPr
           </div>
         </div>
 
-        <div className="p-4 sm:p-6 border-t border-stone-200 bg-stone-50 shrink-0 flex items-center justify-between">
-          <p className="text-xs text-stone-500 font-inter">
+        <div className="p-4 sm:p-6 border-t border-border bg-surface-elevated shrink-0 flex items-center justify-between">
+          <p className="text-xs text-muted font-inter">
             Messages will be queued for delivery.
           </p>
           <div className="flex items-center gap-3">
             <button
               onClick={onClose}
               disabled={isSending}
-              className="px-4 py-2 text-sm font-medium text-stone-600 hover:text-stone-900 transition-colors"
+              className="px-4 py-2 text-sm font-medium text-muted hover:text-foreground transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={handleSend}
               disabled={isSending || numberCount === 0 || message.length === 0}
-              className="px-6 py-2 bg-stone-900 hover:bg-stone-800 text-white text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-6 py-2 bg-foreground hover:bg-foreground/90 text-white text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {isSending ? "Sending..." : "Send SMS"}
             </button>

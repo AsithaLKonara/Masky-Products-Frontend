@@ -69,11 +69,11 @@ export default function TrackingSidePanel({ order, isOpen, onClose }: TrackingSi
                 <p className="font-poppins font-semibold text-lg text-primary">{order.orderNumber}</p>
               </div>
               <div className="text-right">
-                <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide
-                  ${order.status === 'DELIVERED' ? 'bg-green-100 text-green-700' : 
-                    order.status === 'CANCELLED' ? 'bg-red-100 text-red-700' :
-                    order.status === 'DISPATCHED' || order.trackingNumber ? 'bg-blue-100 text-blue-700' :
-                    'bg-yellow-100 text-yellow-700'}`}
+                <span className={`text-xs font-bold uppercase tracking-wider
+                  ${order.status === 'DELIVERED' ? 'text-emerald-500' : 
+                    order.status === 'CANCELLED' ? 'text-rose-500 italic' :
+                    order.status === 'DISPATCHED' || order.trackingNumber ? 'text-blue-500' :
+                    'text-amber-500'}`}
                 >
                   {order.status}
                 </span>

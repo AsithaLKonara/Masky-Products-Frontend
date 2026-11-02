@@ -23,7 +23,7 @@ const STATUS_CONFIG: Record<string, { icon: any; bg: string; color: string; labe
 };
 
 const getStatusConfig = (status: string) =>
-  STATUS_CONFIG[status] || { icon: RotateCcw, bg: "bg-stone-100", color: "text-stone-700", label: status };
+  STATUS_CONFIG[status] || { icon: RotateCcw, bg: "bg-surface-elevated", color: "text-foreground/80", label: status };
 
 const ORIGIN_LABELS: Record<string, { label: string; bg: string; color: string; border: string; icon: any }> = {
   POS: { label: "POS In-Store", bg: "bg-violet-50", color: "text-violet-700", border: "border-violet-200", icon: Store },
@@ -118,38 +118,38 @@ export default function AdminReturnsPage() {
 
       {/* KPI Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white border border-stone-200 rounded-xl p-4 shadow-sm">
-          <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-1">Total Returns</p>
-          <p className="text-2xl font-bold text-stone-900">{total}</p>
+        <div className="bg-surface border border-border border-t-2 border-t-blue-500 rounded-xl p-4 shadow-sm">
+          <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-1">Total Returns</p>
+          <p className="text-2xl font-bold text-foreground">{total}</p>
         </div>
-        <div className="bg-violet-50 border border-violet-200 rounded-xl p-4 shadow-sm">
-          <p className="text-xs font-semibold text-violet-600 uppercase tracking-wider mb-1">POS In-Store</p>
-          <p className="text-2xl font-bold text-violet-700">{posCount}</p>
+        <div className="bg-surface border border-border border-t-2 border-t-violet-500 rounded-xl p-4 shadow-sm">
+          <p className="text-xs font-semibold text-violet-400 uppercase tracking-wider mb-1">POS In-Store</p>
+          <p className="text-2xl font-bold text-violet-400">{posCount}</p>
         </div>
-        <div className="bg-sky-50 border border-sky-200 rounded-xl p-4 shadow-sm">
-          <p className="text-xs font-semibold text-sky-600 uppercase tracking-wider mb-1">Courier / Online</p>
-          <p className="text-2xl font-bold text-sky-700">{courierCount}</p>
+        <div className="bg-surface border border-border border-t-2 border-t-sky-500 rounded-xl p-4 shadow-sm">
+          <p className="text-xs font-semibold text-sky-400 uppercase tracking-wider mb-1">Courier / Online</p>
+          <p className="text-2xl font-bold text-sky-400">{courierCount}</p>
         </div>
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 shadow-sm">
-          <p className="text-xs font-semibold text-amber-600 uppercase tracking-wider mb-1">Exchanges</p>
-          <p className="text-2xl font-bold text-amber-700">{exchangeCount}</p>
+        <div className="bg-surface border border-border border-t-2 border-t-amber-500 rounded-xl p-4 shadow-sm">
+          <p className="text-xs font-semibold text-amber-400 uppercase tracking-wider mb-1">Exchanges</p>
+          <p className="text-2xl font-bold text-amber-400">{exchangeCount}</p>
         </div>
       </div>
 
       {/* Search + Filters */}
-      <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-4 flex flex-col gap-4">
+      <div className="bg-surface border border-border rounded-xl shadow-sm p-4 flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" size={16} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={16} />
             <input
               type="text"
               value={searchInput}
               onChange={(e) => { setSearchInput(e.target.value); setPage(1); }}
               placeholder="Search by RMA, Order ID, or Customer..."
-              className="w-full h-10 pl-10 pr-4 bg-stone-50 border border-stone-200 rounded-lg outline-none focus:border-stone-900 focus:bg-white transition-colors text-sm font-inter"
+              className="w-full h-10 pl-10 pr-4 bg-background border border-border rounded-lg outline-none focus:border-primary text-foreground placeholder:text-muted transition-colors text-sm font-inter"
             />
             {searchInput && (
-              <button onClick={() => setSearchInput("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700">
+              <button onClick={() => setSearchInput("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-foreground">
                 <X size={14} />
               </button>
             )}
@@ -159,27 +159,27 @@ export default function AdminReturnsPage() {
               onClick={() => setShowFilters(p => !p)}
               className={`flex items-center gap-2 h-10 px-4 rounded-lg border text-sm font-medium font-inter transition-colors ${
                 hasActiveFilters
-                  ? "bg-stone-900 text-white border-stone-900"
-                  : "bg-stone-50 text-stone-700 border-stone-200 hover:bg-stone-100"
+                  ? "bg-foreground text-background border-foreground font-semibold"
+                  : "bg-surface text-foreground border-border hover:bg-surface-elevated"
               }`}
             >
               <Filter size={15} />
               Filters
               {hasActiveFilters && (
-                <span className="bg-white text-stone-900 text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                <span className="bg-background text-foreground text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
                   {[statusFilter !== "ALL", originFilter !== "ALL", typeFilter !== "ALL"].filter(Boolean).length}
                 </span>
               )}
               <ChevronDown size={14} className={`transition-transform ${showFilters ? "rotate-180" : ""}`} />
             </button>
             {hasActiveFilters && (
-              <button onClick={clearFilters} className="text-xs text-red-600 font-medium hover:underline font-inter">
+              <button onClick={clearFilters} className="text-xs text-rose-500 font-medium hover:underline font-inter">
                 Clear all
               </button>
             )}
             <button
               onClick={handleExport}
-              className="h-10 px-4 bg-stone-50 border border-stone-200 text-stone-700 rounded-lg text-sm font-medium font-inter hover:bg-stone-100 transition-colors"
+              className="h-10 px-4 bg-surface border border-border text-foreground rounded-lg text-sm font-medium font-inter hover:bg-surface-elevated transition-colors"
             >
               Export CSV
             </button>
@@ -187,16 +187,16 @@ export default function AdminReturnsPage() {
         </div>
 
         {showFilters && (
-          <div className="pt-4 border-t border-stone-100 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="pt-4 border-t border-border grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">Status</p>
+              <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">Status</p>
               <div className="flex flex-wrap gap-1.5">
                 {STATUS_FILTERS.map(f => (
                   <button
                     key={f}
                     onClick={() => { setStatusFilter(f); setPage(1); }}
                     className={`px-3 py-1.5 font-inter text-xs font-medium rounded-lg transition-colors capitalize ${
-                      statusFilter === f ? "bg-stone-900 text-white" : "bg-stone-50 text-stone-600 hover:bg-stone-100 border border-stone-200"
+                      statusFilter === f ? "bg-foreground text-background font-semibold" : "bg-surface text-muted hover:text-foreground hover:bg-surface-elevated border border-border"
                     }`}
                   >
                     {f.toLowerCase()}
@@ -205,16 +205,15 @@ export default function AdminReturnsPage() {
               </div>
             </div>
             <div>
-              <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">Channel</p>
+              <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">Channel</p>
               <div className="flex flex-wrap gap-1.5">
                 {ORIGIN_FILTERS.map(f => {
-                  const cfg = f !== "ALL" ? ORIGIN_LABELS[f] : null;
                   return (
                     <button
                       key={f}
                       onClick={() => { setOriginFilter(f); setPage(1); }}
                       className={`px-3 py-1.5 font-inter text-xs font-medium rounded-lg transition-colors ${
-                        originFilter === f ? "bg-stone-900 text-white" : cfg ? `${cfg.bg} ${cfg.color} border ${cfg.border} hover:opacity-80` : "bg-stone-50 text-stone-600 hover:bg-stone-100 border border-stone-200"
+                        originFilter === f ? "bg-foreground text-background font-semibold" : "bg-surface text-muted hover:text-foreground hover:bg-surface-elevated border border-border"
                       }`}
                     >
                       {f === "ALL" ? "All Channels" : f === "POS" ? "POS In-Store" : "Courier / Online"}
@@ -224,16 +223,15 @@ export default function AdminReturnsPage() {
               </div>
             </div>
             <div>
-              <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">Type</p>
+              <p className="text-xs font-semibold text-muted uppercase tracking-wider mb-2">Type</p>
               <div className="flex flex-wrap gap-1.5">
                 {TYPE_FILTERS.map(f => {
-                  const cfg = f !== "ALL" ? TYPE_LABELS[f] : null;
                   return (
                     <button
                       key={f}
                       onClick={() => { setTypeFilter(f); setPage(1); }}
                       className={`px-3 py-1.5 font-inter text-xs font-medium rounded-lg transition-colors ${
-                        typeFilter === f ? "bg-stone-900 text-white" : cfg ? `${cfg.bg} ${cfg.color} border ${cfg.border} hover:opacity-80` : "bg-stone-50 text-stone-600 hover:bg-stone-100 border border-stone-200"
+                        typeFilter === f ? "bg-foreground text-background font-semibold" : "bg-surface text-muted hover:text-foreground hover:bg-surface-elevated border border-border"
                       }`}
                     >
                       {f === "ALL" ? "All Types" : f.charAt(0) + f.slice(1).toLowerCase()}
@@ -247,34 +245,34 @@ export default function AdminReturnsPage() {
       </div>
 
       {/* Data Table */}
-      <div className="bg-white border border-stone-200 rounded-xl shadow-sm overflow-hidden flex flex-col">
+      <div className="bg-surface border border-border rounded-xl overflow-hidden flex flex-col">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[960px]">
             <thead>
-              <tr className="bg-stone-50 border-b border-stone-200">
+              <tr className="bg-surface-subtle border-b border-border">
                 <th className="py-4 px-6 w-12">
-                  <input type="checkbox" checked={selectedRMAs.length === returns.length && returns.length > 0} onChange={handleSelectAll} className="rounded text-stone-900 focus:ring-stone-900 border-stone-300" />
+                  <input type="checkbox" checked={selectedRMAs.length === returns.length && returns.length > 0} onChange={handleSelectAll} className="rounded text-foreground focus:ring-accent border-border" />
                 </th>
-                <th className="font-inter font-semibold text-xs text-stone-500 uppercase tracking-wider py-4 px-2">RMA</th>
-                <th className="font-inter font-semibold text-xs text-stone-500 uppercase tracking-wider py-4 px-4">Order</th>
-                <th className="font-inter font-semibold text-xs text-stone-500 uppercase tracking-wider py-4 px-4">Customer</th>
-                <th className="font-inter font-semibold text-xs text-stone-500 uppercase tracking-wider py-4 px-4">Channel</th>
-                <th className="font-inter font-semibold text-xs text-stone-500 uppercase tracking-wider py-4 px-4">Type</th>
-                <th className="font-inter font-semibold text-xs text-stone-500 uppercase tracking-wider py-4 px-4">Date</th>
-                <th className="font-inter font-semibold text-xs text-stone-500 uppercase tracking-wider py-4 px-4">Status</th>
-                <th className="font-inter font-semibold text-xs text-stone-500 uppercase tracking-wider py-4 px-4 text-right">Amount</th>
+                <th className="font-inter font-semibold text-xs text-muted uppercase tracking-wider py-4 px-2">RMA</th>
+                <th className="font-inter font-semibold text-xs text-muted uppercase tracking-wider py-4 px-4">Order</th>
+                <th className="font-inter font-semibold text-xs text-muted uppercase tracking-wider py-4 px-4">Customer</th>
+                <th className="font-inter font-semibold text-xs text-muted uppercase tracking-wider py-4 px-4">Channel</th>
+                <th className="font-inter font-semibold text-xs text-muted uppercase tracking-wider py-4 px-4">Type</th>
+                <th className="font-inter font-semibold text-xs text-muted uppercase tracking-wider py-4 px-4">Date</th>
+                <th className="font-inter font-semibold text-xs text-muted uppercase tracking-wider py-4 px-4">Status</th>
+                <th className="font-inter font-semibold text-xs text-muted uppercase tracking-wider py-4 px-4 text-right">Amount</th>
                 <th className="py-4 px-4"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-stone-100">
+            <tbody className="divide-y divide-border/50">
               {isLoading ? (
                 [...Array(5)].map((_, i) => (
-                  <tr key={i}><td colSpan={10} className="py-3 px-6"><div className="h-5 bg-stone-100 rounded animate-pulse w-full" /></td></tr>
+                  <tr key={i}><td colSpan={10} className="py-3 px-6"><div className="h-5 bg-surface-elevated rounded animate-pulse w-full" /></td></tr>
                 ))
               ) : returns.length === 0 ? (
                 <tr>
                   <td colSpan={10} className="py-16 text-center">
-                    <div className="flex flex-col items-center gap-3 text-stone-400">
+                    <div className="flex flex-col items-center gap-3 text-muted/70">
                       <RotateCcw size={36} className="opacity-30" />
                       <p className="font-inter text-sm font-medium">No returns found</p>
                       <p className="font-inter text-xs">Try adjusting your filters or search terms</p>
@@ -289,36 +287,34 @@ export default function AdminReturnsPage() {
                   const OriginIcon = originCfg.icon;
                   const typeCfg = TYPE_LABELS[ret.type] || TYPE_LABELS["REFUND"];
                   return (
-                    <tr key={ret.id} className={`hover:bg-stone-50 transition-colors ${selectedRMAs.includes(ret.id) ? "bg-stone-50" : ""}`}>
+                    <tr key={ret.id} className={`hover:bg-surface-elevated transition-colors ${selectedRMAs.includes(ret.id) ? "bg-surface-elevated" : ""}`}>
                       <td className="py-4 px-6">
-                        <input type="checkbox" checked={selectedRMAs.includes(ret.id)} onChange={() => handleSelectOne(ret.id)} className="rounded text-stone-900 focus:ring-stone-900 border-stone-300" />
+                        <input type="checkbox" checked={selectedRMAs.includes(ret.id)} onChange={() => handleSelectOne(ret.id)} className="rounded text-foreground focus:ring-primary border-border" />
                       </td>
-                      <td className="py-4 px-2 font-inter font-semibold text-sm text-stone-900 font-mono">{ret.rmaId}</td>
-                      <td className="py-4 px-4 font-inter text-sm text-blue-600 hover:underline cursor-pointer">
-                        {ret.orderId ? ret.orderId : <span className="text-stone-400 font-medium text-xs uppercase">Manual</span>}
+                      <td className="py-4 px-2 font-mono font-bold text-xs text-foreground">{ret.rmaId}</td>
+                      <td className="py-4 px-4 font-mono text-xs text-accent hover:underline cursor-pointer">
+                        {ret.orderId ? ret.orderId : <span className="text-muted font-light text-xs uppercase italic">Manual</span>}
                       </td>
-                      <td className="py-4 px-4 font-inter text-sm text-stone-700">{ret.customer}</td>
+                      <td className="py-4 px-4 font-inter text-xs font-normal text-foreground/90">{ret.customer}</td>
                       <td className="py-4 px-4">
-                        <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-semibold border ${originCfg.bg} ${originCfg.color} ${originCfg.border}`}>
-                          <OriginIcon size={11} />
+                        <span className="font-inter text-xs font-light text-muted tracking-tight">
                           {originCfg.label}
-                        </div>
+                        </span>
                       </td>
                       <td className="py-4 px-4">
-                        <div className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-semibold border ${typeCfg.bg} ${typeCfg.color} ${typeCfg.border}`}>
+                        <span className={`font-inter text-xs font-bold uppercase tracking-wider ${ret.type === "EXCHANGE" ? "text-amber-500" : "text-rose-500"}`}>
                           {ret.type === "EXCHANGE" ? "Exchange" : "Refund"}
-                        </div>
+                        </span>
                       </td>
-                      <td className="py-4 px-4 font-inter text-sm text-stone-500">{ret.date}</td>
+                      <td className="py-4 px-4 font-inter text-xs font-light text-muted">{ret.date}</td>
                       <td className="py-4 px-4">
-                        <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider ${statusInfo.bg} ${statusInfo.color}`}>
-                          <StatusIcon size={13} />
+                        <span className={`font-inter text-xs font-bold uppercase tracking-wider ${statusInfo.color}`}>
                           {statusInfo.label}
-                        </div>
+                        </span>
                       </td>
-                      <td className="py-4 px-4 font-inter text-sm text-stone-900 text-right font-medium">LKR {ret.amount.toLocaleString()}</td>
+                      <td className="py-4 px-4 font-mono text-xs font-black text-foreground text-right">LKR {ret.amount.toLocaleString()}</td>
                       <td className="py-4 px-4 text-right">
-                        <Link href={`/admin/returns/${ret.id}`} className="inline-flex items-center justify-center px-3 py-1.5 bg-white border border-stone-300 text-stone-700 font-inter font-medium text-xs rounded hover:bg-stone-50 transition-colors shadow-sm">
+                        <Link href={`/admin/returns/${ret.id}`} className="inline-flex items-center justify-center px-3 py-1.5 bg-surface border border-border text-foreground/80 font-inter font-medium text-xs rounded hover:bg-surface-elevated transition-colors shadow-sm">
                           Process
                         </Link>
                       </td>
@@ -329,25 +325,25 @@ export default function AdminReturnsPage() {
             </tbody>
           </table>
         </div>
-        <div className="flex items-center justify-between p-4 border-t border-stone-200 bg-stone-50/50">
-          <span className="font-inter text-sm text-stone-500">
-            Showing <span className="font-medium text-stone-900">{(page - 1) * 10 + (returns.length > 0 ? 1 : 0)}</span>–<span className="font-medium text-stone-900">{(page - 1) * 10 + returns.length}</span> of <span className="font-medium text-stone-900">{total}</span>
+        <div className="flex items-center justify-between p-4 border-t border-border bg-surface-elevated/50">
+          <span className="font-inter text-sm text-muted">
+            Showing <span className="font-medium text-foreground">{(page - 1) * 10 + (returns.length > 0 ? 1 : 0)}</span>–<span className="font-medium text-foreground">{(page - 1) * 10 + returns.length}</span> of <span className="font-medium text-foreground">{total}</span>
           </span>
           <div className="flex gap-2">
-            <button disabled={page <= 1} onClick={() => setPage(p => Math.max(1, p - 1))} className="px-3 py-1.5 bg-white border border-stone-200 text-stone-700 disabled:text-stone-400 hover:bg-stone-50 font-inter text-sm rounded-md shadow-sm transition-colors disabled:cursor-not-allowed">Previous</button>
-            <button disabled={page >= totalPages} onClick={() => setPage(p => Math.min(totalPages, p + 1))} className="px-3 py-1.5 bg-white border border-stone-200 text-stone-700 disabled:text-stone-400 hover:bg-stone-50 font-inter text-sm rounded-md shadow-sm transition-colors disabled:cursor-not-allowed">Next</button>
+            <button disabled={page <= 1} onClick={() => setPage(p => Math.max(1, p - 1))} className="px-3 py-1.5 bg-surface border border-border text-foreground/80 disabled:text-muted/70 hover:bg-surface-elevated font-inter text-sm rounded-md shadow-sm transition-colors disabled:cursor-not-allowed">Previous</button>
+            <button disabled={page >= totalPages} onClick={() => setPage(p => Math.min(totalPages, p + 1))} className="px-3 py-1.5 bg-surface border border-border text-foreground/80 disabled:text-muted/70 hover:bg-surface-elevated font-inter text-sm rounded-md shadow-sm transition-colors disabled:cursor-not-allowed">Next</button>
           </div>
         </div>
       </div>
 
       {selectedRMAs.length > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-stone-900 text-white px-6 py-4 rounded-full shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-10 z-40">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-foreground text-white px-6 py-4 rounded-full shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-10 z-40">
           <span className="font-inter font-medium text-sm">{selectedRMAs.length} selected</span>
-          <div className="w-px h-6 bg-stone-700" />
-          <button onClick={() => setShowBulkModal(true)} className="font-inter font-semibold text-sm bg-white text-stone-900 px-4 py-2 rounded-full hover:bg-stone-100 transition-colors flex items-center gap-2">
+          <div className="w-px h-6 bg-foreground/80" />
+          <button onClick={() => setShowBulkModal(true)} className="font-inter font-semibold text-sm bg-surface text-foreground px-4 py-2 rounded-full hover:bg-surface-elevated transition-colors flex items-center gap-2">
             <RefreshCw size={14} /> Process Bulk Return
           </button>
-          <button onClick={() => setSelectedRMAs([])} className="text-stone-400 hover:text-white transition-colors"><X size={18} /></button>
+          <button onClick={() => setSelectedRMAs([])} className="text-muted/70 hover:text-white transition-colors"><X size={18} /></button>
         </div>
       )}
 

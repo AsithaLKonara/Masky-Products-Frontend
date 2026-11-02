@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 
 const PaymentsChart = dynamic(() => import("./PaymentsChart"), { 
   ssr: false, 
-  loading: () => <div className="h-[300px] w-full flex items-center justify-center bg-stone-50 rounded-lg animate-pulse text-stone-400">Loading chart...</div> 
+  loading: () => <div className="h-[300px] w-full flex items-center justify-center bg-surface rounded-lg animate-pulse text-muted">Loading chart...</div> 
 });
 
 export default function PaymentReportPage() {
@@ -38,7 +38,7 @@ export default function PaymentReportPage() {
     window.URL.revokeObjectURL(url);
   };
 
-  if (isPending) return <div className="p-10 font-poppins text-stone-500 flex flex-col gap-2"><span>Loading report data...</span><span className="text-xs text-stone-400">If this takes more than 10 seconds, check if the backend API is running.</span></div>;
+  if (isPending) return <div className="p-10 font-poppins text-muted flex flex-col gap-2"><span>Loading report data...</span><span className="text-xs text-muted/70">If this takes more than 10 seconds, check if the backend API is running.</span></div>;
   if (error || !data) return <div className="p-10 font-poppins text-red-500">Failed to load report. {(error as any)?.message || "Unknown error"}</div>;
 
   return (
@@ -52,13 +52,13 @@ export default function PaymentReportPage() {
           <select 
             value={dateRange} 
             onChange={(e) => setDateRange(e.target.value)}
-            className="h-10 px-4 border border-stone-200 rounded-lg bg-white text-sm font-inter text-stone-700 outline-none focus:border-primary"
+            className="h-10 px-4 border border-border rounded-lg bg-surface text-sm font-inter text-foreground outline-none focus:border-primary hover:bg-surface-elevated transition-colors"
           >
             <option value="7">Last 7 Days</option>
             <option value="30">Last 30 Days</option>
             <option value="90">Last 90 Days</option>
           </select>
-          <button onClick={handleDownloadCSV} className="h-10 px-4 bg-primary text-white text-sm font-medium rounded-lg flex items-center gap-2 hover:bg-stone-800 transition-colors">
+          <button onClick={handleDownloadCSV} className="h-10 px-4 bg-primary text-primary-foreground text-sm font-medium rounded-lg flex items-center gap-2 hover:bg-primary-hover transition-colors">
             <Download size={16} />
             Export CSV
           </button>
@@ -66,34 +66,34 @@ export default function PaymentReportPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white border border-stone-200 rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-primary font-poppins mb-6">Revenue by Payment Method</h3>
+        <div className="bg-surface border border-border rounded-xl p-6 shadow-2xs">
+        <h3 className="text-lg font-semibold text-foreground font-poppins mb-6">Revenue by Payment Method</h3>
         {data && data.length > 0 ? (
           <PaymentsChart data={data} />
         ) : (
-          <div className="h-[300px] w-full flex items-center justify-center bg-stone-50 rounded-lg border border-dashed border-stone-200">
-            <p className="text-stone-500 font-inter font-medium">0 Data Available</p>
+          <div className="h-[300px] w-full flex items-center justify-center bg-surface-subtle rounded-lg border border-dashed border-border">
+            <p className="text-muted font-inter font-medium">0 Data Available</p>
           </div>
         )}
       </div>
 
-        <div className="bg-white border border-stone-200 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-primary font-poppins mb-6">Gateway Statistics</h3>
+        <div className="bg-surface border border-border rounded-xl p-5 shadow-2xs">
+          <h3 className="text-base font-semibold text-foreground font-inter mb-4">Gateway Statistics</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-stone-200">
-                  <th className="py-3 font-medium text-stone-500 font-inter text-sm">Gateway</th>
-                  <th className="py-3 font-medium text-stone-500 font-inter text-sm text-right">Transactions</th>
-                  <th className="py-3 font-medium text-stone-500 font-inter text-sm text-right">Revenue</th>
+                <tr className="border-b border-border bg-surface-subtle">
+                  <th className="py-3 px-3 font-semibold text-muted font-inter text-xs uppercase tracking-wider">Gateway</th>
+                  <th className="py-3 px-3 font-semibold text-muted font-inter text-xs uppercase tracking-wider text-right">Transactions</th>
+                  <th className="py-3 px-3 font-semibold text-muted font-inter text-xs uppercase tracking-wider text-right">Revenue</th>
                 </tr>
               </thead>
               <tbody>
                 {data.map((row, idx) => (
-                  <tr key={idx} className="border-b border-stone-100 last:border-0">
-                    <td className="py-4 font-medium text-stone-900 font-poppins text-sm">{row.method}</td>
-                    <td className="py-4 text-stone-600 font-inter text-sm text-right">{row.count}</td>
-                    <td className="py-4 text-stone-900 font-poppins font-semibold text-sm text-right">Rs. {row.revenue.toLocaleString()}</td>
+                  <tr key={idx} className="border-b border-border last:border-0 hover:bg-surface-elevated/40 transition-colors">
+                    <td className="py-4 font-mono font-semibold text-foreground text-sm uppercase tracking-wider">{row.method}</td>
+                    <td className="py-4 text-muted font-mono text-sm text-right">{row.count}</td>
+                    <td className="py-4 text-foreground font-mono font-black text-sm text-right">Rs. {row.revenue.toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>

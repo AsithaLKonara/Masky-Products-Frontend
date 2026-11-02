@@ -31,7 +31,7 @@ export default function BrandStorySection() {
           
           {/* Subtle Over-title */}
           <span className="font-inter uppercase tracking-[0.3em] text-[10px] text-stone-500">
-            The Seramaaduwen Ethos
+            The Masky Product Ethos
           </span>
           
           {/* Main Headline */}
@@ -48,7 +48,7 @@ export default function BrandStorySection() {
               "We believe true luxury lies in effortless elegance."
             </p>
             <p className="font-poppins font-light text-sm md:text-base leading-[1.8] text-stone-600">
-              At SERAMAADUWEN.LK, every stitch is a testament to our dedication to quality. 
+              At MASKY PRODUCT, every stitch is a testament to our dedication to quality. 
               We curate collections that transcend fleeting trends, offering pieces designed 
               to empower your everyday confidence. Discover garments crafted with precision, 
               designed to be lived in and loved for a lifetime.

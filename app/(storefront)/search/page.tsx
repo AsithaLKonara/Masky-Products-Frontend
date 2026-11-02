@@ -1,8 +1,8 @@
 import SearchContent from "./SearchContent";
 
 export const metadata = {
-  title: "Search Results - SERAMAADUWEN.LK",
-  description: "Search results for SERAMAADUWEN.LK products.",
+  title: "Search Results - MASKY PRODUCT",
+  description: "Search results for MASKY PRODUCT products.",
 };
 
 export default function SearchPage() {

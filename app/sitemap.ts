@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // Use environment variable for base URL, fallback to production URL
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://seramaaduwen.lk';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://masky.space';
   
   // Define standard static routes
   const routes = [

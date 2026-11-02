@@ -5,7 +5,7 @@ import { Product } from "@/types/product";
 import { PaginatedResponse } from "@/types/api";
 
 export const metadata = {
-  title: "Shop - SERAMAADUWEN.LK",
+  title: "Shop - MASKY PRODUCT",
   description: "Browse our latest collections of luxury clothing.",
 };
 

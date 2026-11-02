@@ -37,22 +37,22 @@ export default function CollectionsPage() {
   };
 
   const columns = [
-    { header: "ID", accessor: (row: any) => row.id.substring(0, 8), className: "font-mono text-stone-500 text-xs" },
+    { header: "ID", accessor: (row: any) => row.id.substring(0, 8), className: "font-mono text-muted text-xs" },
     { 
       header: "Collection Title", 
       accessor: (row: any) => (
-        <button onClick={() => handleEdit(row)} className="font-semibold text-stone-900 hover:text-accent transition-colors text-left">
+        <button onClick={() => handleEdit(row)} className="font-semibold text-foreground hover:text-accent transition-colors text-left">
           {row.title}
         </button>
       )
     },
-    { header: "Slug", accessor: "slug" as const, className: "font-mono text-xs text-stone-500" },
+    { header: "Slug", accessor: "slug" as const, className: "font-mono text-xs text-muted" },
     { 
       header: "Type", 
       accessor: (row: any) => row.type.charAt(0) + row.type.slice(1).toLowerCase(), 
-      className: "text-stone-600 font-inter text-sm" 
+      className: "text-muted font-inter text-sm" 
     },
-    { header: "Products", accessor: (row: any) => row._count?.products || 0, className: "font-bold text-stone-800" },
+    { header: "Products", accessor: (row: any) => row._count?.products || 0, className: "font-bold text-foreground/90" },
     {
       header: "Status",
       accessor: (row: any) => (
@@ -64,7 +64,7 @@ export default function CollectionsPage() {
       accessor: (row: any) => (
         <div className="flex items-center gap-2">
           <button onClick={() => handleEdit(row)} className="text-xs text-blue-600 hover:underline font-medium">Edit</button>
-          <span className="text-stone-300">·</span>
+          <span className="text-border">·</span>
           <button onClick={() => handleDelete(row.id)} disabled={deleteCollectionMutation.isPending} className="text-xs text-red-500 hover:underline font-medium disabled:opacity-50">Delete</button>
         </div>
       ),
@@ -73,19 +73,19 @@ export default function CollectionsPage() {
 
   const filters = (
     <>
-      <select className="bg-stone-50 border border-stone-200 rounded-lg py-2 px-3 text-sm font-inter text-stone-700 outline-none focus:ring-1 focus:ring-stone-900/50">
+      <select className="bg-surface border border-border rounded-lg py-2 px-3 text-sm font-inter text-foreground outline-none focus:ring-1 focus:ring-primary">
         <option>All Status</option>
         <option>Active</option>
         <option>Draft</option>
       </select>
-      <select className="bg-stone-50 border border-stone-200 rounded-lg py-2 px-3 text-sm font-inter text-stone-700 outline-none focus:ring-1 focus:ring-stone-900/50">
+      <select className="bg-surface border border-border rounded-lg py-2 px-3 text-sm font-inter text-foreground outline-none focus:ring-1 focus:ring-primary">
         <option>All Types</option>
         <option>Manual</option>
         <option>Automated</option>
       </select>
       <button 
         onClick={handleAdd}
-        className="bg-stone-900 text-white hover:bg-stone-800 active:scale-95 px-5 py-2 rounded-lg font-inter text-sm font-semibold transition-all whitespace-nowrap ml-auto shadow-md shadow-stone-900/20 flex items-center gap-2"
+        className="bg-foreground text-background hover:opacity-90 active:scale-95 px-5 py-2 rounded-lg font-inter text-sm font-semibold transition-all whitespace-nowrap ml-auto shadow-md flex items-center gap-2"
       >
         + Add Collection
       </button>
@@ -107,9 +107,9 @@ export default function CollectionsPage() {
           { label: "Draft", value: collections.filter(c => c.status === 'Draft').length.toString() },
           { label: "Automated", value: collections.filter(c => c.type === 'AUTOMATED').length.toString() },
         ].map((s) => (
-          <div key={s.label} className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
-            <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider font-inter">{s.label}</p>
-            <p className="text-3xl font-bold text-stone-900 mt-1 font-inter">{s.value}</p>
+          <div key={s.label} className="bg-surface border border-border rounded-xl p-5 shadow-sm">
+            <p className="text-xs font-semibold text-muted uppercase tracking-wider font-inter">{s.label}</p>
+            <p className="text-3xl font-bold text-foreground mt-1 font-inter">{s.value}</p>
           </div>
         ))}
       </div>
@@ -126,7 +126,7 @@ export default function CollectionsPage() {
         filters={filters} 
       />
 
-      <div className="bg-white border border-stone-200 rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-surface border border-border rounded-xl shadow-sm overflow-hidden">
         <DataTable
           data={collections}
           columns={columns}

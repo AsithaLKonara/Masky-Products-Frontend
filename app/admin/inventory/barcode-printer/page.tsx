@@ -179,7 +179,7 @@ export default function BarcodePrinterClient() {
       <div className="barcode-print-zone hidden print:grid">
         {labelsToPrint.map((item, i) => (
           <div key={`${item.sku}-${i}`} className="barcode-label">
-            <div className="text-[10px] font-bold text-black truncate w-full text-center leading-tight">Seramaaduwen - {item.name.substring(0, 20)}</div>
+            <div className="text-[10px] font-bold text-black truncate w-full text-center leading-tight">Masky Product - {item.name.substring(0, 20)}</div>
             
             {/* Pseudo-barcode */}
             <div className="flex-1 w-full flex flex-col items-center justify-center py-1">

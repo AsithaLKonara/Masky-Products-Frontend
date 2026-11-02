@@ -28,23 +28,23 @@ const urbanist = Urbanist({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://seramaaduwen.lk'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://masky.space'),
   title: {
-    template: '%s | SERAMAADUWEN.LK',
-    default: 'SERAMAADUWEN.LK',
+    template: '%s | MASKY PRODUCT',
+    default: 'MASKY PRODUCT',
   },
   description: 'Pieces edited for quiet luxury — cut clean, worn easy.',
   openGraph: {
-    title: 'SERAMAADUWEN.LK',
+    title: 'MASKY PRODUCT',
     description: 'Pieces edited for quiet luxury — cut clean, worn easy.',
     url: '/',
-    siteName: 'SERAMAADUWEN.LK',
+    siteName: 'MASKY PRODUCT',
     images: [
       {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'SERAMAADUWEN.LK',
+        alt: 'MASKY PRODUCT',
       },
     ],
     locale: 'en_LK',
@@ -65,9 +65,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("masky_theme")||"dark";if(t==="dark"){document.documentElement.classList.add("dark")}else{document.documentElement.classList.remove("dark")}}catch(e){}})()`,
+          }}
+        />
+      </head>
       <body
-        className={`${poppins.variable} ${orangeAvenue.variable} ${inriaSerif.variable} ${urbanist.variable} antialiased`}
+        className={`${poppins.variable} ${orangeAvenue.variable} ${inriaSerif.variable} ${urbanist.variable} antialiased bg-background text-foreground transition-colors duration-200`}
       >
         <Suspense fallback={null}>
           <MetaPixel />

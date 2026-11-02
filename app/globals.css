@@ -4,43 +4,103 @@
 
 @layer base {
   :root {
-    --background: #F9FAFB;
-    --foreground: #111827;
+    /* Enterprise Light Mode - Clean Alpine Slate & Snow */
+    --background: #F8FAFC;
+    --foreground: #0F172A;
 
+    /* Depth Surfaces for Light Mode */
     --surface: #FFFFFF;
-    --surface-elevated: #FFFFFF;
+    --surface-elevated: #F1F5F9;
+    --surface-subtle: #F8FAFC;
 
-    --primary: #111827;
-    --primary-hover: #1F2937;
+    --primary: #0F172A;
+    --primary-hover: #1E293B;
+    --primary-foreground: #FFFFFF;
 
-    --accent: #F97316;
-    --accent-soft: #FFEDD5;
+    --secondary: #F1F5F9;
+    --secondary-foreground: #0F172A;
 
-    --text-primary: #111827;
-    --text-secondary: #6B7280;
+    --accent: #2563EB;
+    --accent-soft: rgba(37, 99, 235, 0.10);
+
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
     
-    --muted: #9CA3AF;
-    --border: #E5E7EB;
+    --muted: #64748B;
+    --muted-foreground: #94A3B8;
+    --border: #E2E8F0;
+    --ring: #2563EB;
+
+    --success: #059669;
+    --success-soft: rgba(5, 150, 105, 0.12);
+
+    --warning: #D97706;
+    --warning-soft: rgba(217, 119, 6, 0.12);
+
+    --error: #DC2626;
+    --error-soft: rgba(220, 38, 38, 0.12);
+
+    --info: #2563EB;
+    --info-soft: rgba(37, 99, 235, 0.12);
+
+    --chart-1: #2563EB;
+    --chart-2: #059669;
+    --chart-3: #D97706;
+    --chart-4: #7C3AED;
+    --chart-5: #0891B2;
+  }
+
+  .dark {
+    /* Enterprise Dark Mode - Obsidian Slate & Deep Zinc */
+    --background: #0B0F17;
+    --foreground: #F8FAFC;
+
+    /* Depth Surfaces for Dark Mode */
+    --surface: #111827;
+    --surface-elevated: #1F2937;
+    --surface-subtle: #0E1522;
+
+    --primary: #3B82F6;
+    --primary-hover: #2563EB;
+    --primary-foreground: #FFFFFF;
+
+    --secondary: #1F2937;
+    --secondary-foreground: #F8FAFC;
+
+    --accent: #3B82F6;
+    --accent-soft: rgba(59, 130, 246, 0.15);
+
+    --text-primary: #F8FAFC;
+    --text-secondary: #94A3B8;
+
+    --muted: #94A3B8;
+    --muted-foreground: #64748B;
+    --border: #1F2937;
+    --ring: #3B82F6;
 
     --success: #10B981;
-    --success-soft: #D1FAE5;
+    --success-soft: rgba(16, 185, 129, 0.15);
 
     --warning: #F59E0B;
-    --warning-soft: #FEF3C7;
+    --warning-soft: rgba(245, 158, 11, 0.15);
 
     --error: #EF4444;
-    --error-soft: #FEE2E2;
+    --error-soft: rgba(239, 68, 68, 0.15);
 
     --info: #3B82F6;
-    --info-soft: #DBEAFE;
+    --info-soft: rgba(59, 130, 246, 0.15);
+
+    --chart-1: #3B82F6;
+    --chart-2: #10B981;
+    --chart-3: #F59E0B;
+    --chart-4: #8B5CF6;
+    --chart-5: #06B6D4;
   }
 
   .dashboard-theme {
-    --primary: #F97316;
-    --primary-hover: #EA580C;
-    --accent: #F97316;
-    --accent-soft: #FFEDD5;
-    --background: #f5f5f4; /* stone-100 */
+    background-color: var(--canvas);
+    color: var(--foreground);
+    min-height: 100vh;
   }
 }
 

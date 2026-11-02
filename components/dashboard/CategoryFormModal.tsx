@@ -79,18 +79,18 @@ export default function CategoryFormModal({ isOpen, onClose, categoryToEdit }: C
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-stone-950/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-background/60 backdrop-blur-sm" onClick={onClose} />
 
       {/* Modal Content */}
-      <div className="relative w-full max-w-[600px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden max-h-[90vh] animate-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-[600px] bg-surface rounded-2xl shadow-2xl flex flex-col overflow-hidden max-h-[90vh] animate-in zoom-in-95 duration-200">
         
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-stone-200 bg-stone-50 shrink-0">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-surface-elevated shrink-0">
           <div>
-            <h2 className="font-inter font-bold text-lg text-stone-900">{categoryToEdit ? "Edit Category" : "Add New Category"}</h2>
-            <p className="font-inter text-xs text-stone-500 mt-0.5">{categoryToEdit ? "Update category details." : "Create a new product category."}</p>
+            <h2 className="font-inter font-bold text-lg text-foreground">{categoryToEdit ? "Edit Category" : "Add New Category"}</h2>
+            <p className="font-inter text-xs text-muted mt-0.5">{categoryToEdit ? "Update category details." : "Create a new product category."}</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-stone-200 rounded-lg text-stone-600 transition-colors">
+          <button onClick={onClose} className="p-2 hover:bg-border rounded-lg text-muted transition-colors">
             <X size={20} />
           </button>
         </div>
@@ -99,23 +99,23 @@ export default function CategoryFormModal({ isOpen, onClose, categoryToEdit }: C
         <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6 custom-scrollbar">
           
           <div className="flex flex-col gap-2">
-            <label className="font-inter text-xs font-semibold text-stone-700">Category Cover Image</label>
+            <label className="font-inter text-xs font-semibold text-foreground/80">Category Cover Image</label>
             <div 
               onClick={() => setIsMediaModalOpen(true)}
-              className="w-full h-40 rounded-xl border-2 border-dashed border-stone-200 hover:border-stone-400 hover:bg-stone-50 transition-colors flex flex-col items-center justify-center cursor-pointer overflow-hidden relative group"
+              className="w-full h-40 rounded-xl border-2 border-dashed border-border hover:border-primary/60 hover:bg-surface-elevated transition-colors flex flex-col items-center justify-center cursor-pointer overflow-hidden relative group"
             >
               {imageUrl ? (
                 <>
                   <Image src={imageUrl} alt="Category Cover" fill className="object-cover" />
-                  <div className="absolute inset-0 bg-stone-900/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute inset-0 bg-foreground/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <p className="font-inter text-white text-xs font-medium">Change Image</p>
                   </div>
                 </>
               ) : (
                 <>
-                  <ImagePlus size={24} className="text-stone-400 mb-2" />
-                  <p className="font-inter text-sm font-medium text-stone-600">Browse Media</p>
-                  <p className="font-inter text-xs text-stone-400">Click to select from library</p>
+                  <ImagePlus size={24} className="text-muted/70 mb-2" />
+                  <p className="font-inter text-sm font-medium text-muted">Browse Media</p>
+                  <p className="font-inter text-xs text-muted/70">Click to select from library</p>
                 </>
               )}
             </div>
@@ -130,20 +130,20 @@ export default function CategoryFormModal({ isOpen, onClose, categoryToEdit }: C
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="font-inter text-xs font-semibold text-stone-700">Category Name <span className="text-red-500">*</span></label>
+            <label className="font-inter text-xs font-semibold text-foreground/80">Category Name <span className="text-red-500">*</span></label>
             <input
               type="text"
               value={name}
               onChange={e => handleNameChange(e.target.value)}
               placeholder="e.g. Graphic Tees"
-              className="w-full border border-stone-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-stone-400 focus:ring-2 focus:ring-stone-100 transition-all font-inter"
+              className="w-full border border-border rounded-lg px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-inter"
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="font-inter text-xs font-semibold text-stone-700">Category Slug</label>
-            <div className="flex items-center border border-stone-200 rounded-lg overflow-hidden bg-white focus-within:border-stone-400 focus-within:ring-2 focus-within:ring-stone-100 transition-all">
-              <span className="px-3 py-2.5 bg-stone-50 text-stone-500 text-sm border-r border-stone-200 font-mono">/categories/</span>
+            <label className="font-inter text-xs font-semibold text-foreground/80">Category Slug</label>
+            <div className="flex items-center border border-border rounded-lg overflow-hidden bg-surface focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+              <span className="px-3 py-2.5 bg-surface-elevated text-muted text-sm border-r border-border font-mono">/categories/</span>
               <input
                 type="text"
                 value={slug}
@@ -154,41 +154,41 @@ export default function CategoryFormModal({ isOpen, onClose, categoryToEdit }: C
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="font-inter text-xs font-semibold text-stone-700">Description</label>
+            <label className="font-inter text-xs font-semibold text-foreground/80">Description</label>
             <textarea
               value={description}
               onChange={e => setDescription(e.target.value)}
               rows={4}
               placeholder="Brief description for internal use and SEO..."
-              className="w-full border border-stone-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-stone-400 focus:ring-2 focus:ring-stone-100 transition-all font-inter resize-none"
+              className="w-full border border-border rounded-lg px-3 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-inter resize-none"
             />
           </div>
 
-          <div className="flex items-center justify-between p-4 bg-stone-50 border border-stone-200 rounded-xl">
+          <div className="flex items-center justify-between p-4 bg-surface-elevated border border-border rounded-xl">
             <div>
-              <h3 className="font-inter font-bold text-sm text-stone-900">Category Status</h3>
-              <p className="font-inter text-xs text-stone-500 mt-0.5">Control visibility across the platform.</p>
+              <h3 className="font-inter font-bold text-sm text-foreground">Category Status</h3>
+              <p className="font-inter text-xs text-muted mt-0.5">Control visibility across the platform.</p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" className="sr-only peer" checked={status === "Active"} onChange={e => setStatus(e.target.checked ? "Active" : "Inactive")} />
-              <div className="w-11 h-6 bg-stone-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-stone-900"></div>
+              <div className="w-11 h-6 bg-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-foreground"></div>
             </label>
           </div>
 
         </div>
 
         {/* Footer */}
-        <div className="border-t border-stone-200 px-6 py-4 bg-stone-50 shrink-0 flex items-center justify-end gap-3">
+        <div className="border-t border-border px-6 py-4 bg-surface-elevated shrink-0 flex items-center justify-end gap-3">
           <button 
             onClick={onClose} 
-            className="px-4 py-2 bg-white border border-stone-300 rounded-lg font-inter font-medium text-sm text-stone-700 hover:bg-stone-50 transition-colors shadow-sm"
+            className="px-4 py-2 bg-surface border border-border rounded-lg font-inter font-medium text-sm text-foreground/80 hover:bg-surface-elevated transition-colors shadow-sm"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={!name.trim() || createCategoryMutation.isPending || updateCategoryMutation.isPending}
-            className="px-5 py-2 bg-stone-900 text-white rounded-lg font-inter font-medium text-sm hover:bg-stone-800 transition-colors shadow-md shadow-stone-900/20 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-5 py-2 bg-foreground text-white rounded-lg font-inter font-medium text-sm hover:bg-foreground/90 transition-colors shadow-md shadow-foreground/10 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {createCategoryMutation.isPending || updateCategoryMutation.isPending ? "Saving..." : "Save Category"}
           </button>

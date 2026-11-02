@@ -95,7 +95,7 @@ export default function ClientContent() {
             "True luxury is the quiet confidence of wearing something made exclusively with passion and purpose."
           </p>
           <div className="w-12 h-[1px] bg-accent mt-4"></div>
-          <span className="font-poppins text-sm uppercase tracking-widest text-stone-400 mt-2">SERAMAADUWEN.LK</span>
+          <span className="font-poppins text-sm uppercase tracking-widest text-stone-400 mt-2">MASKY PRODUCT</span>
         </div>
       </section>
 
@@ -119,7 +119,7 @@ export default function ClientContent() {
             Why choose us
           </h2>
           <p className="font-poppins text-sm md:text-[17px] leading-[1.8] text-[#33302d] text-center max-w-[904px] font-light">
-            With a focus on comfort and practicality, our designs are thoughtfully created to enhance the everyday experience, allowing our customers to express their personal style effortlessly. Whether it's a cozy knit for a casual coffee date or a statement dress for a special event, we serve as the go-to destination for individuals seeking clothing that reflects their lifestyle. At Seramaaduwen, we are committed to fostering a community that celebrates individuality and embraces the philosophy that fashion should be accessible to all. Join us on this exciting journey as we redefine fashion, offering a seamless fusion of essentials for a lifestyle that is stylish, versatile, and uniquely you.
+            With a focus on comfort and practicality, our designs are thoughtfully created to enhance the everyday experience, allowing our customers to express their personal style effortlessly. Whether it's a cozy knit for a casual coffee date or a statement dress for a special event, we serve as the go-to destination for individuals seeking clothing that reflects their lifestyle. At Masky Product, we are committed to fostering a community that celebrates individuality and embraces the philosophy that fashion should be accessible to all. Join us on this exciting journey as we redefine fashion, offering a seamless fusion of essentials for a lifestyle that is stylish, versatile, and uniquely you.
           </p>
         </div>
       </section>
@@ -130,7 +130,7 @@ export default function ClientContent() {
           
           <div className="flex flex-col gap-4 flex-1">
             <h2 className="font-poppins text-3xl md:text-[36px] font-normal text-primary leading-tight">
-              Experience Seramaaduwen in Person
+              Experience Masky Product in Person
             </h2>
             <p className="font-poppins text-sm text-stone-500 leading-relaxed font-light max-w-[500px]">
               Book a private consultation at our Colombo studio. Our personal stylists will guide you through our latest collections and help you curate a wardrobe tailored to your lifestyle.

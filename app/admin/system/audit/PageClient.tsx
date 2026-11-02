@@ -60,7 +60,7 @@ export default function AuditPage() {
       <select 
         value={actionFilter}
         onChange={e => { setActionFilter(e.target.value); setPage(1); }}
-        className="bg-stone-50 border border-stone-200 rounded-lg py-2 px-3 text-sm font-inter text-stone-700 outline-none focus:ring-1 focus:ring-stone-400"
+        className="bg-surface border border-border rounded-lg py-2 px-3 text-sm font-inter text-foreground outline-none focus:ring-1 focus:ring-primary"
       >
         <option value="">All Actions</option>
         <option value="CREATE">CREATE</option>
@@ -72,7 +72,7 @@ export default function AuditPage() {
       <select 
         value={timeframeFilter}
         onChange={e => { setTimeframeFilter(e.target.value); setPage(1); }}
-        className="bg-stone-50 border border-stone-200 rounded-lg py-2 px-3 text-sm font-inter text-stone-700 outline-none focus:ring-1 focus:ring-stone-400"
+        className="bg-surface border border-border rounded-lg py-2 px-3 text-sm font-inter text-foreground outline-none focus:ring-1 focus:ring-primary"
       >
         <option value="">All Time</option>
         <option value="Last 24 Hours">Last 24 Hours</option>

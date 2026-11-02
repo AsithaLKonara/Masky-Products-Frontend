@@ -61,16 +61,37 @@ export default function OrdersPage() {
 
   const columns = [
     {
-      header: <input type="checkbox" checked={selectedOrders.length === orders.length && orders.length > 0} onChange={handleSelectAll} className="rounded text-stone-900 focus:ring-stone-900 border-stone-300" />,
-      accessor: (row: any) => <input type="checkbox" checked={selectedOrders.includes(row.id)} onChange={() => handleSelectOne(row.id)} onClick={e => e.stopPropagation()} className="rounded text-stone-900 focus:ring-stone-900 border-stone-300" />
+      header: <input type="checkbox" checked={selectedOrders.length === orders.length && orders.length > 0} onChange={handleSelectAll} className="rounded text-foreground focus:ring-accent border-border" />,
+      accessor: (row: any) => <input type="checkbox" checked={selectedOrders.includes(row.id)} onChange={() => handleSelectOne(row.id)} onClick={e => e.stopPropagation()} className="rounded text-foreground focus:ring-accent border-border" />
     },
-    { header: "Order", accessor: (row: any) => row.orderNumber || row.id.substring(0, 8) },
-    { header: "Customer", accessor: (row: any) => row.customer ? `${row.customer.firstName} ${row.customer.lastName}` : "Guest" },
+    { 
+      header: "Order", 
+      accessor: (row: any) => (
+        <span className="font-mono text-xs font-bold text-foreground tracking-tight">
+          {row.orderNumber || row.id.substring(0, 8)}
+        </span>
+      ) 
+    },
+    { 
+      header: "Customer", 
+      accessor: (row: any) => (
+        <span className="font-inter text-xs font-normal text-foreground/90">
+          {row.customer ? `${row.customer.firstName} ${row.customer.lastName}` : "Guest"}
+        </span>
+      ) 
+    },
     { 
       header: "Branch", 
       accessor: (row: any) => <BranchBadge branch={row.branch?.name || "Online"} /> 
     },
-    { header: "Total", accessor: (row: any) => `Rs. ${row.total?.toLocaleString()}` },
+    { 
+      header: "Total", 
+      accessor: (row: any) => (
+        <span className="font-mono text-xs font-black text-foreground tracking-tight">
+          Rs. {row.total?.toLocaleString()}
+        </span>
+      ) 
+    },
     { 
       header: "Payment", 
       accessor: (row: any) => <PaymentGatewayBadge gateway={row.paymentMethod || "Unknown"} status={row.paymentStatus?.toLowerCase() || 'pending'} /> 
@@ -89,7 +110,7 @@ export default function OrdersPage() {
       <select 
         value={branchId}
         onChange={e => { setBranchId(e.target.value); setPage(1); }}
-        className="bg-stone-50 border border-stone-200 rounded-lg py-2 px-3 text-sm font-inter text-stone-700 outline-none focus:ring-1 focus:ring-stone-400 max-w-[140px]"
+        className="bg-surface border border-border rounded-lg py-2 px-3 text-sm font-inter text-foreground outline-none focus:ring-1 focus:ring-primary hover:bg-surface-elevated transition-colors max-w-[140px]"
       >
         <option value="">All Branches</option>
         {branches.map((b: any) => (
@@ -100,7 +121,7 @@ export default function OrdersPage() {
       <select 
         value={status} 
         onChange={e => { setStatus(e.target.value); setPage(1); }}
-        className="bg-stone-50 border border-stone-200 rounded-lg py-2 px-3 text-sm font-inter text-stone-700 outline-none focus:ring-1 focus:ring-stone-400"
+        className="bg-surface border border-border rounded-lg py-2 px-3 text-sm font-inter text-foreground outline-none focus:ring-1 focus:ring-primary hover:bg-surface-elevated transition-colors"
       >
         <option value="">All Statuses</option>
         <option value="PENDING">Pending</option>
@@ -113,7 +134,7 @@ export default function OrdersPage() {
       <select 
         value={paymentGateway}
         onChange={e => { setPaymentGateway(e.target.value); setPage(1); }}
-        className="bg-stone-50 border border-stone-200 rounded-lg py-2 px-3 text-sm font-inter text-stone-700 outline-none focus:ring-1 focus:ring-stone-400"
+        className="bg-surface border border-border rounded-lg py-2 px-3 text-sm font-inter text-foreground outline-none focus:ring-1 focus:ring-primary hover:bg-surface-elevated transition-colors"
       >
         <option value="">All Gateways</option>
         <option value="Koko">Koko</option>
@@ -127,7 +148,7 @@ export default function OrdersPage() {
       <select 
         value={type}
         onChange={e => { setType(e.target.value); setPage(1); }}
-        className="bg-stone-50 border border-stone-200 rounded-lg py-2 px-3 text-sm font-inter text-stone-700 outline-none focus:ring-1 focus:ring-stone-400"
+        className="bg-surface border border-border rounded-lg py-2 px-3 text-sm font-inter text-foreground outline-none focus:ring-1 focus:ring-primary hover:bg-surface-elevated transition-colors"
       >
         <option value="">All Types</option>
         <option value="ECOMMERCE">Online Store</option>
@@ -173,7 +194,9 @@ export default function OrdersPage() {
   };
 
   const getQuickSelectVariant = (rangeStart: string, rangeEnd: string) => {
-    return startDate === rangeStart && endDate === rangeEnd ? "bg-stone-900 text-white" : "bg-stone-100 text-stone-600 hover:bg-stone-200";
+    return startDate === rangeStart && endDate === rangeEnd 
+      ? "bg-foreground text-background font-semibold shadow-xs" 
+      : "bg-surface border border-border text-muted hover:text-foreground hover:bg-surface-elevated";
   };
   
   const todayStr = new Date().toISOString().split("T")[0];
@@ -191,23 +214,23 @@ export default function OrdersPage() {
         <button onClick={() => handleDateQuickSelect("90days")} className={`px-3 py-1.5 rounded-md text-xs font-inter font-medium transition-colors ${getQuickSelectVariant(last90Str, todayStr)}`}>Last 90 Days</button>
       </div>
 
-      <div className="flex items-center gap-3 bg-stone-50 p-1.5 rounded-lg border border-stone-200 w-full md:w-auto">
+      <div className="flex items-center gap-3 bg-surface p-1.5 rounded-lg border border-border w-full md:w-auto">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-inter text-stone-500 font-medium whitespace-nowrap pl-2">Custom Range:</span>
+          <span className="text-xs font-inter text-muted font-medium whitespace-nowrap pl-2">Custom Range:</span>
           <input 
             type="date" 
             value={startDate} 
             onChange={e => { setStartDate(e.target.value); setPage(1); }}
-            className="bg-white border border-stone-200 rounded-md py-1.5 px-2 text-xs font-inter text-stone-700 outline-none focus:ring-1 focus:ring-stone-400"
+            className="bg-background border border-border rounded-md py-1.5 px-2 text-xs font-inter text-foreground outline-none focus:ring-1 focus:ring-primary"
           />
         </div>
-        <span className="text-stone-300">-</span>
+        <span className="text-muted">-</span>
         <div className="flex items-center gap-2">
           <input 
             type="date" 
             value={endDate} 
             onChange={e => { setEndDate(e.target.value); setPage(1); }}
-            className="bg-white border border-stone-200 rounded-md py-1.5 px-2 text-xs font-inter text-stone-700 outline-none focus:ring-1 focus:ring-stone-400"
+            className="bg-background border border-border rounded-md py-1.5 px-2 text-xs font-inter text-foreground outline-none focus:ring-1 focus:ring-primary"
           />
         </div>
       </div>
@@ -223,7 +246,7 @@ export default function OrdersPage() {
         />
         <Link 
           href="/admin/orders/quick-dispatch"
-          className="flex items-center gap-2 bg-stone-900 text-white px-4 py-2 rounded-lg font-inter font-medium text-sm hover:bg-stone-800 transition-colors shadow-sm self-start sm:self-auto"
+          className="flex items-center gap-2 bg-foreground text-background px-4 py-2 rounded-lg font-inter font-medium text-sm hover:opacity-80 transition-all shadow-sm self-start sm:self-auto"
         >
           <Plus size={16} /> Quick Dispatch
         </Link>
@@ -237,11 +260,11 @@ export default function OrdersPage() {
           { title: "Pending", value: orders.filter((o: any) => o.status === 'PENDING').length, theme: "orange" }
         ]}
         statuses={[
-          { label: "Pending", value: orders.filter((o: any) => o.status === 'PENDING').length, colorClass: "bg-orange-50 text-orange-700" },
-          { label: "Processing", value: orders.filter((o: any) => o.status === 'PROCESSING').length, colorClass: "bg-blue-50 text-blue-700" },
-          { label: "Dispatched", value: orders.filter((o: any) => o.status === 'DISPATCHED').length, colorClass: "bg-indigo-50 text-indigo-700" },
-          { label: "Delivered", value: orders.filter((o: any) => o.status === 'DELIVERED').length, colorClass: "bg-emerald-50 text-emerald-700" },
-          { label: "Cancelled", value: orders.filter((o: any) => o.status === 'CANCELLED').length, colorClass: "bg-stone-100 text-stone-700" }
+          { label: "Pending", value: orders.filter((o: any) => o.status === 'PENDING').length, colorClass: "bg-orange-500/10 text-orange-600 dark:text-orange-400" },
+          { label: "Processing", value: orders.filter((o: any) => o.status === 'PROCESSING').length, colorClass: "bg-blue-500/10 text-blue-600 dark:text-blue-400" },
+          { label: "Dispatched", value: orders.filter((o: any) => o.status === 'DISPATCHED').length, colorClass: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400" },
+          { label: "Delivered", value: orders.filter((o: any) => o.status === 'DELIVERED').length, colorClass: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" },
+          { label: "Cancelled", value: orders.filter((o: any) => o.status === 'CANCELLED').length, colorClass: "bg-muted/40 text-muted" }
         ]}
       />
 
@@ -267,10 +290,10 @@ export default function OrdersPage() {
 
       {/* Floating Bulk Action Bar */}
       {selectedOrders.length > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-stone-900 text-white px-6 py-4 rounded-full shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-10 z-40">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-foreground text-background px-6 py-4 rounded-full shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-10 z-40">
           <span className="font-inter font-medium text-sm">{selectedOrders.length} selected</span>
-          <div className="w-px h-6 bg-stone-700"></div>
-          <button onClick={() => setShowLabelModal(true)} className="font-inter font-semibold text-sm bg-white text-stone-900 px-4 py-2 rounded-full hover:bg-stone-100 transition-colors flex items-center gap-2">
+          <div className="w-px h-6 bg-background/30"></div>
+          <button onClick={() => setShowLabelModal(true)} className="font-inter font-semibold text-sm bg-background text-foreground px-4 py-2 rounded-full hover:opacity-80 transition-colors flex items-center gap-2">
             <Printer size={14} /> Print Courier Labels
           </button>
           <button onClick={() => setShowFardarModal(true)} className="font-inter font-semibold text-sm bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-500 transition-colors flex items-center gap-2">

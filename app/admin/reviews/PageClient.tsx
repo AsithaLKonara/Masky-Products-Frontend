@@ -11,7 +11,7 @@ const STATUS_STYLES: Record<string, { bg: string; text: string; label: string }>
   PENDING:  { bg: "bg-orange-100", text: "text-orange-700", label: "Pending" },
   APPROVED: { bg: "bg-emerald-100", text: "text-emerald-700", label: "Approved" },
   REJECTED: { bg: "bg-red-100",  text: "text-red-700",  label: "Rejected" },
-  SPAM: { bg: "bg-stone-200", text: "text-stone-800", label: "Spam" },
+  SPAM: { bg: "bg-border", text: "text-foreground/90", label: "Spam" },
 };
 
 function StarRating({ rating }: { rating: number }) {
@@ -21,7 +21,7 @@ function StarRating({ rating }: { rating: number }) {
         <Star
           key={s}
           size={14}
-          className={s <= rating ? "text-amber-400 fill-amber-400" : "text-stone-200 fill-stone-200"}
+          className={s <= rating ? "text-amber-400 fill-amber-400" : "text-border fill-border"}
         />
       ))}
     </div>
@@ -155,28 +155,28 @@ export default function AdminReviewsPage() {
       {/* KPI Strip */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Pending Review", value: stats?.pending || 0, color: "text-orange-600" },
-          { label: "Approved", value: stats?.approved || 0, color: "text-emerald-600" },
-          { label: "Rejected / Spam", value: stats?.rejected || 0, color: "text-red-600" },
+          { label: "Pending Review", value: stats?.pending || 0, color: "text-orange-500" },
+          { label: "Approved", value: stats?.approved || 0, color: "text-emerald-500" },
+          { label: "Rejected / Spam", value: stats?.rejected || 0, color: "text-rose-500" },
           { label: "Average Rating", value: `${stats?.averageRating || 0} ★`, color: "text-amber-500" },
         ].map(({ label, value, color }) => (
-          <div key={label} className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm flex flex-col gap-1">
-            <span className="font-inter text-xs font-semibold text-stone-500 uppercase tracking-wider">{label}</span>
+          <div key={label} className="bg-surface border border-border rounded-xl p-5 shadow-sm flex flex-col gap-1">
+            <span className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">{label}</span>
             <span className={`font-inter text-3xl font-black ${color}`}>{value}</span>
           </div>
         ))}
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 border border-stone-200 rounded-xl shadow-sm">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-surface p-4 border border-border rounded-xl shadow-sm">
         <div className="relative w-full sm:w-80">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" size={16} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={16} />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by customer, product, or title..."
-            className="w-full h-10 pl-10 pr-4 bg-stone-50 border border-stone-200 rounded-lg outline-none focus:border-stone-900 focus:bg-white transition-colors text-sm font-inter"
+            className="w-full h-10 pl-10 pr-4 bg-background border border-border rounded-lg outline-none focus:border-primary text-foreground transition-colors text-sm font-inter placeholder:text-muted"
           />
         </div>
         <div className="flex gap-2 flex-wrap">
@@ -185,7 +185,7 @@ export default function AdminReviewsPage() {
               key={f}
               onClick={() => setFilter(f)}
               className={`px-4 py-2 font-inter text-sm font-medium rounded-lg transition-colors whitespace-nowrap capitalize ${
-                filter === f ? "bg-stone-900 text-white" : "bg-stone-50 text-stone-600 hover:bg-stone-100"
+                filter === f ? "bg-foreground text-background font-semibold shadow-sm" : "bg-surface border border-border text-muted hover:bg-surface-elevated hover:text-foreground"
               }`}
             >
               {f === "ALL" ? "All Reviews" : f.charAt(0) + f.slice(1).toLowerCase()}
@@ -205,25 +205,25 @@ export default function AdminReviewsPage() {
       </div>
 
       {/* Reviews Table */}
-      <div className="bg-white border border-stone-200 rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-surface border border-border rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[900px]">
             <thead>
-              <tr className="bg-stone-50 border-b border-stone-200">
+              <tr className="bg-surface-subtle border-b border-border">
                 <th className="py-4 px-6 w-12">
                   <input
                     type="checkbox"
                     checked={selectedIds.length === displayed.length && displayed.length > 0}
                     onChange={handleSelectAll}
-                    className="rounded text-stone-900 focus:ring-stone-900 border-stone-300"
+                    className="rounded text-foreground focus:ring-accent border-border"
                   />
                 </th>
-                <th className="font-inter font-semibold text-xs text-stone-500 uppercase tracking-wider py-4 px-4">Rating</th>
-                <th className="font-inter font-semibold text-xs text-stone-500 uppercase tracking-wider py-4 px-4">Review</th>
-                <th className="font-inter font-semibold text-xs text-stone-500 uppercase tracking-wider py-4 px-4">Product</th>
-                <th className="font-inter font-semibold text-xs text-stone-500 uppercase tracking-wider py-4 px-4">Customer</th>
-                <th className="font-inter font-semibold text-xs text-stone-500 uppercase tracking-wider py-4 px-4">Status</th>
-                <th className="font-inter font-semibold text-xs text-stone-500 uppercase tracking-wider py-4 px-4 text-right">Actions</th>
+                <th className="font-inter font-semibold text-xs text-muted uppercase tracking-wider py-4 px-4">Rating</th>
+                <th className="font-inter font-semibold text-xs text-muted uppercase tracking-wider py-4 px-4">Review</th>
+                <th className="font-inter font-semibold text-xs text-muted uppercase tracking-wider py-4 px-4">Product</th>
+                <th className="font-inter font-semibold text-xs text-muted uppercase tracking-wider py-4 px-4">Customer</th>
+                <th className="font-inter font-semibold text-xs text-muted uppercase tracking-wider py-4 px-4">Status</th>
+                <th className="font-inter font-semibold text-xs text-muted uppercase tracking-wider py-4 px-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-100">
@@ -233,19 +233,19 @@ export default function AdminReviewsPage() {
                 return (
                   <Fragment key={review.id}>
                     <tr
-                      className={`transition-colors group ${selectedIds.includes(review.id) ? "bg-stone-50" : "hover:bg-stone-50/60"}`}
+                      className={`transition-colors group ${selectedIds.includes(review.id) ? "bg-surface-elevated" : "hover:bg-surface-elevated/60"}`}
                     >
                     <td className="py-4 px-6 align-top">
                       <input
                         type="checkbox"
                         checked={selectedIds.includes(review.id)}
                         onChange={() => toggleSelect(review.id)}
-                        className="rounded text-stone-900 focus:ring-stone-900 border-stone-300 mt-1"
+                        className="rounded text-foreground focus:ring-primary border-border mt-1"
                       />
                     </td>
                     <td className="py-4 px-4 align-top">
                       <StarRating rating={review.rating} />
-                      <span className="font-inter text-xs text-stone-400 mt-1 block">{review.date}</span>
+                      <span className="font-inter text-xs text-muted/70 mt-1 block">{review.date}</span>
                     </td>
                     <td className="py-4 px-4 align-top max-w-xs">
                       <div className="flex items-start gap-2">
@@ -253,8 +253,8 @@ export default function AdminReviewsPage() {
                           <Flag size={14} className="text-red-500 mt-0.5 shrink-0" />
                         )}
                         <div>
-                          <p className="font-inter font-semibold text-sm text-stone-900 line-clamp-1">{review.title}</p>
-                          <p className={`font-inter text-xs text-stone-500 mt-1 leading-relaxed ${isExpanded ? "" : "line-clamp-2"}`}>
+                          <p className="font-inter font-semibold text-sm text-foreground line-clamp-1">{review.title}</p>
+                          <p className={`font-inter text-xs text-muted mt-1 leading-relaxed ${isExpanded ? "" : "line-clamp-2"}`}>
                             {review.body}
                           </p>
                           <button
@@ -268,11 +268,11 @@ export default function AdminReviewsPage() {
                       </div>
                     </td>
                     <td className="py-4 px-4 align-top">
-                      <p className="font-inter text-sm font-medium text-stone-900 line-clamp-1">{review.product}</p>
-                      <p className="font-inter text-xs text-stone-400 font-mono mt-0.5">{review.productSku}</p>
+                      <p className="font-inter text-sm font-medium text-foreground line-clamp-1">{review.product}</p>
+                      <p className="font-inter text-xs text-muted/70 font-mono mt-0.5">{review.productSku}</p>
                     </td>
                     <td className="py-4 px-4 align-top">
-                      <p className="font-inter text-sm text-stone-700">{review.customer}</p>
+                      <p className="font-inter text-sm text-foreground/80">{review.customer}</p>
                       {review.verified && (
                         <span className="inline-flex items-center gap-1 text-emerald-600 text-[10px] font-bold uppercase tracking-wider mt-1">
                           <Check size={10} /> Verified Purchase
@@ -280,7 +280,7 @@ export default function AdminReviewsPage() {
                       )}
                     </td>
                     <td className="py-4 px-4 align-top">
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider ${st.bg} ${st.text}`}>
+                      <span className={`text-xs font-bold uppercase tracking-wider ${st.text}`}>
                         {st.label}
                       </span>
                       {review.flagged && (
@@ -310,7 +310,7 @@ export default function AdminReviewsPage() {
                             <button
                               onClick={() => markSpam(review.id)}
                               title="Mark as Spam"
-                              className="w-8 h-8 flex items-center justify-center bg-stone-100 text-stone-600 border border-stone-300 rounded-lg hover:bg-stone-200 transition-colors shadow-sm"
+                              className="w-8 h-8 flex items-center justify-center bg-surface-elevated text-muted border border-border rounded-lg hover:bg-border transition-colors shadow-sm"
                             >
                               <Flag size={14} />
                             </button>
@@ -319,7 +319,7 @@ export default function AdminReviewsPage() {
                         <button
                           onClick={() => { setReplyingToId(review.id); setReplyText(review.adminReply || ""); }}
                           title="Reply"
-                          className="w-8 h-8 flex items-center justify-center bg-stone-50 text-stone-500 border border-stone-200 rounded-lg hover:bg-stone-100 transition-colors shadow-sm"
+                          className="w-8 h-8 flex items-center justify-center bg-surface text-foreground border border-border rounded-lg hover:bg-surface-elevated transition-colors shadow-2xs"
                         >
                           <MessageSquare size={14} />
                         </button>
@@ -327,7 +327,7 @@ export default function AdminReviewsPage() {
                     </td>
                   </tr>
                   {review.adminReply && !replyingToId && (
-                    <tr key={`${review.id}-reply-show`} className="bg-stone-50/30">
+                    <tr key={`${review.id}-reply-show`} className="bg-surface-elevated/30">
                       <td colSpan={2}></td>
                       <td colSpan={5} className="pb-4 px-4 align-top">
                         <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 relative">
@@ -338,27 +338,27 @@ export default function AdminReviewsPage() {
                     </tr>
                   )}
                   {replyingToId === review.id && (
-                    <tr key={`${review.id}-reply`} className="bg-stone-50/50">
+                    <tr key={`${review.id}-reply`} className="bg-surface-elevated/50">
                       <td colSpan={2}></td>
                       <td colSpan={5} className="py-4 px-4">
                         <div className="flex flex-col gap-2 max-w-2xl">
                           <textarea 
                             autoFocus
-                            className="w-full border border-stone-300 rounded-lg p-3 text-sm font-inter outline-none focus:ring-2 focus:ring-stone-900"
+                            className="w-full border border-border rounded-lg p-3 text-sm font-inter outline-none focus:ring-2 focus:ring-primary"
                             rows={3}
                             placeholder="Type your reply to the customer..."
                             value={replyText}
                             onChange={e => setReplyText(e.target.value)}
                           />
                           <div className="flex gap-2 justify-end">
-                            <button onClick={() => setReplyingToId(null)} className="px-3 py-1.5 border border-stone-300 text-stone-700 text-xs font-semibold rounded hover:bg-stone-100 transition-colors">Cancel</button>
+                            <button onClick={() => setReplyingToId(null)} className="px-3 py-1.5 border border-border text-foreground/80 text-xs font-semibold rounded hover:bg-surface-elevated transition-colors">Cancel</button>
                             <button 
                               onClick={async () => {
                                 await addReply({ id: review.id, reply: replyText });
                                 setReplyingToId(null);
                               }} 
                               disabled={!replyText.trim()}
-                              className="px-3 py-1.5 bg-stone-900 text-white text-xs font-semibold rounded hover:bg-stone-800 disabled:opacity-50 transition-colors"
+                              className="px-3 py-1.5 bg-foreground text-white text-xs font-semibold rounded hover:bg-foreground/90 disabled:opacity-50 transition-colors"
                             >
                               Post Reply
                             </button>
@@ -375,29 +375,29 @@ export default function AdminReviewsPage() {
         </div>
 
         {displayed.length === 0 && (
-          <div className="py-16 text-center text-stone-500 font-inter text-sm">
+          <div className="py-16 text-center text-muted font-inter text-sm">
             No reviews found matching your filters.
           </div>
         )}
 
         {/* Pagination */}
-        <div className="flex items-center justify-between p-4 border-t border-stone-200 bg-stone-50/50">
-          <span className="font-inter text-sm text-stone-500">
-            Showing <span className="font-medium text-stone-900">{displayed.length > 0 ? (page - 1) * limit + 1 : 0}</span> to <span className="font-medium text-stone-900">{Math.min(page * limit, totalReviews)}</span> of{" "}
-            <span className="font-medium text-stone-900">{totalReviews}</span> reviews
+        <div className="flex items-center justify-between p-4 border-t border-border bg-surface">
+          <span className="font-inter text-sm text-muted">
+            Showing <span className="font-medium text-foreground">{displayed.length > 0 ? (page - 1) * limit + 1 : 0}</span> to <span className="font-medium text-foreground">{Math.min(page * limit, totalReviews)}</span> of{" "}
+            <span className="font-medium text-foreground">{totalReviews}</span> reviews
           </span>
           <div className="flex gap-2">
             <button 
               disabled={page === 1} 
               onClick={() => setPage(p => Math.max(1, p - 1))}
-              className="px-3 py-1.5 bg-white border border-stone-200 text-stone-700 font-inter text-sm rounded-md shadow-sm hover:bg-stone-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-3 py-1.5 bg-surface border border-border text-foreground font-inter text-sm rounded-md shadow-2xs hover:bg-surface-elevated disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Previous
             </button>
             <button 
               disabled={page >= totalPages} 
               onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-              className="px-3 py-1.5 bg-white border border-stone-200 text-stone-700 font-inter text-sm rounded-md shadow-sm hover:bg-stone-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-3 py-1.5 bg-surface border border-border text-foreground font-inter text-sm rounded-md shadow-2xs hover:bg-surface-elevated disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               Next
             </button>
@@ -407,9 +407,9 @@ export default function AdminReviewsPage() {
 
       {/* Floating Bulk Action Bar */}
       {selectedIds.length > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-stone-900 text-white px-6 py-4 rounded-full shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-10 z-40">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-foreground text-white px-6 py-4 rounded-full shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-10 z-40">
           <span className="font-inter font-medium text-sm">{selectedIds.length} selected</span>
-          <div className="w-px h-6 bg-stone-700"></div>
+          <div className="w-px h-6 bg-foreground/80"></div>
           <button
             onClick={bulkApprove}
             className="font-inter font-semibold text-sm bg-emerald-500 text-white px-4 py-2 rounded-full hover:bg-emerald-400 transition-colors flex items-center gap-2"

@@ -140,7 +140,7 @@ const MODULE_GROUPS = [
   },
   {
     group: "Branches",
-    color: "bg-stone-100 text-stone-800",
+    color: "bg-surface-elevated text-foreground/90",
     modules: [
       { label: "Branches — View", code: "branches:view", action: "View" },
       { label: "Branches — Create", code: "branches:create", action: "Create" },
@@ -272,25 +272,25 @@ export default function RoleModal({ isOpen, onClose, onSuccess, initialData }: R
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6">
-      <div className="absolute inset-0 bg-stone-950/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-background/60 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative w-full max-w-[850px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden max-h-[92vh]">
+      <div className="relative w-full max-w-[850px] bg-surface rounded-2xl shadow-2xl flex flex-col overflow-hidden max-h-[92vh]">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-stone-200 bg-stone-50 shrink-0">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-surface-elevated shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-stone-900 flex items-center justify-center text-white">
+            <div className="w-9 h-9 rounded-xl bg-foreground flex items-center justify-center text-white">
               <Shield size={18} />
             </div>
             <div>
-              <h2 className="font-inter font-bold text-lg text-stone-900">
+              <h2 className="font-inter font-bold text-lg text-foreground">
                 {initialData ? `Edit Role: ${initialData.name}` : "Create Custom Role"}
               </h2>
-              <p className="font-inter text-xs text-stone-500">
+              <p className="font-inter text-xs text-muted">
                 Configure role access levels and permission matrix
               </p>
             </div>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-stone-200 rounded-lg text-stone-600 transition-colors">
+          <button onClick={onClose} className="p-2 hover:bg-border rounded-lg text-muted transition-colors">
             <X size={20} />
           </button>
         </div>
@@ -304,25 +304,25 @@ export default function RoleModal({ isOpen, onClose, onSuccess, initialData }: R
           )}
 
           {/* Role Details */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-stone-50/70 p-4 rounded-xl border border-stone-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-surface-elevated/70 p-4 rounded-xl border border-border">
             <div className="flex flex-col gap-1.5">
-              <label className="font-inter text-xs font-semibold text-stone-700">Role Name <span className="text-red-500">*</span></label>
+              <label className="font-inter text-xs font-semibold text-foreground/80">Role Name <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 value={name}
                 onChange={e => setName(e.target.value)}
                 disabled={initialData?.isSystem}
                 placeholder="e.g. Regional Merchandiser"
-                className="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-stone-900 bg-white font-inter disabled:bg-stone-100 disabled:text-stone-500"
+                className="w-full border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-foreground bg-surface font-inter disabled:bg-surface-elevated disabled:text-muted"
               />
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="font-inter text-xs font-semibold text-stone-700">Status</label>
+              <label className="font-inter text-xs font-semibold text-foreground/80">Status</label>
               <select
                 value={status}
                 onChange={e => setStatus(e.target.value)}
-                className="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-stone-900 bg-white font-inter"
+                className="w-full border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-foreground bg-surface font-inter"
               >
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
@@ -330,23 +330,23 @@ export default function RoleModal({ isOpen, onClose, onSuccess, initialData }: R
             </div>
 
             <div className="flex flex-col gap-1.5 md:col-span-2">
-              <label className="font-inter text-xs font-semibold text-stone-700">Description</label>
+              <label className="font-inter text-xs font-semibold text-foreground/80">Description</label>
               <textarea
                 value={description}
                 onChange={e => setDescription(e.target.value)}
                 rows={2}
                 placeholder="Role responsibilities and department scope..."
-                className="w-full border border-stone-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-stone-900 bg-white font-inter resize-none"
+                className="w-full border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-foreground bg-surface font-inter resize-none"
               />
             </div>
           </div>
 
           {/* Permissions Matrix */}
           <div className="flex flex-col gap-3">
-            <div className="flex items-center justify-between border-b border-stone-100 pb-2">
+            <div className="flex items-center justify-between border-b border-border/50 pb-2">
               <div>
-                <h3 className="font-inter font-bold text-stone-900 text-sm">Permission Modules</h3>
-                <span className="font-inter text-xs text-stone-400">
+                <h3 className="font-inter font-bold text-foreground text-sm">Permission Modules</h3>
+                <span className="font-inter text-xs text-muted/70">
                   {selectedCodes.size} permission flags enabled
                 </span>
               </div>
@@ -354,14 +354,14 @@ export default function RoleModal({ isOpen, onClose, onSuccess, initialData }: R
                 <button
                   type="button"
                   onClick={() => MODULE_GROUPS.forEach(g => toggleGroupAll(g, true))}
-                  className="px-3 py-1 text-xs font-inter font-semibold bg-stone-900 text-white rounded-lg hover:bg-stone-700 transition-colors"
+                  className="px-3 py-1 text-xs font-inter font-semibold bg-foreground text-white rounded-lg hover:opacity-80 transition-colors"
                 >
                   Grant All
                 </button>
                 <button
                   type="button"
                   onClick={() => setSelectedCodes(new Set())}
-                  className="px-3 py-1 text-xs font-inter font-semibold bg-white border border-stone-200 text-stone-600 rounded-lg hover:bg-stone-50 transition-colors"
+                  className="px-3 py-1 text-xs font-inter font-semibold bg-surface border border-border text-muted rounded-lg hover:bg-surface-elevated transition-colors"
                 >
                   Revoke All
                 </button>
@@ -376,9 +376,9 @@ export default function RoleModal({ isOpen, onClose, onSuccess, initialData }: R
                 const countGranted = group.modules.filter(m => selectedCodes.has(m.code)).length;
 
                 return (
-                  <div key={group.group} className="border border-stone-200 rounded-xl overflow-hidden">
+                  <div key={group.group} className="border border-border rounded-xl overflow-hidden">
                     <div
-                      className="flex items-center gap-3 px-4 py-3 bg-stone-50 cursor-pointer hover:bg-stone-100 transition-colors"
+                      className="flex items-center gap-3 px-4 py-3 bg-surface-elevated cursor-pointer hover:bg-surface-elevated transition-colors"
                       onClick={() => toggleExpand(group.group)}
                     >
                       <input
@@ -392,21 +392,21 @@ export default function RoleModal({ isOpen, onClose, onSuccess, initialData }: R
                       <span className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider ${group.color}`}>
                         {group.group}
                       </span>
-                      <span className="font-inter text-xs text-stone-400 ml-auto">
+                      <span className="font-inter text-xs text-muted/70 ml-auto">
                         {countGranted}/{group.modules.length} permissions
                       </span>
-                      {isExpanded ? <ChevronDown size={14} className="text-stone-400" /> : <ChevronRight size={14} className="text-stone-400" />}
+                      {isExpanded ? <ChevronDown size={14} className="text-muted/70" /> : <ChevronRight size={14} className="text-muted/70" />}
                     </div>
 
                     {isExpanded && (
-                      <div className="p-3 bg-white grid grid-cols-1 sm:grid-cols-2 gap-2 border-t border-stone-100">
+                      <div className="p-3 bg-surface grid grid-cols-1 sm:grid-cols-2 gap-2 border-t border-border/50">
                         {group.modules.map(mod => {
                           const isChecked = selectedCodes.has(mod.code);
                           return (
                             <label
                               key={mod.code}
                               className={`flex items-center gap-2.5 p-2 rounded-lg border transition-colors cursor-pointer text-xs font-inter ${
-                                isChecked ? "bg-stone-50 border-stone-900/40 text-stone-900 font-semibold" : "border-stone-100 hover:bg-stone-50/50 text-stone-600"
+                                isChecked ? "bg-surface-elevated border-foreground/40 text-foreground font-semibold" : "border-border/50 hover:bg-surface-elevated/50 text-muted"
                               }`}
                             >
                               <input
@@ -429,20 +429,20 @@ export default function RoleModal({ isOpen, onClose, onSuccess, initialData }: R
         </div>
 
         {/* Footer */}
-        <div className="border-t border-stone-200 px-6 py-4 bg-stone-50 shrink-0 flex items-center justify-between">
-          <p className="font-inter text-xs text-stone-400">{selectedCodes.size} permissions selected</p>
+        <div className="border-t border-border px-6 py-4 bg-surface-elevated shrink-0 flex items-center justify-between">
+          <p className="font-inter text-xs text-muted/70">{selectedCodes.size} permissions selected</p>
           <div className="flex gap-3">
             <button
               onClick={onClose}
               disabled={loading}
-              className="px-4 py-2 bg-white border border-stone-300 rounded-lg font-inter font-medium text-sm text-stone-700 hover:bg-stone-50 transition-colors shadow-sm"
+              className="px-4 py-2 bg-surface border border-border rounded-lg font-inter font-medium text-sm text-foreground/80 hover:bg-surface-elevated transition-colors shadow-sm"
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
               disabled={loading || !name.trim()}
-              className="px-5 py-2 bg-stone-900 text-white rounded-lg font-inter font-medium text-sm hover:bg-stone-800 transition-colors shadow-md shadow-stone-900/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-5 py-2 bg-foreground text-white rounded-lg font-inter font-medium text-sm hover:bg-foreground/90 transition-colors shadow-md shadow-foreground/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {loading && <Loader2 size={14} className="animate-spin" />}
               {initialData ? "Save Permissions" : "Create Role"}

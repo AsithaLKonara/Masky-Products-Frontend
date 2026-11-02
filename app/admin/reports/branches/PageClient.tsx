@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 
 const BranchesChart = dynamic(() => import("./BranchesChart"), { 
   ssr: false, 
-  loading: () => <div className="h-[400px] w-full flex items-center justify-center bg-stone-50 rounded-lg animate-pulse text-stone-400">Loading chart...</div> 
+  loading: () => <div className="h-[400px] w-full flex items-center justify-center bg-surface rounded-lg animate-pulse text-muted">Loading chart...</div> 
 });
 
 export default function BranchReportPage() {
@@ -38,7 +38,7 @@ export default function BranchReportPage() {
     window.URL.revokeObjectURL(url);
   };
 
-  if (isPending) return <div className="p-10 font-poppins text-stone-500 flex flex-col gap-2"><span>Loading report data...</span><span className="text-xs text-stone-400">If this takes more than 10 seconds, check if the backend API is running.</span></div>;
+  if (isPending) return <div className="p-10 font-poppins text-muted flex flex-col gap-2"><span>Loading report data...</span><span className="text-xs text-muted/70">If this takes more than 10 seconds, check if the backend API is running.</span></div>;
   if (error || !data) return <div className="p-10 font-poppins text-red-500">Failed to load report. {(error as any)?.message || "Unknown error"}</div>;
 
   const totalGlobalRevenue = data.reduce((sum, b) => sum + b.revenue, 0);
@@ -54,13 +54,13 @@ export default function BranchReportPage() {
           <select 
             value={dateRange} 
             onChange={(e) => setDateRange(e.target.value)}
-            className="h-10 px-4 border border-stone-200 rounded-lg bg-white text-sm font-inter text-stone-700 outline-none focus:border-primary"
+            className="h-10 px-4 border border-border rounded-lg bg-surface text-sm font-inter text-foreground outline-none focus:border-primary hover:bg-surface-elevated transition-colors"
           >
             <option value="7">Last 7 Days</option>
             <option value="30">Last 30 Days</option>
             <option value="90">Last 90 Days</option>
           </select>
-          <button onClick={handleDownloadCSV} className="h-10 px-4 bg-primary text-white text-sm font-medium rounded-lg flex items-center gap-2 hover:bg-stone-800 transition-colors">
+          <button onClick={handleDownloadCSV} className="h-10 px-4 bg-primary text-primary-foreground text-sm font-medium rounded-lg flex items-center gap-2 hover:bg-primary-hover transition-colors">
             <Download size={16} />
             Export CSV
           </button>
@@ -69,19 +69,19 @@ export default function BranchReportPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {data.map((branch) => (
-          <div key={branch.branchId} className="bg-white border border-stone-200 rounded-xl p-5 relative overflow-hidden">
+          <div key={branch.branchId} className="bg-surface border border-border rounded-xl p-5 relative overflow-hidden shadow-2xs">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-stone-100 flex items-center justify-center text-stone-600">
+              <div className="w-10 h-10 rounded-lg bg-surface-subtle border border-border flex items-center justify-center text-muted">
                 <Building2 size={20} />
               </div>
               <div>
-                <h4 className="font-semibold text-stone-900 font-poppins text-sm">{branch.branchName}</h4>
-                <span className="text-xs text-stone-500 font-inter px-2 py-0.5 bg-stone-100 rounded-full">{branch.type}</span>
+                <h4 className="font-semibold text-foreground font-poppins text-sm">{branch.branchName}</h4>
+                <span className="text-xs text-muted font-inter font-light">{branch.type}</span>
               </div>
             </div>
             <div className="space-y-1">
-              <p className="text-2xl font-semibold text-primary font-poppins">Rs. {branch.revenue.toLocaleString()}</p>
-              <p className="text-xs text-stone-500 font-inter">{branch.orders} Total Orders</p>
+              <p className="text-2xl font-semibold text-foreground font-poppins">Rs. {branch.revenue.toLocaleString()}</p>
+              <p className="text-xs text-muted font-inter">{branch.orders} Total Orders</p>
             </div>
             <div 
               className="absolute bottom-0 left-0 h-1 bg-accent" 
@@ -91,13 +91,13 @@ export default function BranchReportPage() {
         ))}
       </div>
 
-      <div className="bg-white border border-stone-200 rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-primary font-poppins mb-6">Revenue by Branch</h3>
+      <div className="bg-surface border border-border rounded-xl p-6 shadow-2xs">
+        <h3 className="text-lg font-semibold text-foreground font-poppins mb-6">Revenue by Branch</h3>
         {data && data.length > 0 ? (
           <BranchesChart data={data} />
         ) : (
-          <div className="h-[300px] w-full flex items-center justify-center bg-stone-50 rounded-lg border border-dashed border-stone-200">
-            <p className="text-stone-500 font-inter font-medium">0 Data Available</p>
+          <div className="h-[300px] w-full flex items-center justify-center bg-surface-subtle rounded-lg border border-dashed border-border">
+            <p className="text-muted font-inter font-medium">0 Data Available</p>
           </div>
         )}
       </div>

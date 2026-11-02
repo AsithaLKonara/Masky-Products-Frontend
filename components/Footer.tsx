@@ -50,7 +50,7 @@ export default function Footer() {
           <div className="flex flex-col items-start gap-[20px] lg:col-span-3">
             {/* Logo */}
             <div className="relative w-[280px] h-[60px] mb-4">
-               <Image src="/logo-white.png" alt="SERAMAADUWEN.LK" fill sizes="200px" className="object-contain object-left" />
+               <Image src="/logo-white.png" alt="MASKY PRODUCT" fill sizes="200px" className="object-contain object-left" />
             </div>
             
             {/* Contact Items */}
@@ -65,7 +65,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-[10px]">
                 <Mail className="w-[20px] h-[20px] text-background shrink-0" />
-                <span className="font-inter text-sm leading-[21px] text-background/90">{supportEmail || "info@seramaaduwen.lk"}</span>
+                <span className="font-inter text-sm leading-[21px] text-background/90">{supportEmail || "info@masky.space"}</span>
               </div>
             </div>
           </div>
@@ -161,7 +161,7 @@ export default function Footer() {
       {/* True Bottom Bar */}
       <div className="flex flex-col md:flex-row justify-between items-center w-full py-4 md:py-0 min-h-[40px] px-4 md:px-8 lg:px-[120px] bg-background gap-4 md:gap-0">
         <p className="font-inter text-xs text-stone-500 text-center md:text-left">
-          © 2026 SERAMAADUWEN.LK. All Rights Reserved. 
+          © 2026 MASKY PRODUCT. All Rights Reserved. 
         </p>
         <div className="relative w-[309px] h-[24px]">
           <Image src="/footer/payments.webp" alt="Payment Methods" fill sizes="400px" className="object-contain md:object-right" />

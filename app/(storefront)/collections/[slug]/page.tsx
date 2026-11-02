@@ -25,13 +25,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     
   return {
     title: mockTitle,
-    description: `Explore our exclusive ${mockTitle} collection at SERAMAADUWEN.LK. Hand-picked pieces edited for quiet luxury.`,
+    description: `Explore our exclusive ${mockTitle} collection at MASKY PRODUCT. Hand-picked pieces edited for quiet luxury.`,
     alternates: {
       canonical: `/collections/${slug}`,
     },
     openGraph: {
-      title: `${mockTitle} Collection | SERAMAADUWEN.LK`,
-      description: `Explore our exclusive ${mockTitle} collection at SERAMAADUWEN.LK.`,
+      title: `${mockTitle} Collection | MASKY PRODUCT`,
+      description: `Explore our exclusive ${mockTitle} collection at MASKY PRODUCT.`,
       url: `/collections/${slug}`,
       images: [
         {

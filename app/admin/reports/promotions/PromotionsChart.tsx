@@ -11,15 +11,16 @@ export default function PromotionsChart({ data }: PromotionsChartProps) {
     <div className="h-[300px] w-full">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f5f5f4" />
-          <XAxis dataKey="name" stroke="#a8a29e" fontSize={12} tickLine={false} axisLine={false} />
-          <YAxis stroke="#a8a29e" fontSize={12} tickLine={false} axisLine={false} />
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" strokeOpacity={0.7} />
+          <XAxis dataKey="name" stroke="var(--muted)" fontSize={11} tickLine={false} axisLine={false} dy={5} />
+          <YAxis stroke="var(--muted)" fontSize={11} tickLine={false} axisLine={false} />
           <Tooltip 
-            contentStyle={{ borderRadius: '8px', border: '1px solid #e7e5e4', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+            cursor={{ fill: 'var(--surface-elevated)', opacity: 0.4 }}
+            contentStyle={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--foreground)', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.3)' }}
           />
           <Legend iconType="circle" />
-          <Bar dataKey="Issued" fill="#1c1917" radius={[4, 4, 0, 0]} maxBarSize={50} />
-          <Bar dataKey="Used" fill="#78716c" radius={[4, 4, 0, 0]} maxBarSize={50} />
+          <Bar dataKey="Issued" fill="#3B82F6" radius={[4, 4, 0, 0]} maxBarSize={45} />
+          <Bar dataKey="Used" fill="#10B981" radius={[4, 4, 0, 0]} maxBarSize={45} />
         </BarChart>
       </ResponsiveContainer>
     </div>

@@ -25,40 +25,46 @@ export default function AdminStatCards({ metrics, statuses }: AdminStatCardsProp
       {/* Top Metric Cards */}
       <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-${Math.min(metrics.length, 4)} gap-4 mb-6`}>
         {metrics.map((metric, idx) => {
-          let containerClass = "rounded-xl p-5 shadow-sm relative overflow-hidden flex flex-col justify-between ";
+          let containerClass = "bg-surface rounded-xl p-5 border shadow-2xs relative overflow-hidden flex flex-col justify-between transition-all ";
           let titleClass = "text-xs font-semibold uppercase tracking-wider mb-2 ";
-          let valueClass = "text-4xl font-bold ";
+          let valueClass = "text-3xl sm:text-4xl font-bold font-inter text-foreground ";
+          let accentBarColor = "";
           
           if (metric.theme === 'red') {
-            containerClass += "bg-[#FF003A] text-white";
-            titleClass += "opacity-90";
+            containerClass += "border-rose-500/30 hover:border-rose-500/50";
+            titleClass += "text-rose-600 dark:text-rose-400";
+            accentBarColor = "bg-rose-500";
           } else if (metric.theme === 'orange') {
-            containerClass += "bg-[#FFF4E5] text-[#D84B16]";
+            containerClass += "border-amber-500/30 hover:border-amber-500/50";
+            titleClass += "text-amber-600 dark:text-amber-400";
+            accentBarColor = "bg-amber-500";
           } else if (metric.theme === 'white-blue') {
-            containerClass += "bg-white border border-blue-100";
-            titleClass += "text-blue-600";
-            valueClass += "text-blue-900";
+            containerClass += "border-blue-500/30 hover:border-blue-500/50";
+            titleClass += "text-blue-600 dark:text-blue-400";
+            accentBarColor = "bg-blue-500";
           } else {
-            // white-stone default
-            containerClass += "bg-white border border-stone-200";
-            titleClass += "text-stone-500";
-            valueClass += "text-stone-900";
+            // default theme
+            containerClass += "border-border hover:border-border/80";
+            titleClass += "text-muted";
           }
 
           return (
             <div key={idx} className={containerClass}>
+              {accentBarColor && (
+                <div className={`absolute top-0 left-0 right-0 h-1 ${accentBarColor}`} />
+              )}
               <div>
                 <p className={titleClass}>{metric.title}</p>
                 <p className={valueClass}>{metric.value}</p>
               </div>
               {metric.subText && (
-                <div className="mt-4">
+                <div className="mt-4 text-xs text-muted">
                   {metric.subText}
                 </div>
               )}
-              {metric.progress !== undefined && metric.theme === 'red' && (
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
-                  <div className="h-full bg-white/50" style={{ width: `${Math.min(Math.max(metric.progress, 0), 100)}%` }} />
+              {metric.progress !== undefined && (
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-surface-elevated">
+                  <div className={`h-full ${accentBarColor || "bg-accent"}`} style={{ width: `${Math.min(Math.max(metric.progress, 0), 100)}%` }} />
                 </div>
               )}
             </div>
@@ -69,12 +75,12 @@ export default function AdminStatCards({ metrics, statuses }: AdminStatCardsProp
       {/* Status Breakdown Pills */}
       {statuses && statuses.length > 0 && (
         <div className="mb-6">
-          <p className="text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-3">Status Breakdown</p>
+          <p className="text-[10px] font-bold text-muted uppercase tracking-widest mb-3">Status Breakdown</p>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3">
             {statuses.map((stat, idx) => (
-              <div key={idx} className={`flex items-center gap-3 p-3 rounded-xl border border-stone-100 ${stat.colorClass}`}>
-                <div className="text-lg font-bold">{stat.value}</div>
-                <div className="text-xs font-semibold leading-tight">{stat.label}</div>
+              <div key={idx} className="flex items-center gap-3 p-3 rounded-xl border border-border bg-surface hover:bg-surface-elevated transition-colors">
+                <div className="text-lg font-bold font-mono text-foreground">{stat.value}</div>
+                <div className="text-xs font-semibold leading-tight text-muted">{stat.label}</div>
               </div>
             ))}
           </div>

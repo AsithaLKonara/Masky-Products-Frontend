@@ -3,8 +3,8 @@ import ClientContent from "./ClientContent";
 export const dynamic = 'force-static';
 
 export const metadata = {
-  title: "FAQ - SERAMAADUWEN.LK",
-  description: "Frequently Asked Questions about SERAMAADUWEN.LK."
+  title: "FAQ - MASKY PRODUCT",
+  description: "Frequently Asked Questions about MASKY PRODUCT."
 };
 
 export default function FAQPage() {

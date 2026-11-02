@@ -425,24 +425,24 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
   return (
     <div className="fixed inset-0 z-[200] flex">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-stone-950/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-background/60 backdrop-blur-sm" onClick={onClose} />
 
       {/* Full-height Panel */}
-      <div className="relative ml-auto w-full max-w-[920px] h-full bg-white flex flex-col shadow-2xl overflow-hidden">
+      <div className="relative ml-auto w-full max-w-[920px] h-full bg-surface flex flex-col shadow-2xl overflow-hidden">
         
         {/* Header */}
-        <div className="flex items-center justify-between px-8 py-5 border-b border-stone-200 bg-stone-50 shrink-0">
+        <div className="flex items-center justify-between px-8 py-5 border-b border-border bg-surface-elevated shrink-0">
           <div>
-            <h2 className="font-inter font-bold text-xl text-stone-900">{productToEdit ? "Edit Product" : "Add New Product"}</h2>
-            <p className="font-inter text-sm text-stone-500 mt-0.5">{productToEdit ? "Update product details and variations." : "Fill in all sections to publish a complete product listing."}</p>
+            <h2 className="font-inter font-bold text-xl text-foreground">{productToEdit ? "Edit Product" : "Add New Product"}</h2>
+            <p className="font-inter text-sm text-muted mt-0.5">{productToEdit ? "Update product details and variations." : "Fill in all sections to publish a complete product listing."}</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-stone-200 rounded-lg text-stone-600 transition-colors">
+          <button onClick={onClose} className="p-2 hover:bg-border rounded-lg text-muted transition-colors">
             <X size={20} />
           </button>
         </div>
 
         {/* Tab Bar */}
-        <div className="flex gap-0 border-b border-stone-200 bg-white shrink-0 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-0 border-b border-border bg-surface shrink-0 overflow-x-auto scrollbar-hide">
           {SECTION_TABS.map(tab => {
             const Icon = tab.icon;
             return (
@@ -452,8 +452,8 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-5 py-3.5 text-sm font-medium font-inter whitespace-nowrap border-b-2 transition-all ${
                   activeTab === tab.id
-                    ? "border-stone-900 text-stone-900"
-                    : "border-transparent text-stone-400 hover:text-stone-700 hover:border-stone-300"
+                    ? "border-foreground text-foreground"
+                    : "border-transparent text-muted/70 hover:text-foreground/80 hover:border-border"
                 }`}
               >
                 <Icon size={15} />
@@ -483,16 +483,16 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
 
                 <div className="flex flex-col gap-2">
                   <label className="label">Product Slug</label>
-                  <div className={`flex items-center bg-stone-50 border ${errors.slug ? 'border-red-500' : 'border-stone-200'} rounded-lg overflow-hidden`}>
-                    <span className="px-3 text-stone-400 text-sm font-mono border-r border-stone-200 h-full py-2.5">/products/</span>
+                  <div className={`flex items-center bg-surface-elevated border ${errors.slug ? 'border-red-500' : 'border-border'} rounded-lg overflow-hidden`}>
+                    <span className="px-3 text-muted/70 text-sm font-mono border-r border-border h-full py-2.5">/products/</span>
                     <input
                       type="text"
                       {...register("slug", { onChange: () => setSlugEdited(true) })}
-                      className="flex-1 bg-transparent px-3 py-2.5 text-sm font-mono outline-none text-stone-900"
+                      className="flex-1 bg-transparent px-3 py-2.5 text-sm font-mono outline-none text-foreground"
                     />
                   </div>
                   {errors.slug && <span className="text-red-500 text-xs">{errors.slug.message}</span>}
-                  <p className="text-xs text-stone-400 font-inter">Auto-generated from product name. Edit only if needed.</p>
+                  <p className="text-xs text-muted/70 font-inter">Auto-generated from product name. Edit only if needed.</p>
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -555,12 +555,12 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                     <div 
                       key={i} 
                       onClick={() => { setActiveImageSlot(i); setIsMediaModalOpen(true); }}
-                      className={`relative aspect-square border-2 border-dashed border-stone-300 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-stone-50 hover:border-accent transition-all group overflow-hidden ${i === 0 ? "col-span-2 row-span-2" : ""}`}
+                      className={`relative aspect-square border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-surface-elevated hover:border-accent transition-all group overflow-hidden ${i === 0 ? "col-span-2 row-span-2" : ""}`}
                     >
                       {images[i] ? (
                         <>
                           <Image src={images[i]} alt={`Product Image ${i + 1}`} fill className="object-cover" />
-                          <div className="absolute inset-0 bg-stone-900/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                          <div className="absolute inset-0 bg-foreground/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
                             <p className="font-inter text-white text-xs font-medium">Change Image</p>
                           </div>
                           <button 
@@ -568,21 +568,21 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                               e.stopPropagation(); 
                               setImages(prev => { const n = [...prev]; n[i] = ""; return n; });
                             }}
-                            className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm rounded-full p-1 text-stone-700 hover:bg-white transition-colors z-20"
+                            className="absolute top-2 right-2 bg-surface/80 backdrop-blur-sm rounded-full p-1 text-foreground/80 hover:bg-surface transition-colors z-20"
                           >
                             <X size={14} />
                           </button>
                         </>
                       ) : (
                         <>
-                          <ImagePlus size={i === 0 ? 32 : 20} className="text-stone-300 group-hover:text-accent transition-colors" />
-                          <span className="font-inter text-xs text-stone-400 group-hover:text-accent transition-colors">{i === 0 ? "Main Image" : "Image " + (i + 1)}</span>
+                          <ImagePlus size={i === 0 ? 32 : 20} className="text-border group-hover:text-accent transition-colors" />
+                          <span className="font-inter text-xs text-muted/70 group-hover:text-accent transition-colors">{i === 0 ? "Main Image" : "Image " + (i + 1)}</span>
                         </>
                       )}
                     </div>
                   ))}
                 </div>
-                <p className="text-xs text-stone-400 font-inter">Upload high-quality images. First image will be the primary product photo. Recommended: 800×1000px, JPG/PNG/WEBP.</p>
+                <p className="text-xs text-muted/70 font-inter">Upload high-quality images. First image will be the primary product photo. Recommended: 800×1000px, JPG/PNG/WEBP.</p>
 
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-3">
                   <AlertCircle size={16} className="text-amber-600 shrink-0 mt-0.5" />
@@ -608,22 +608,22 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                           onClick={() => toggleSize(size)}
                           className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-all ${
                             selectedSizes.includes(size)
-                              ? "bg-stone-900 text-white border-stone-900"
-                              : "bg-white text-stone-700 border-stone-200 hover:border-stone-400"
+                              ? "bg-foreground text-white border-foreground"
+                              : "bg-surface text-foreground/80 border-border hover:border-primary/60"
                           }`}
                         >
                           {size}
                         </button>
                       ))}
                       {!isAddingSize ? (
-                        <button type="button" onClick={() => setIsAddingSize(true)} className="px-3 py-1.5 rounded-lg text-sm font-medium border border-dashed border-stone-300 text-stone-500 hover:text-stone-700 hover:border-stone-400 flex items-center gap-1 transition-all">
+                        <button type="button" onClick={() => setIsAddingSize(true)} className="px-3 py-1.5 rounded-lg text-sm font-medium border border-dashed border-border text-muted hover:text-foreground/80 hover:border-primary/60 flex items-center gap-1 transition-all">
                           <Plus size={14} /> Add Size
                         </button>
                       ) : (
                         <div className="flex items-center gap-2">
-                          <input type="text" value={newSize} onChange={e => setNewSize(e.target.value)} placeholder="e.g. 40" className="px-3 py-1.5 bg-white rounded-lg text-sm border border-stone-200 outline-none w-20 focus:border-stone-400" autoFocus onKeyDown={e => e.key === 'Enter' && handleAddCustomSize()} />
-                          <button type="button" onClick={handleAddCustomSize} className="px-3 py-1.5 bg-stone-900 text-white rounded-lg text-xs font-medium hover:bg-stone-800">Add</button>
-                          <button type="button" onClick={() => setIsAddingSize(false)} className="p-1.5 text-stone-400 hover:text-stone-600 bg-stone-100 rounded-lg"><X size={14} /></button>
+                          <input type="text" value={newSize} onChange={e => setNewSize(e.target.value)} placeholder="e.g. 40" className="px-3 py-1.5 bg-surface rounded-lg text-sm border border-border outline-none w-20 focus:border-primary" autoFocus onKeyDown={e => e.key === 'Enter' && handleAddCustomSize()} />
+                          <button type="button" onClick={handleAddCustomSize} className="px-3 py-1.5 bg-foreground text-white rounded-lg text-xs font-medium hover:bg-foreground/90">Add</button>
+                          <button type="button" onClick={() => setIsAddingSize(false)} className="p-1.5 text-muted/70 hover:text-muted bg-surface-elevated rounded-lg"><X size={14} /></button>
                         </div>
                       )}
                     </div>
@@ -641,24 +641,24 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                             onClick={() => toggleColor(color)}
                             className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-all flex items-center gap-2 ${
                               selectedColors.includes(color)
-                                ? "bg-stone-900 text-white border-stone-900"
-                                : "bg-white text-stone-700 border-stone-200 hover:border-stone-400"
+                                ? "bg-foreground text-white border-foreground"
+                                : "bg-surface text-foreground/80 border-border hover:border-primary/60"
                             }`}
                           >
-                            {isCustom && <span className="w-3 h-3 rounded-full border border-stone-200" style={{ backgroundColor: isCustom.hex }} />}
+                            {isCustom && <span className="w-3 h-3 rounded-full border border-border" style={{ backgroundColor: isCustom.hex }} />}
                             {color}
                           </button>
                         );
                       })}
                       
                       {!isAddingColor ? (
-                        <button type="button" onClick={() => setIsAddingColor(true)} className="px-3 py-1.5 rounded-lg text-sm font-medium border border-dashed border-stone-300 text-stone-500 hover:text-stone-700 hover:border-stone-400 flex items-center gap-1 transition-all">
+                        <button type="button" onClick={() => setIsAddingColor(true)} className="px-3 py-1.5 rounded-lg text-sm font-medium border border-dashed border-border text-muted hover:text-foreground/80 hover:border-primary/60 flex items-center gap-1 transition-all">
                           <Plus size={14} /> Add Color
                         </button>
                       ) : (
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 bg-stone-50 border border-stone-200 rounded-lg p-2 w-full sm:w-auto">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 bg-surface-elevated border border-border rounded-lg p-2 w-full sm:w-auto">
                           <div className="flex items-center gap-2">
-                             <div className="relative w-7 h-7 rounded-md border border-stone-200 shrink-0 overflow-hidden">
+                             <div className="relative w-7 h-7 rounded-md border border-border shrink-0 overflow-hidden">
                                <input 
                                  type="color" 
                                  value={newColorHex.match(/^#([0-9a-fA-F]{6})$/i) ? newColorHex : '#000000'}
@@ -666,12 +666,12 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                                  className="absolute -top-2 -left-2 w-12 h-12 cursor-pointer"
                                />
                              </div>
-                             <input type="text" value={newColorHex} onChange={e => setNewColorHex(e.target.value)} placeholder="#HEX" className="px-2 py-1.5 bg-white rounded-md text-sm border border-stone-200 outline-none w-24 focus:border-stone-400 font-mono uppercase" />
+                             <input type="text" value={newColorHex} onChange={e => setNewColorHex(e.target.value)} placeholder="#HEX" className="px-2 py-1.5 bg-surface rounded-md text-sm border border-border outline-none w-24 focus:border-primary font-mono uppercase" />
                           </div>
                           <div className="flex items-center gap-2">
-                            <input type="text" value={newColorName} onChange={e => setNewColorName(e.target.value)} placeholder="Color Name" className="px-2 py-1.5 bg-white rounded-md text-sm border border-stone-200 outline-none w-32 focus:border-stone-400" onKeyDown={e => e.key === 'Enter' && handleAddCustomColor()} />
-                            <button type="button" onClick={handleAddCustomColor} className="px-3 py-1.5 bg-stone-900 text-white rounded-md text-xs font-medium hover:bg-stone-800 transition-colors">Add</button>
-                            <button type="button" onClick={() => setIsAddingColor(false)} className="p-1.5 text-stone-400 hover:text-stone-600 bg-stone-100 rounded-md transition-colors"><X size={14} /></button>
+                            <input type="text" value={newColorName} onChange={e => setNewColorName(e.target.value)} placeholder="Color Name" className="px-2 py-1.5 bg-surface rounded-md text-sm border border-border outline-none w-32 focus:border-primary" onKeyDown={e => e.key === 'Enter' && handleAddCustomColor()} />
+                            <button type="button" onClick={handleAddCustomColor} className="px-3 py-1.5 bg-foreground text-white rounded-md text-xs font-medium hover:bg-foreground/90 transition-colors">Add</button>
+                            <button type="button" onClick={() => setIsAddingColor(false)} className="p-1.5 text-muted/70 hover:text-muted bg-surface-elevated rounded-md transition-colors"><X size={14} /></button>
                           </div>
                         </div>
                       )}
@@ -684,7 +684,7 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                     type="button"
                     onClick={generateVariants}
                     disabled={selectedSizes.length === 0 || selectedColors.length === 0}
-                    className="w-fit bg-stone-900 text-white px-6 py-3 rounded-lg font-inter font-medium text-sm hover:bg-stone-800 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="w-fit bg-foreground text-white px-6 py-3 rounded-lg font-inter font-medium text-sm hover:bg-foreground/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
                   >
                     <Plus size={16} />
                     Generate {selectedSizes.length * selectedColors.length} Variant{selectedSizes.length * selectedColors.length !== 1 ? "s" : ""}
@@ -693,7 +693,7 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                     <button
                       type="button"
                       onClick={() => setShowBulkBarcodePrint(true)}
-                      className="w-fit bg-stone-100 text-stone-700 border border-stone-200 px-6 py-3 rounded-lg font-inter font-medium text-sm hover:bg-stone-200 transition-colors flex items-center gap-2"
+                      className="w-fit bg-surface-elevated text-foreground/80 border border-border px-6 py-3 rounded-lg font-inter font-medium text-sm hover:bg-border transition-colors flex items-center gap-2"
                     >
                       <Printer size={16} />
                       Print All Barcodes ({variants.length})
@@ -702,34 +702,34 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                 </div>
 
                 {variants.length > 0 && (
-                  <div className="border border-stone-200 rounded-xl overflow-hidden">
+                  <div className="border border-border rounded-xl overflow-hidden">
                     <table className="w-full text-left text-sm">
-                      <thead className="bg-stone-50 border-b border-stone-200">
+                      <thead className="bg-surface-elevated border-b border-border">
                         <tr>
-                          <th className="px-4 py-3 font-semibold text-xs text-stone-500 uppercase tracking-wide">Variant</th>
-                          <th className="px-4 py-3 font-semibold text-xs text-stone-500 uppercase tracking-wide">SKU</th>
-                          <th className="px-4 py-3 font-semibold text-xs text-stone-500 uppercase tracking-wide">Barcode</th>
-                          <th className="px-4 py-3 font-semibold text-xs text-stone-500 uppercase tracking-wide">Price (Rs.)</th>
+                          <th className="px-4 py-3 font-semibold text-xs text-muted uppercase tracking-wide">Variant</th>
+                          <th className="px-4 py-3 font-semibold text-xs text-muted uppercase tracking-wide">SKU</th>
+                          <th className="px-4 py-3 font-semibold text-xs text-muted uppercase tracking-wide">Barcode</th>
+                          <th className="px-4 py-3 font-semibold text-xs text-muted uppercase tracking-wide">Price (Rs.)</th>
                           {branchCodes.map((b: string) => (
-                            <th key={b} className="px-4 py-3 font-semibold text-xs text-stone-500 uppercase tracking-wide">{b}</th>
+                            <th key={b} className="px-4 py-3 font-semibold text-xs text-muted uppercase tracking-wide">{b}</th>
                           ))}
                           <th className="px-4 py-3"></th>
                         </tr>
                       </thead>
                       <tbody>
                         {variants.map(v => (
-                          <tr key={v.id} className="border-b border-stone-100 last:border-0 hover:bg-stone-50 transition-colors">
-                            <td className="px-4 py-3 font-medium text-stone-900">{v.size} / {v.color}</td>
+                          <tr key={v.id} className="border-b border-border/50 last:border-0 hover:bg-surface-elevated transition-colors">
+                            <td className="px-4 py-3 font-medium text-foreground">{v.size} / {v.color}</td>
                             <td className="px-4 py-3">
                               <input
-                                className="font-mono text-xs border border-stone-200 rounded px-2 py-1 w-36 outline-none focus:border-stone-400"
+                                className="font-mono text-xs border border-border rounded px-2 py-1 w-36 outline-none focus:border-primary"
                                 value={v.sku}
                                 onChange={e => updateVariantField(v.id, "sku", e.target.value)}
                               />
                             </td>
                             <td className="px-4 py-3">
                               <div className="flex items-center gap-1.5">
-                                <span className="font-mono text-xs bg-stone-50 border border-stone-200 rounded px-2 py-1 text-stone-600 select-all cursor-text min-w-[7rem]">
+                                <span className="font-mono text-xs bg-surface-elevated border border-border rounded px-2 py-1 text-muted select-all cursor-text min-w-[7rem]">
                                   {v.barcode || '—'}
                                 </span>
                                 {v.barcode && (
@@ -737,7 +737,7 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                                     type="button"
                                     title="Print barcode"
                                     onClick={() => setPrintingVariant({ barcode: v.barcode, label: `${productName} — ${v.size}/${v.color}` })}
-                                    className="p-1 text-stone-400 hover:text-stone-800 hover:bg-stone-100 rounded transition-colors"
+                                    className="p-1 text-muted/70 hover:text-foreground/90 hover:bg-surface-elevated rounded transition-colors"
                                   >
                                     <Printer size={13} />
                                   </button>
@@ -746,7 +746,7 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                             </td>
                             <td className="px-4 py-3">
                               <input
-                                className="text-sm border border-stone-200 rounded px-2 py-1 w-24 outline-none focus:border-stone-400"
+                                className="text-sm border border-border rounded px-2 py-1 w-24 outline-none focus:border-primary"
                                 value={v.price}
                                 onChange={e => updateVariantField(v.id, "price", e.target.value)}
                               />
@@ -755,7 +755,7 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                               <td key={b} className="px-4 py-3">
                                 <input
                                   type="number"
-                                  className="text-sm border border-stone-200 rounded px-2 py-1 w-16 outline-none focus:border-stone-400 text-center"
+                                  className="text-sm border border-border rounded px-2 py-1 w-16 outline-none focus:border-primary text-center"
                                   value={v.stock[b]}
                                   min={0}
                                   onChange={e => updateVariantStock(v.id, b, parseInt(e.target.value) || 0)}
@@ -775,10 +775,10 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                 )}
 
                 {variants.length === 0 && (
-                  <div className="border-2 border-dashed border-stone-200 rounded-xl p-12 flex flex-col items-center gap-3 text-center">
-                    <Layers size={32} className="text-stone-300" />
-                    <p className="font-inter text-stone-500 font-medium">No variants generated yet</p>
-                    <p className="font-inter text-xs text-stone-400">Select sizes and colors above, then click Generate Variants</p>
+                  <div className="border-2 border-dashed border-border rounded-xl p-12 flex flex-col items-center gap-3 text-center">
+                    <Layers size={32} className="text-border" />
+                    <p className="font-inter text-muted font-medium">No variants generated yet</p>
+                    <p className="font-inter text-xs text-muted/70">Select sizes and colors above, then click Generate Variants</p>
                   </div>
                 )}
               </div>
@@ -787,33 +787,33 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
             {/* ────────── PRICING ────────── */}
             {activeTab === "pricing" && (
               <div className="flex flex-col gap-6 max-w-[500px]">
-                <div className="bg-stone-50 border border-stone-200 rounded-xl p-5 flex flex-col gap-4">
-                  <h3 className="font-inter font-bold text-stone-900">Base Pricing</h3>
-                  <p className="text-xs text-stone-400 font-inter">These prices apply to all variants by default. You can override per-variant pricing in the Variants tab.</p>
+                <div className="bg-surface-elevated border border-border rounded-xl p-5 flex flex-col gap-4">
+                  <h3 className="font-inter font-bold text-foreground">Base Pricing</h3>
+                  <p className="text-xs text-muted/70 font-inter">These prices apply to all variants by default. You can override per-variant pricing in the Variants tab.</p>
 
                   <div className="flex flex-col gap-2">
                     <label className="label">Selling Price (Rs.)</label>
-                    <div className={`flex items-center border ${errors.basePrice ? 'border-red-500' : 'border-stone-200'} rounded-lg overflow-hidden bg-white`}>
-                      <span className="px-3 py-2.5 text-stone-500 text-sm border-r border-stone-200">Rs.</span>
+                    <div className={`flex items-center border ${errors.basePrice ? 'border-red-500' : 'border-border'} rounded-lg overflow-hidden bg-surface`}>
+                      <span className="px-3 py-2.5 text-muted text-sm border-r border-border">Rs.</span>
                       <input type="number" {...register("basePrice")} placeholder="0.00" className="flex-1 px-3 py-2.5 text-sm outline-none" />
                     </div>
                     {errors.basePrice && <span className="text-red-500 text-xs">{errors.basePrice.message}</span>}
                   </div>
 
                   <div className="flex flex-col gap-2">
-                    <label className="label">Compare-At Price (Rs.) <span className="text-stone-400 font-normal">(Original / MRP)</span></label>
-                    <div className={`flex items-center border ${errors.compareAtPrice ? 'border-red-500' : 'border-stone-200'} rounded-lg overflow-hidden bg-white`}>
-                      <span className="px-3 py-2.5 text-stone-500 text-sm border-r border-stone-200">Rs.</span>
+                    <label className="label">Compare-At Price (Rs.) <span className="text-muted/70 font-normal">(Original / MRP)</span></label>
+                    <div className={`flex items-center border ${errors.compareAtPrice ? 'border-red-500' : 'border-border'} rounded-lg overflow-hidden bg-surface`}>
+                      <span className="px-3 py-2.5 text-muted text-sm border-r border-border">Rs.</span>
                       <input type="number" {...register("compareAtPrice")} placeholder="0.00" className="flex-1 px-3 py-2.5 text-sm outline-none" />
                     </div>
                     {errors.compareAtPrice && <span className="text-red-500 text-xs">{errors.compareAtPrice.message}</span>}
-                    <p className="text-xs text-stone-400 font-inter">Shown with strikethrough to indicate discount.</p>
+                    <p className="text-xs text-muted/70 font-inter">Shown with strikethrough to indicate discount.</p>
                   </div>
 
                   <div className="flex flex-col gap-2">
-                    <label className="label">Cost Per Item (Rs.) <span className="text-stone-400 font-normal">(Not shown to customers)</span></label>
-                    <div className={`flex items-center border ${errors.costPrice ? 'border-red-500' : 'border-stone-200'} rounded-lg overflow-hidden bg-white`}>
-                      <span className="px-3 py-2.5 text-stone-500 text-sm border-r border-stone-200">Rs.</span>
+                    <label className="label">Cost Per Item (Rs.) <span className="text-muted/70 font-normal">(Not shown to customers)</span></label>
+                    <div className={`flex items-center border ${errors.costPrice ? 'border-red-500' : 'border-border'} rounded-lg overflow-hidden bg-surface`}>
+                      <span className="px-3 py-2.5 text-muted text-sm border-r border-border">Rs.</span>
                       <input type="number" {...register("costPrice")} placeholder="0.00" className="flex-1 px-3 py-2.5 text-sm outline-none" />
                     </div>
                     {errors.costPrice && <span className="text-red-500 text-xs">{errors.costPrice.message}</span>}
@@ -839,8 +839,8 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                   <p className="text-sm font-inter text-amber-700">Per-variant stock is managed in the <strong>Variants tab</strong>. You can use this section to set an initial stock amount and apply it globally to all generated variants.</p>
                 </div>
 
-                <div className="flex flex-col gap-4 bg-white border border-stone-200 rounded-xl p-5">
-                  <h3 className="font-inter font-bold text-stone-900">Initial Stock Configuration</h3>
+                <div className="flex flex-col gap-4 bg-surface border border-border rounded-xl p-5">
+                  <h3 className="font-inter font-bold text-foreground">Initial Stock Configuration</h3>
                   <div className="flex items-end gap-4">
                     <div className="flex flex-col gap-2 flex-1">
                       <label className="label">Initial Global Stock</label>
@@ -851,27 +851,27 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                         min={0}
                         className="input" 
                       />
-                      <p className="text-xs text-stone-400 font-inter">This amount will be applied to all new variants when generated.</p>
+                      <p className="text-xs text-muted/70 font-inter">This amount will be applied to all new variants when generated.</p>
                     </div>
                     <button 
                       type="button" 
                       onClick={applyStockToAll}
-                      className="h-[42px] px-6 bg-stone-900 text-white rounded-lg text-sm font-medium hover:bg-stone-800 transition-colors whitespace-nowrap mb-[22px]"
+                      className="h-[42px] px-6 bg-foreground text-white rounded-lg text-sm font-medium hover:bg-foreground/90 transition-colors whitespace-nowrap mb-[22px]"
                     >
                       Apply to all existing variants
                     </button>
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-4 bg-white border border-stone-200 rounded-xl p-5">
-                  <h3 className="font-inter font-bold text-stone-900">Stock Tracking</h3>
+                <div className="flex flex-col gap-4 bg-surface border border-border rounded-xl p-5">
+                  <h3 className="font-inter font-bold text-foreground">Stock Tracking</h3>
                   <label className="flex items-center gap-3 cursor-pointer">
                     <input type="checkbox" defaultChecked className="w-4 h-4 accent-stone-900" />
-                    <span className="font-inter text-sm text-stone-700">Track inventory for this product</span>
+                    <span className="font-inter text-sm text-foreground/80">Track inventory for this product</span>
                   </label>
                   <label className="flex items-center gap-3 cursor-pointer">
                     <input type="checkbox" className="w-4 h-4 accent-stone-900" />
-                    <span className="font-inter text-sm text-stone-700">Allow purchases when out of stock (backorder)</span>
+                    <span className="font-inter text-sm text-foreground/80">Allow purchases when out of stock (backorder)</span>
                   </label>
                 </div>
 
@@ -879,22 +879,22 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                   <div className="flex flex-col gap-2">
                     <label className="label">Low Stock Threshold</label>
                     <input type="number" defaultValue={5} className="input" />
-                    <p className="text-xs text-stone-400 font-inter">Get alerted when stock falls below this level.</p>
+                    <p className="text-xs text-muted/70 font-inter">Get alerted when stock falls below this level.</p>
                   </div>
                   <div className="flex flex-col gap-2">
                     <label className="label">Reorder Quantity</label>
                     <input type="number" defaultValue={50} className="input" />
-                    <p className="text-xs text-stone-400 font-inter">Suggested qty for stock transfer requests.</p>
+                    <p className="text-xs text-muted/70 font-inter">Suggested qty for stock transfer requests.</p>
                   </div>
                 </div>
 
-                <div className="bg-white border border-stone-200 rounded-xl p-5">
-                  <h3 className="font-inter font-bold text-stone-900 mb-4">Branch Availability</h3>
+                <div className="bg-surface border border-border rounded-xl p-5">
+                  <h3 className="font-inter font-bold text-foreground mb-4">Branch Availability</h3>
                   <div className="flex flex-col gap-3">
                     {branchCodes.map((branch: string) => (
                       <label key={branch} className="flex items-center gap-3 cursor-pointer">
                         <input type="checkbox" defaultChecked className="w-4 h-4 accent-stone-900" />
-                        <span className="font-inter text-sm text-stone-700 font-medium">{branch}</span>
+                        <span className="font-inter text-sm text-foreground/80 font-medium">{branch}</span>
                       </label>
                     ))}
                   </div>
@@ -913,8 +913,8 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                     className="w-4 h-4 accent-stone-900"
                   />
                   <div>
-                    <span className="font-inter text-sm font-semibold text-stone-900">Enable Size Guide for this product</span>
-                    <p className="font-inter text-xs text-stone-400">Shows a size guide button on the product page.</p>
+                    <span className="font-inter text-sm font-semibold text-foreground">Enable Size Guide for this product</span>
+                    <p className="font-inter text-xs text-muted/70">Shows a size guide button on the product page.</p>
                   </div>
                 </label>
 
@@ -925,12 +925,12 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                       <div className="flex items-center gap-4">
                         <div 
                           onClick={() => { setActiveImageSlot(99); setIsMediaModalOpen(true); }}
-                          className="relative w-32 h-32 border-2 border-dashed border-stone-300 rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-stone-50 hover:border-accent transition-all group overflow-hidden shrink-0"
+                          className="relative w-32 h-32 border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-surface-elevated hover:border-accent transition-all group overflow-hidden shrink-0"
                         >
                           {sizeGuideImageUrl ? (
                             <>
                               <Image src={sizeGuideImageUrl} alt="Size Guide" fill className="object-cover" />
-                              <div className="absolute inset-0 bg-stone-900/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                              <div className="absolute inset-0 bg-foreground/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
                                 <p className="font-inter text-white text-xs font-medium">Change</p>
                               </div>
                               <button 
@@ -938,19 +938,19 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                                   e.stopPropagation(); 
                                   setSizeGuideImageUrl("");
                                 }}
-                                className="absolute top-2 right-2 bg-white/80 backdrop-blur-sm rounded-full p-1 text-stone-700 hover:bg-white transition-colors z-20"
+                                className="absolute top-2 right-2 bg-surface/80 backdrop-blur-sm rounded-full p-1 text-foreground/80 hover:bg-surface transition-colors z-20"
                               >
                                 <X size={14} />
                               </button>
                             </>
                           ) : (
                             <>
-                              <ImagePlus size={24} className="text-stone-300 group-hover:text-accent transition-colors" />
-                              <span className="font-inter text-xs text-stone-400 group-hover:text-accent text-center px-2">Upload visual guide</span>
+                              <ImagePlus size={24} className="text-border group-hover:text-accent transition-colors" />
+                              <span className="font-inter text-xs text-muted/70 group-hover:text-accent text-center px-2">Upload visual guide</span>
                             </>
                           )}
                         </div>
-                        <p className="text-xs text-stone-400 max-w-[250px] font-inter">Upload a visual guide showing how to measure the garment.</p>
+                        <p className="text-xs text-muted/70 max-w-[250px] font-inter">Upload a visual guide showing how to measure the garment.</p>
                       </div>
                     </div>
 
@@ -962,16 +962,16 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                         rows={8}
                         className="input font-mono text-sm resize-none"
                       />
-                      <p className="text-xs text-stone-400 font-inter">Each line becomes a row in the size guide. Format: Size — Measurement</p>
+                      <p className="text-xs text-muted/70 font-inter">Each line becomes a row in the size guide. Format: Size — Measurement</p>
                     </div>
 
-                    <div className="bg-white border border-stone-200 rounded-xl p-5">
-                      <h3 className="font-inter font-bold text-stone-900 mb-3 text-sm">Preview</h3>
+                    <div className="bg-surface border border-border rounded-xl p-5">
+                      <h3 className="font-inter font-bold text-foreground mb-3 text-sm">Preview</h3>
                       <div className="flex flex-col gap-2">
                         {sizeGuideContent.split("\n").filter(Boolean).map((line, i) => (
-                          <div key={i} className="flex justify-between py-2 border-b border-stone-100 last:border-0">
-                            <span className="font-inter text-sm font-bold text-stone-900">{line.split("—")[0]?.trim()}</span>
-                            <span className="font-inter text-sm text-stone-600">{line.split("—")[1]?.trim()}</span>
+                          <div key={i} className="flex justify-between py-2 border-b border-border/50 last:border-0">
+                            <span className="font-inter text-sm font-bold text-foreground">{line.split("—")[0]?.trim()}</span>
+                            <span className="font-inter text-sm text-muted">{line.split("—")[1]?.trim()}</span>
                           </div>
                         ))}
                       </div>
@@ -985,13 +985,13 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
             {activeTab === "payment" && (
               <div className="flex flex-col gap-6 max-w-[500px]">
                 <div className="flex flex-col gap-2">
-                  <h3 className="font-inter font-bold text-stone-900">Allowed Payment Methods</h3>
-                  <p className="font-inter text-sm text-stone-500">Control which payment gateways are available at checkout for this product.</p>
+                  <h3 className="font-inter font-bold text-foreground">Allowed Payment Methods</h3>
+                  <p className="font-inter text-sm text-muted">Control which payment gateways are available at checkout for this product.</p>
                 </div>
 
                 <div className="flex flex-col gap-3">
                   {PAYMENT_GATEWAYS.map(gw => (
-                    <label key={gw} className="flex items-center justify-between p-4 bg-white border border-stone-200 rounded-xl cursor-pointer hover:bg-stone-50 transition-colors group">
+                    <label key={gw} className="flex items-center justify-between p-4 bg-surface border border-border rounded-xl cursor-pointer hover:bg-surface-elevated transition-colors group">
                       <div className="flex items-center gap-3">
                         <input
                           type="checkbox"
@@ -999,10 +999,10 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                           onChange={() => togglePayment(gw)}
                           className="w-4 h-4 accent-stone-900"
                         />
-                        <span className="font-inter text-sm font-semibold text-stone-900">{gw}</span>
+                        <span className="font-inter text-sm font-semibold text-foreground">{gw}</span>
                       </div>
                       <span className={`px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${
-                        gw === "COD" ? "bg-stone-100 text-stone-600" :
+                        gw === "COD" ? "bg-surface-elevated text-muted" :
                         gw === "Koko" || gw === "Mintpay" ? "bg-violet-100 text-violet-700" :
                         "bg-blue-100 text-blue-700"
                       }`}>
@@ -1023,8 +1023,8 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
             {activeTab === "seo" && (
               <div className="flex flex-col gap-6 max-w-[700px]">
                 <div className="flex flex-col gap-2">
-                  <h3 className="font-inter font-bold text-stone-900">SEO & Search Visibility</h3>
-                  <p className="font-inter text-sm text-stone-500">Optimise how this product appears in search engines.</p>
+                  <h3 className="font-inter font-bold text-foreground">SEO & Search Visibility</h3>
+                  <p className="font-inter text-sm text-muted">Optimise how this product appears in search engines.</p>
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -1037,7 +1037,7 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                     maxLength={70}
                   />
                   {errors.metaTitle && <span className="text-red-500 text-xs">{errors.metaTitle.message}</span>}
-                  <p className="text-xs text-stone-400 font-inter">{(metaTitle || productName || "").length}/70 characters</p>
+                  <p className="text-xs text-muted/70 font-inter">{(metaTitle || productName || "").length}/70 characters</p>
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -1050,15 +1050,15 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                     maxLength={160}
                   />
                   {errors.metaDesc && <span className="text-red-500 text-xs">{errors.metaDesc.message}</span>}
-                  <p className="text-xs text-stone-400 font-inter">{(metaDesc || "").length}/160 characters</p>
+                  <p className="text-xs text-muted/70 font-inter">{(metaDesc || "").length}/160 characters</p>
                 </div>
 
-                <div className="bg-white border border-stone-200 rounded-xl p-5 flex flex-col gap-1.5">
-                  <p className="text-[10px] text-stone-400 font-inter uppercase tracking-wider">Google Preview</p>
+                <div className="bg-surface border border-border rounded-xl p-5 flex flex-col gap-1.5">
+                  <p className="text-[10px] text-muted/70 font-inter uppercase tracking-wider">Google Preview</p>
                   <a href="#" className="font-medium text-blue-700 text-base hover:underline truncate">
-                    {metaTitle || productName || "Product Name"} — SERAMAADUWEN.LK
+                    {metaTitle || productName || "Product Name"} — MASKY PRODUCT
                   </a>
-                  <p className="text-sm text-stone-600 font-inter line-clamp-2">
+                  <p className="text-sm text-muted font-inter line-clamp-2">
                     {metaDesc || "Product description will appear here in search results. Write a compelling summary to improve click-through rates."}
                   </p>
                 </div>
@@ -1076,18 +1076,18 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
           </div>
 
           {/* Footer */}
-          <div className="border-t border-stone-200 px-8 py-5 bg-stone-50 shrink-0 flex items-center justify-end gap-3">
+          <div className="border-t border-border px-8 py-5 bg-surface-elevated shrink-0 flex items-center justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 bg-white border border-stone-300 rounded-lg font-inter font-medium text-sm text-stone-700 hover:bg-stone-50 transition-colors shadow-sm"
+              className="px-5 py-2.5 bg-surface border border-border rounded-lg font-inter font-medium text-sm text-foreground/80 hover:bg-surface-elevated transition-colors shadow-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={createProductMutation.isPending || updateProductMutation.isPending}
-              className="px-8 py-2.5 bg-stone-900 text-white rounded-lg font-inter font-medium text-sm hover:bg-stone-800 transition-colors shadow-md shadow-stone-900/20 disabled:opacity-50 flex items-center gap-2"
+              className="px-8 py-2.5 bg-foreground text-white rounded-lg font-inter font-medium text-sm hover:bg-foreground/90 transition-colors shadow-md shadow-foreground/10 disabled:opacity-50 flex items-center gap-2"
             >
               {(createProductMutation.isPending || updateProductMutation.isPending) ? "Saving..." : "Save Product"}
             </button>
@@ -1168,23 +1168,23 @@ function VariantBarcodePrintModal({ barcode, label, onClose }: { barcode: string
   const displayCode = barcode.length > 12 ? barcode.substring(0, 12) : barcode;
   return (
     <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
-        <div className="flex items-center justify-between p-4 border-b border-stone-200 bg-stone-50">
-          <h3 className="font-inter font-bold text-base text-stone-900">Print Barcode</h3>
-          <button onClick={onClose} className="p-1.5 text-stone-400 hover:text-stone-900 hover:bg-stone-200 rounded-lg transition-colors"><X size={18} /></button>
+      <div className="bg-surface rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+        <div className="flex items-center justify-between p-4 border-b border-border bg-surface-elevated">
+          <h3 className="font-inter font-bold text-base text-foreground">Print Barcode</h3>
+          <button onClick={onClose} className="p-1.5 text-muted/70 hover:text-foreground hover:bg-border rounded-lg transition-colors"><X size={18} /></button>
         </div>
-        <div className="p-6 flex flex-col items-center gap-4 bg-stone-100">
-          <div className="bg-white p-5 rounded-xl shadow-sm border border-stone-200 flex flex-col items-center w-full">
+        <div className="p-6 flex flex-col items-center gap-4 bg-surface-elevated">
+          <div className="bg-surface p-5 rounded-xl shadow-sm border border-border flex flex-col items-center w-full">
             <div ref={ref} className="react-to-print-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'white', padding: '16px', width: '100%', fontFamily: 'sans-serif' }}>
               <p style={{ fontWeight: 700, fontSize: '14px', textAlign: 'center', margin: '0 0 4px 0', color: '#1c1917' }}>{label}</p>
               <BarcodeLib value={displayCode} format="CODE128" width={1.5} height={55} displayValue fontSize={13} margin={4} />
             </div>
           </div>
-          <p className="text-xs text-stone-500 font-inter text-center">Label: {label}</p>
+          <p className="text-xs text-muted font-inter text-center">Label: {label}</p>
         </div>
-        <div className="p-4 border-t border-stone-200 bg-stone-50 flex justify-end gap-3">
-          <button onClick={onClose} className="px-4 py-2 bg-white border border-stone-200 text-stone-700 font-inter font-medium text-sm rounded-lg hover:bg-stone-50 transition-colors">Cancel</button>
-          <button onClick={() => handlePrint()} className="px-5 py-2 bg-stone-900 text-white font-inter font-medium text-sm rounded-lg hover:bg-stone-800 transition-colors flex items-center gap-2">
+        <div className="p-4 border-t border-border bg-surface-elevated flex justify-end gap-3">
+          <button onClick={onClose} className="px-4 py-2 bg-surface border border-border text-foreground/80 font-inter font-medium text-sm rounded-lg hover:bg-surface-elevated transition-colors">Cancel</button>
+          <button onClick={() => handlePrint()} className="px-5 py-2 bg-foreground text-white font-inter font-medium text-sm rounded-lg hover:bg-foreground/90 transition-colors flex items-center gap-2">
             <Printer size={15} /> Print Label
           </button>
         </div>
@@ -1203,30 +1203,30 @@ function BulkBarcodePrintModal({ variants, onClose }: { variants: { barcode: str
   });
   return (
     <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-200 max-h-[90vh]">
-        <div className="flex items-center justify-between p-4 border-b border-stone-200 bg-stone-50 shrink-0">
+      <div className="bg-surface rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-200 max-h-[90vh]">
+        <div className="flex items-center justify-between p-4 border-b border-border bg-surface-elevated shrink-0">
           <div>
-            <h3 className="font-inter font-bold text-base text-stone-900">Bulk Barcode Print</h3>
-            <p className="text-xs text-stone-500 font-inter mt-0.5">{variants.length} barcode{variants.length !== 1 ? "s" : ""} will be printed</p>
+            <h3 className="font-inter font-bold text-base text-foreground">Bulk Barcode Print</h3>
+            <p className="text-xs text-muted font-inter mt-0.5">{variants.length} barcode{variants.length !== 1 ? "s" : ""} will be printed</p>
           </div>
-          <button onClick={onClose} className="p-1.5 text-stone-400 hover:text-stone-900 hover:bg-stone-200 rounded-lg transition-colors"><X size={18} /></button>
+          <button onClick={onClose} className="p-1.5 text-muted/70 hover:text-foreground hover:bg-border rounded-lg transition-colors"><X size={18} /></button>
         </div>
-        <div className="flex-1 overflow-y-auto p-6 bg-stone-100">
-          <div ref={ref} className="grid grid-cols-3 gap-4 bg-stone-100 p-2" style={{ printColorAdjust: "exact" }}>
+        <div className="flex-1 overflow-y-auto p-6 bg-surface-elevated">
+          <div ref={ref} className="grid grid-cols-3 gap-4 bg-surface-elevated p-2" style={{ printColorAdjust: "exact" }}>
             {variants.map((v, i) => {
               const displayCode = v.barcode.length > 12 ? v.barcode.substring(0, 12) : v.barcode;
               return (
-                <div key={i} className="bg-white p-3 rounded-lg border border-stone-200 flex flex-col items-center">
-                  <p className="font-sans font-semibold text-[10px] text-center leading-tight mb-1 text-stone-800">{v.label}</p>
+                <div key={i} className="bg-surface p-3 rounded-lg border border-border flex flex-col items-center">
+                  <p className="font-sans font-semibold text-[10px] text-center leading-tight mb-1 text-foreground/90">{v.label}</p>
                   <BarcodeLib value={displayCode} format="CODE128" width={1.2} height={40} displayValue fontSize={10} margin={2} />
                 </div>
               );
             })}
           </div>
         </div>
-        <div className="p-4 border-t border-stone-200 bg-stone-50 flex justify-end gap-3 shrink-0">
-          <button onClick={onClose} className="px-4 py-2 bg-white border border-stone-200 text-stone-700 font-inter font-medium text-sm rounded-lg hover:bg-stone-50 transition-colors">Cancel</button>
-          <button onClick={() => handlePrint()} className="px-5 py-2 bg-stone-900 text-white font-inter font-medium text-sm rounded-lg hover:bg-stone-800 transition-colors flex items-center gap-2">
+        <div className="p-4 border-t border-border bg-surface-elevated flex justify-end gap-3 shrink-0">
+          <button onClick={onClose} className="px-4 py-2 bg-surface border border-border text-foreground/80 font-inter font-medium text-sm rounded-lg hover:bg-surface-elevated transition-colors">Cancel</button>
+          <button onClick={() => handlePrint()} className="px-5 py-2 bg-foreground text-white font-inter font-medium text-sm rounded-lg hover:bg-foreground/90 transition-colors flex items-center gap-2">
             <Printer size={15} /> Print All {variants.length} Labels
           </button>
         </div>

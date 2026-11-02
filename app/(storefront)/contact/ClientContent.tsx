@@ -108,7 +108,7 @@ export default function ClientContent() {
             <div className="w-[180px] h-[34px] relative">
               <Image 
                 src="/logo.png" 
-                alt="SERAMAADUWEN.LK" 
+                alt="MASKY PRODUCT" 
                 fill 
                 sizes="200px"
                 className="object-contain object-left" 
@@ -149,7 +149,7 @@ export default function ClientContent() {
                   <Mail size={16} strokeWidth={1.5} className="text-primary group-hover:text-white transition-colors" />
                 </div>
                 <span className="font-poppins font-light text-sm text-primary">
-                  {supportEmail || "info@seramaaduwenclothing.com"}
+                  {supportEmail || "info@maskyproductclothing.com"}
                 </span>
               </div>
 
