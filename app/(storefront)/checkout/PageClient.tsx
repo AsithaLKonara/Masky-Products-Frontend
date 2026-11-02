@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { TicketPercent, CreditCard, Banknote, ShieldCheck, Award, ChevronDown } from "lucide-react";
+import { TicketPercent, CreditCard, Banknote, ShieldCheck, Award, ChevronDown, AlertTriangle, AlertCircle } from "lucide-react";
 
 import LoyaltyPointsModal from "@/components/LoyaltyPointsModal";
 import OtpVerificationModal from "@/components/OtpVerificationModal";
@@ -22,6 +22,8 @@ import { globalDialog } from "@/store/dialog.store";
 import { generateDeviceFingerprint, isLikelyBot } from "@/lib/fingerprint";
 import { Turnstile, TurnstileInstance } from "@marsidev/react-turnstile";
 import { paymentService } from "@/services/payment.service";
+import { checkoutService } from "@/services/checkout.service";
+import { useStockSocket } from "@/hooks/useStockSocket";
 import slAddress from "sl-address";
 import { allFardarCities } from "@/lib/fardarCities";
 
@@ -63,8 +65,11 @@ export default function CheckoutPage() {
   useEffect(() => {
     setMounted(true);
     paymentService.getPaymentMethods()
-      .then(methods => setAvailablePaymentMethods(methods))
-      .catch(err => console.error("Failed to fetch payment methods", err));
+      .then(methods => setAvailablePaymentMethods(Array.isArray(methods) ? methods : []))
+      .catch(err => {
+        console.error("Failed to fetch payment methods", err);
+        setAvailablePaymentMethods([]);
+      });
   }, []);
   const [appliedLoyaltyPoints, setAppliedLoyaltyPoints] = useState<number>(0);
   
@@ -83,14 +88,46 @@ export default function CheckoutPage() {
   const [saveAddress, setSaveAddress] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState("");
 
-  const cartItems = cart?.items || [];
+  const cartItems = cart?.items || (cart as any)?.data?.items || [];
   const subtotal = cartItems.reduce((sum, item) => sum + (item.quantity * getEffectivePrice(item.variant)), 0);
   const shippingFee = 400; // Flat fee for now
   const total = subtotal + shippingFee - appliedLoyaltyPoints;
 
+  // Real-Time Stock Synchronization & 0-Stock Lockout
+  const [realtimeOutOfStockMessage, setRealtimeOutOfStockMessage] = useState<string | null>(null);
+
+  const cartVariantIds = React.useMemo(() => {
+    return cartItems.map((item: any) => item.variantId || item.variant?.id).filter(Boolean);
+  }, [cartItems]);
+
+  const { isConnected: isSocketConnected, depletedVariants, clearDepletedWarning } = useStockSocket({
+    variantIds: cartVariantIds,
+    onStockDepleted: (data) => {
+      const affectedItem = cartItems.find((i: any) => (i.variantId || i.variant?.id) === data.variantId);
+      const itemName = affectedItem?.variant?.product?.name || "An item in your cart";
+      const channelLabel = data.channel ? `on ${data.channel}` : "on another channel (Daraz/eBay/Amazon)";
+      setRealtimeOutOfStockMessage(
+        `Real-Time Alert: "${itemName}" was just purchased ${channelLabel} and is now out of stock. Checkout is disabled to prevent overselling.`
+      );
+    },
+    onStockUpdate: (data) => {
+      if (data.quantity > 0) {
+        clearDepletedWarning(data.variantId);
+        setRealtimeOutOfStockMessage(null);
+      }
+    },
+  });
+
+  const hasOutOfStockItem = React.useMemo(() => {
+    return cartItems.some((item: any) => {
+      const vId = item.variantId || item.variant?.id;
+      return Boolean(depletedVariants[vId]) || (item.variant && item.variant.quantity === 0);
+    });
+  }, [cartItems, depletedVariants]);
+
   const filteredPaymentMethods = React.useMemo(() => {
-    if (!availablePaymentMethods.length) return [];
-    if (!cartItems.length) return availablePaymentMethods;
+    if (!Array.isArray(availablePaymentMethods) || availablePaymentMethods.length === 0) return [];
+    if (!Array.isArray(cartItems) || cartItems.length === 0) return availablePaymentMethods;
 
     // A method is only available if EVERY product in the cart allows it.
     return availablePaymentMethods.filter(method => {
@@ -236,6 +273,37 @@ export default function CheckoutPage() {
   const onSubmit = async (data: CheckoutFormData) => {
     if (!cart?.id) return;
 
+    // 0-Stock Prevention: Pre-flight atomic stock check
+    if (hasOutOfStockItem) {
+      globalDialog.alert(
+        "One or more items in your cart are out of stock. Please remove them to complete your order.",
+        "Item Out of Stock"
+      );
+      return;
+    }
+
+    try {
+      const stockCheck = await checkoutService.verifyStock(
+        cartItems.map((item: any) => ({
+          variantId: item.variantId || item.variant?.id,
+          quantity: item.quantity,
+        }))
+      );
+      if (!stockCheck.valid && stockCheck.outOfStockItems.length > 0) {
+        const itemNames = stockCheck.outOfStockItems.map((o) => o.name || "Item").join(", ");
+        setRealtimeOutOfStockMessage(
+          `Cannot place order: "${itemNames}" is out of stock. Inventory was claimed by another channel.`
+        );
+        globalDialog.alert(
+          `"${itemNames}" is out of stock. The last unit was just purchased on another channel.`,
+          "Out of Stock Alert"
+        );
+        return;
+      }
+    } catch (err: any) {
+      console.warn("Pre-flight stock check bypassed, server transaction will enforce:", err);
+    }
+
     // Pre-flight bot check — reject obvious automation before any API call
     if (isLikelyBot()) {
       globalDialog.alert(
@@ -263,10 +331,14 @@ export default function CheckoutPage() {
         
         {/* Left Column: Forms */}
         <div className="flex flex-col flex-1 w-full lg:pr-[60px] lg:border-r lg:border-stone-200 gap-10">
-          <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between flex-wrap gap-3">
             <h1 className="font-poppins font-medium text-4xl md:text-5xl text-primary leading-tight">
               Checkout
             </h1>
+            <div id="realtime-sync-indicator" className="inline-flex items-center gap-1.5 px-3 py-1 bg-stone-100 dark:bg-stone-800 rounded-full text-xs text-stone-600 dark:text-stone-300 font-poppins border border-stone-200 dark:border-stone-700">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Real-Time Sync Active</span>
+            </div>
           </div>
 
           <form id="checkout-form" onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-10 w-full">
@@ -274,6 +346,31 @@ export default function CheckoutPage() {
             <div style={{ display: 'none' }} aria-hidden="true">
               <input type="text" {...register('_honeypot' as any)} tabIndex={-1} autoComplete="off" />
             </div>
+
+            {/* Real-Time WebSocket Stock Alert Banner */}
+            {(realtimeOutOfStockMessage || hasOutOfStockItem) && (
+              <div
+                id="realtime-stock-alert"
+                className="w-full p-4 bg-red-500/10 border-2 border-red-500/30 rounded-2xl flex items-start gap-3.5 text-red-600 dark:text-red-400 animate-in fade-in slide-in-from-top-2 duration-300 shadow-sm"
+              >
+                <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                  <AlertTriangle className="w-4 h-4 text-red-600 dark:text-red-400" />
+                </div>
+                <div className="flex flex-col flex-1 gap-1">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <span className="font-poppins font-bold text-sm tracking-tight text-red-700 dark:text-red-300">
+                      Real-Time Inventory Alert: 0 Stock Detected
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/20 text-red-600 dark:text-red-400 uppercase tracking-wider">
+                      Checkout Blocked
+                    </span>
+                  </div>
+                  <p className="font-poppins text-xs text-red-600/90 dark:text-red-300 leading-relaxed">
+                    {realtimeOutOfStockMessage || "An item in your cart was just purchased on another channel (Daraz / eBay / Amazon) and is no longer available. Checkout is disabled to prevent 0-stock overselling."}
+                  </p>
+                </div>
+              </div>
+            )}
             
             {/* Shipping Information */}
             <div className="flex flex-col gap-6 w-full">
@@ -625,10 +722,15 @@ export default function CheckoutPage() {
               <div className="flex w-full pt-6">
                  <button 
                   type="submit"
-                  disabled={initiateCheckout.isPending || cartItems.length === 0}
+                  id="place-order-submit-btn"
+                  disabled={initiateCheckout.isPending || cartItems.length === 0 || hasOutOfStockItem}
                   className="w-full h-[54px] flex justify-center items-center bg-primary hover:bg-stone-800 transition-colors rounded-full font-poppins font-semibold text-sm text-white uppercase tracking-widest shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {initiateCheckout.isPending ? "Processing..." : "Place Order"}
+                  {initiateCheckout.isPending 
+                    ? "Processing..." 
+                    : hasOutOfStockItem 
+                    ? "Item Out of Stock — Checkout Blocked" 
+                    : "Place Order"}
                 </button>
               </div>
             </div>
@@ -680,6 +782,12 @@ export default function CheckoutPage() {
                       <span className="font-poppins text-xs text-stone-500">{item.variant.name}</span>
                       <span className="font-poppins font-medium text-xs text-primary">{item.quantity} × Rs: {getEffectivePrice(item.variant).toLocaleString()}</span>
                     </div>
+                    {(depletedVariants[item.variantId || item.variant?.id] || (item.variant && item.variant.quantity === 0)) && (
+                      <div className="mt-1.5 flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/20">
+                        <AlertCircle size={11} className="shrink-0" />
+                        <span>Out of Stock (Depleted on another channel)</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))

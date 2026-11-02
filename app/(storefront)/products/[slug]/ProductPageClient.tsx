@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, use, useEffect } from "react";
+import { useState, use, useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, LayoutGrid, Info, ArrowLeftRight, Heart, Ruler, Send, MessageCircle } from "lucide-react";
@@ -20,6 +20,7 @@ import { useCart } from "@/components/CartProvider";
 import { useAddToWishlist } from "@/hooks/useWishlist";
 
 import { PaginatedResponse } from "@/types/api";
+import { useStockSocket } from "@/hooks/useStockSocket";
 
 const COLOR_MAP: Record<string, string> = {
   black: '#000000', white: '#FFFFFF', red: '#EF4444', blue: '#3B82F6', green: '#22C55E',
@@ -69,6 +70,38 @@ export default function ProductPageClient({
   const [qty, setQty] = useState(1);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [stockOverrides, setStockOverrides] = useState<Record<string, { quantity: number; stockStatus: string }>>({});
+  const [realtimeAlert, setRealtimeAlert] = useState<string | null>(null);
+
+  const productVariantIds = useMemo(() => {
+    return (product?.variants || []).map((v) => v.id);
+  }, [product?.variants]);
+
+  useStockSocket({
+    variantIds: productVariantIds,
+    onStockUpdate: (stock) => {
+      setStockOverrides((prev) => ({
+        ...prev,
+        [stock.variantId]: {
+          quantity: stock.quantity,
+          stockStatus: stock.quantity <= 0 ? "outofstock" : "instock",
+        },
+      }));
+    },
+    onStockDepleted: (data) => {
+      setStockOverrides((prev) => ({
+        ...prev,
+        [data.variantId]: {
+          quantity: 0,
+          stockStatus: "outofstock",
+        },
+      }));
+      const channelLabel = data.channel ? `across ${data.channel}` : "across our marketplace channels";
+      setRealtimeAlert(
+        data.reason || (data as any).message || `This item just sold out ${channelLabel} in real-time.`
+      );
+    },
+  });
 
   useEffect(() => {
     if (product && typeof window !== 'undefined' && window.fbq) {
@@ -188,7 +221,15 @@ export default function ProductPageClient({
   variantImages = deduplicateImages(variantImages);
   const images = variantImages.length > 0 ? variantImages : ["/products/default.jpg"];
 
-  const inStock = selectedVariant ? selectedVariant.stockStatus === 'instock' : true;
+  const getVariantStockStatus = (v: any) => {
+    if (!v) return "outofstock";
+    if (stockOverrides[v.id]) {
+      return stockOverrides[v.id].stockStatus;
+    }
+    return v.stockStatus || (v.quantity !== undefined && v.quantity <= 0 ? "outofstock" : "instock");
+  };
+
+  const inStock = selectedVariant ? getVariantStockStatus(selectedVariant) === "instock" : true;
 
   return (
     <main className="relative flex flex-col w-full min-h-screen bg-background pt-[83px]">
@@ -293,7 +334,7 @@ export default function ProductPageClient({
                              v.color?.toLowerCase() === selectedColor?.toLowerCase();
                     });
                     
-                    const isSizeInStock = variantForSize ? variantForSize.stockStatus === 'instock' : false;
+                    const isSizeInStock = variantForSize ? getVariantStockStatus(variantForSize) === "instock" : false;
 
                     return (
                       <button 
@@ -316,6 +357,16 @@ export default function ProductPageClient({
               </div>
             )}
           </div>
+
+          {/* Real-time stock depletion alert banner */}
+          {(!inStock || realtimeAlert) && (
+            <div id="product-realtime-stock-alert" className="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-2.5 text-xs text-red-600 dark:text-red-400">
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-ping shrink-0" />
+              <span className="font-medium">
+                {realtimeAlert || "This variant just sold out across our marketplace channels. Checkout is disabled."}
+              </span>
+            </div>
+          )}
 
           {/* Actions */}
           <div className="flex flex-row flex-wrap items-center gap-4 w-full mt-4 pb-6 border-b border-stone-200">

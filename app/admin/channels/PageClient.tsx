@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PageHeader from "@/components/dashboard/PageHeader";
 import StatCard from "@/components/dashboard/StatCard";
 import {
@@ -12,6 +12,8 @@ import {
   useDisconnectChannel,
 } from "@/hooks/useChannels";
 import { ChannelConfig } from "@/services/channel.service";
+import { useStockSocket } from "@/hooks/useStockSocket";
+import { getSocket } from "@/services/socket.client";
 import {
   Globe2,
   RefreshCw,
@@ -37,6 +39,52 @@ export default function MultiChannelControlCenterClient() {
   const { data: channels = [], isLoading: channelsLoading } = useChannels();
   const { data: stats } = useChannelStats();
   const { data: syncLogs = [] } = useChannelSyncLogs(15);
+  const [liveLogs, setLiveLogs] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      getSocket();
+    }
+  }, []);
+
+  const { isConnected: isSocketConnected } = useStockSocket({
+    isAdminChannel: true,
+    onSyncEvent: (event) => {
+      console.log("[PageClient] onSyncEvent received in Admin Channels:", event);
+      setLiveLogs((prev) => [
+        {
+          id: `live-${Date.now()}-${Math.random()}`,
+          channelId: event.channelId || "channel",
+          channelName: event.channelName || "Gateway Hub",
+          action: event.action || "REALTIME_SYNC",
+          status: event.status || "SUCCESS",
+          message: event.message || event.details || "Live stock event synchronized",
+          itemsProcessed: event.itemsProcessed || 1,
+          timestamp: event.timestamp || new Date().toISOString(),
+        },
+        ...prev,
+      ]);
+    },
+    onStockUpdate: (stock) => {
+      setLiveLogs((prev) => [
+        {
+          id: `stock-${Date.now()}-${Math.random()}`,
+          channelId: stock.channel || "stock_hub",
+          channelName: stock.channel || "Stock Sync Hub",
+          action: stock.quantity <= 0 ? "ZERO_STOCK_LOCKOUT" : "STOCK_ADJUSTED",
+          status: "SUCCESS",
+          message: `SKU/Variant ${stock.sku || stock.variantId} updated to ${stock.quantity} (${stock.stockStatus})`,
+          itemsProcessed: 1,
+          timestamp: stock.timestamp || new Date().toISOString(),
+        },
+        ...prev,
+      ]);
+    },
+  });
+
+  const displayLogs = React.useMemo(() => {
+    return [...liveLogs, ...syncLogs].slice(0, 20);
+  }, [liveLogs, syncLogs]);
 
   const syncMutation = useSyncChannel();
   const connectMutation = useConnectChannel();
@@ -205,6 +253,12 @@ export default function MultiChannelControlCenterClient() {
         badge="Multi-Channel Retail"
         action={
           <div className="flex items-center gap-2.5">
+            <div id="websocket-status-badge" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-surface-elevated border border-border rounded-xl text-xs font-inter shadow-2xs">
+              <span className={`w-2 h-2 rounded-full ${isSocketConnected ? "bg-emerald-500 animate-pulse" : "bg-muted"}`} />
+              <span className="text-foreground text-[11px] font-medium">
+                {isSocketConnected ? "WebSocket Live Sync: Active" : "Socket Gateway: Ready"}
+              </span>
+            </div>
             <button
               onClick={handleSyncAll}
               disabled={activeSyncingId !== null}
@@ -472,8 +526,8 @@ export default function MultiChannelControlCenterClient() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border/60">
-              {syncLogs.length > 0 ? (
-                syncLogs.map((log) => {
+              {displayLogs.length > 0 ? (
+                displayLogs.map((log) => {
                   const channelIdentifier = log.channelName || (log as any).channel || "";
                   const badge = getChannelBadge(
                     channelIdentifier.toUpperCase().includes("DARAZ") ? "DARAZ" :

@@ -55,4 +55,12 @@ export const checkoutService = {
     const { data } = await api.post('/checkout/initiate', payload, getHeaders(sessionId));
     return data;
   },
+
+  async verifyStock(items: Array<{ variantId: string; quantity: number }>): Promise<{
+    valid: boolean;
+    outOfStockItems: Array<{ variantId: string; available: number; requested: number; name?: string }>;
+  }> {
+    const { data } = await api.post('/checkout/verify-stock', { items });
+    return data.data;
+  },
 };
