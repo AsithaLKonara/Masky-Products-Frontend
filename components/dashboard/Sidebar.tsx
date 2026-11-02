@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuthStore } from "@/store/auth.store";
+import { FEATURES } from "@/config/features";
 import {
   LayoutDashboard,
   ShoppingCart,
@@ -252,10 +253,18 @@ export default function Sidebar({
     return hasPermission(perm);
   };
 
+  const isItemEnabled = (item: NavItem) => {
+    // POS feature gating: preserve code but hide links when disabled
+    if ((item.href === "/pos" || item.href === "/admin/pos-sales") && !FEATURES.ENABLE_POS) {
+      return false;
+    }
+    return true;
+  };
+
   const visibleGroups = navGroups
     .map((group) => ({
       ...group,
-      items: group.items.filter((item) => checkPermission(item.permission)),
+      items: group.items.filter((item) => isItemEnabled(item) && checkPermission(item.permission)),
     }))
     .filter((group) => group.items.length > 0);
 

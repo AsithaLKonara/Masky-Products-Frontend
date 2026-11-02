@@ -4,17 +4,24 @@ import PageHeader from "@/components/dashboard/PageHeader";
 import { BarChart3, TrendingUp, Users, ShoppingBag, Box, MapPin, CreditCard, MonitorSmartphone, Tag } from "lucide-react";
 import Link from "next/link";
 import AdminStatCards from "@/components/admin/AdminStatCards";
+import { FEATURES } from "@/config/features";
 
 export default function ReportsPage() {
-  const reportCards = [
-    { title: "Sales & Revenue", description: "Comprehensive breakdown of online and POS sales, AOV, and revenue trends.", icon: TrendingUp, href: "/admin/reports/sales" },
-    { title: "Payments", description: "Payment gateway performance, success rates, and fee analysis.", icon: CreditCard, href: "/admin/reports/payments" },
-    { title: "Inventory", description: "Stock health, valuation, low stock alerts, and transfer logs.", icon: Box, href: "/admin/reports/inventory" },
-    { title: "Branches", description: "Performance comparison across physical locations and POS terminals.", icon: MapPin, href: "/admin/reports/branches" },
-    { title: "Point of Sale (POS)", description: "Analyze cashier sessions, cash variances, and terminal performance.", icon: MonitorSmartphone, href: "/admin/reports/pos" },
-    { title: "Customer Insights", description: "Analyze customer acquisition, guest vs registered metrics, and lifetime value.", icon: Users, href: "/admin/reports/customers" },
-    { title: "Promotions & Vouchers", description: "Track the usage and liability of exchange vouchers and discount coupons.", icon: Tag, href: "/admin/reports/promotions" },
+  const allReportCards = [
+    { title: "Sales & Revenue", description: "Comprehensive breakdown of online and POS sales, AOV, and revenue trends.", icon: TrendingUp, href: "/admin/reports/sales", feature: "always" },
+    { title: "Payments", description: "Payment gateway performance, success rates, and fee analysis.", icon: CreditCard, href: "/admin/reports/payments", feature: "always" },
+    { title: "Inventory", description: "Stock health, valuation, low stock alerts, and transfer logs.", icon: Box, href: "/admin/reports/inventory", feature: "always" },
+    { title: "Branches", description: "Performance comparison across physical locations and POS terminals.", icon: MapPin, href: "/admin/reports/branches", feature: "branches" },
+    { title: "Point of Sale (POS)", description: "Analyze cashier sessions, cash variances, and terminal performance.", icon: MonitorSmartphone, href: "/admin/reports/pos", feature: "pos" },
+    { title: "Customer Insights", description: "Analyze customer acquisition, guest vs registered metrics, and lifetime value.", icon: Users, href: "/admin/reports/customers", feature: "always" },
+    { title: "Promotions & Vouchers", description: "Track the usage and liability of exchange vouchers and discount coupons.", icon: Tag, href: "/admin/reports/promotions", feature: "always" },
   ] as const;
+
+  const reportCards = allReportCards.filter((card) => {
+    if (card.feature === "pos" && !FEATURES.ENABLE_POS) return false;
+    if (card.feature === "branches" && !FEATURES.ENABLE_MULTI_BRANCH) return false;
+    return true;
+  });
 
   return (
     <div className="flex flex-col p-4 md:p-10 max-w-[1280px] mx-auto w-full">

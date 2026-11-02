@@ -15,6 +15,7 @@ import Link from "next/link";
 import AdminStatCards from "@/components/admin/AdminStatCards";
 import OrderSidePanel from "@/components/admin/OrderSidePanel";
 import { useBranches } from "@/hooks/useInventory";
+import { FEATURES } from "@/config/features";
 
 export default function OrdersPage() {
   const router = useRouter();
@@ -152,7 +153,7 @@ export default function OrdersPage() {
       >
         <option value="">All Types</option>
         <option value="ECOMMERCE">Online Store</option>
-        <option value="POS">In-Store (POS)</option>
+        {FEATURES.ENABLE_POS && <option value="POS">In-Store (POS)</option>}
         <option value="MANUAL">Manual</option>
       </select>
     </>

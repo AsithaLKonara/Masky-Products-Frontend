@@ -38,6 +38,19 @@ export function middleware(request: NextRequest) {
   const isAccountRoute = pathname.startsWith("/account");
   const isAuthRoute = pathname === "/login" || pathname === "/register";
 
+  // Feature Flag: POS feature disabled
+  const isPosDisabled = process.env.NEXT_PUBLIC_ENABLE_POS !== "true";
+  const isPosSpecificRoute =
+    pathname.startsWith("/pos") ||
+    pathname.startsWith("/admin/pos-sales") ||
+    pathname.startsWith("/admin/reports/pos");
+
+  if (isPosSpecificRoute && isPosDisabled) {
+    const targetUrl = new URL("/admin", request.url);
+    targetUrl.searchParams.set("notice", "pos_disabled");
+    return NextResponse.redirect(targetUrl);
+  }
+
   const isStaffRoute = isAdminRoute || isBranchAdminRoute || isPosRoute;
 
   // 1. Unauthenticated or expired user trying to access protected routes

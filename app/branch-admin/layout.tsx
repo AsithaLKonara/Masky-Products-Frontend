@@ -5,15 +5,18 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { FEATURES } from "@/config/features";
 
 export default function BranchAdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const navItems = [
+  const allNavItems = [
     { name: "Dashboard", href: "/branch-admin", icon: LayoutDashboard },
-    { name: "POS", href: "/pos", icon: TerminalSquare },
+    { name: "POS", href: "/pos", icon: TerminalSquare, isPos: true },
   ];
+
+  const navItems = allNavItems.filter((item) => !item.isPos || FEATURES.ENABLE_POS);
 
   const managementItems = [
     { name: "Orders", href: "/branch-admin/orders", icon: ShoppingBag },
