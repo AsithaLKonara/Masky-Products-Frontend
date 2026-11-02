@@ -48,6 +48,11 @@
     --chart-3: #D97706;
     --chart-4: #7C3AED;
     --chart-5: #0891B2;
+
+    /* Theme-Adaptive Scrollbar Tokens (Light Mode) */
+    --scrollbar-track: #F1F5F9;
+    --scrollbar-thumb: #CBD5E1;
+    --scrollbar-thumb-hover: #94A3B8;
   }
 
   .dark {
@@ -95,6 +100,50 @@
     --chart-3: #F59E0B;
     --chart-4: #8B5CF6;
     --chart-5: #06B6D4;
+
+    /* Theme-Adaptive Scrollbar Tokens (Dark Mode) */
+    --scrollbar-track: #0B0F17;
+    --scrollbar-thumb: #1E293B;
+    --scrollbar-thumb-hover: #334155;
+  }
+
+  /* Color scheme synchronizer for native browser UI elements */
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+
+  /* Universal Theme-Adaptive Scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  }
+
+  /* WebKit Scrollbar Styling (Chrome, Edge, Safari, Opera) */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border-radius: 9999px;
+    border: 2px solid var(--scrollbar-track);
+    transition: background-color 0.15s ease;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover);
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: var(--scrollbar-track);
   }
 
   .dashboard-theme {
@@ -111,6 +160,14 @@
   @keyframes marquee {
     0% { transform: translateX(0%); }
     100% { transform: translateX(-50%); }
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
 
