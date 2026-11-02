@@ -4,12 +4,18 @@ export interface HeroSlide {
   id: string;
   title: string;
   subtitle?: string;
+  description?: string;
+  eyebrow?: string;
   cta?: string;
   ctaLink?: string;
+  ctaSecondaryLabel?: string;
+  ctaSecondaryLink?: string;
   image: string;
+  accentColor?: string;
   active: boolean;
   order: number;
 }
+
 
 export interface Banner {
   id: string;

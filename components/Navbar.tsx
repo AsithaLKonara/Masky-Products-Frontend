@@ -75,42 +75,21 @@ export default function Navbar() {
 
   return (
     <nav className={`w-full z-[50] transition-colors duration-300 ${navBgClass}`}>
-      <div className="w-full px-4 md:px-6 lg:px-12 xl:px-[120px] h-[83px] flex justify-between items-center relative gap-4">
+      <div className="w-full px-4 md:px-6 lg:px-12 xl:px-[100px] h-[76px] flex justify-between items-center relative gap-4">
         
-        {/* Mobile Hamburger (Left) */}
-        <div className="flex md:hidden flex-1 items-center">
-          <button 
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={`p-2 -ml-2 rounded-full transition-colors ${hoverBgClass}`}
-          >
-            {isMobileMenuOpen ? <X size={24} className={textColorClass} /> : <Menu size={24} className={textColorClass} />}
-          </button>
-        </div>
-
-        {/* Desktop Left Links */}
-        <div className="hidden md:flex flex-1 items-center space-x-[15px] lg:space-x-[30px] xl:space-x-[40px] text-xs font-bold font-poppins">
-          {navLinks.map((link) => {
-            const isActive = pathname === link.href;
-            return (
-              <Link 
-                key={link.name} 
-                href={link.href} 
-                className={`transition-colors hover:text-stone-500 ${
-                  isActive 
-                    ? `${textColorClass} underline underline-offset-8 decoration-2` 
-                    : textColorClass
-                }`}
-              >
-                {link.name}
-              </Link>
-            );
-          })}
-        </div>
-
-        {/* Center Logo */}
-        <div className="flex justify-center shrink-0">
-          <Link href="/">
-            <div className="relative w-[200px] md:w-[240px] lg:w-[280px] h-[30px] md:h-[36px] lg:h-[42px]">
+        {/* Left: Brand Logo & Mobile Hamburger */}
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="flex md:hidden items-center">
+            <button 
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className={`p-2 -ml-2 rounded-full transition-colors ${hoverBgClass}`}
+              aria-label="Toggle navigation menu"
+            >
+              {isMobileMenuOpen ? <X size={22} className={textColorClass} /> : <Menu size={22} className={textColorClass} />}
+            </button>
+          </div>
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="relative w-[150px] md:w-[180px] lg:w-[200px] h-[32px] md:h-[36px]">
               <Image 
                 src={logoImage}
                 alt="MASKY PRODUCT"
@@ -123,41 +102,68 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Right Actions */}
-        <div className="flex justify-end flex-1 items-center">
-          <div className="hidden md:flex items-center gap-[4px] space-x-2 xl:space-x-4 mr-2 xl:mr-4">
-            <Link href={authHref} className={`font-poppins font-bold text-[10px] xl:text-xs tracking-wide uppercase transition-colors hover:opacity-70 ${textColorClass}`}>
+        {/* Center: Nav Links */}
+        <div className="hidden md:flex items-center gap-1 lg:gap-2 text-[12px] font-medium font-poppins">
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link 
+                key={link.name} 
+                href={link.href} 
+                className={`px-4 py-1.5 rounded-full transition-all duration-300 ${
+                  isActive 
+                    ? "bg-[#627254] text-[#FFFCF4] shadow-sm font-semibold" 
+                    : `${textColorClass} hover:text-[#203C2B] hover:bg-stone-200/40`
+                }`}
+              >
+                {link.name}
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Right: Actions */}
+        <div className="flex justify-end items-center gap-1 md:gap-2">
+          <div className="hidden lg:flex items-center mr-1">
+            <Link 
+              href={authHref} 
+              className={`font-poppins font-medium text-[11px] tracking-wider uppercase transition-all px-3 py-1.5 rounded-full hover:bg-stone-200/40 ${textColorClass}`}
+            >
               {authText}
             </Link>
           </div>
-          <div className="flex items-center gap-1 md:gap-[4px]">
-            <button 
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className={`p-2 md:p-2.5 rounded-full transition-colors ${hoverBgClass}`}
-            >
-              <Search size={20} className={textColorClass} />
-            </button>
-            <button 
-              onClick={openWishlist}
-              className={`p-2 md:p-2.5 rounded-full transition-colors ${hoverBgClass}`}
-            >
-              <Heart size={20} className={textColorClass} />
-            </button>
-            
-            <button onClick={openDrawer} className={`flex items-center space-x-1 md:space-x-2 p-2 md:p-2.5 rounded-full transition-colors relative ${hoverBgClass}`}>
-              <div className="relative">
-                <ShoppingCart size={20} className={textColorClass} />
-                {itemCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-accent text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                    {itemCount}
-                  </span>
-                )}
-              </div>
-              <span className={`hidden sm:inline font-bold text-xs font-poppins ${textColorClass}`}>
-                Rs: {subtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </span>
-            </button>
-          </div>
+          <button 
+            onClick={() => setIsSearchOpen(!isSearchOpen)}
+            className={`p-2 rounded-full transition-colors ${hoverBgClass}`}
+            aria-label="Search"
+          >
+            <Search size={18} className={textColorClass} />
+          </button>
+          <button 
+            onClick={openWishlist}
+            className={`p-2 rounded-full transition-colors ${hoverBgClass}`}
+            aria-label="Wishlist"
+          >
+            <Heart size={18} className={textColorClass} />
+          </button>
+          
+          <button 
+            onClick={openDrawer} 
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all border border-[#DCDCCB] bg-[#FFFCF4]/80 hover:bg-[#FFFCF4] shadow-sm ${hoverBgClass}`}
+            aria-label="Shopping Cart"
+          >
+            <div className="relative">
+              <ShoppingCart size={17} className={textColorClass} />
+              {itemCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-[#203C2B] text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  {itemCount}
+                </span>
+              )}
+            </div>
+            <span className={`hidden sm:inline font-semibold text-[11px] font-poppins ${textColorClass}`}>
+              Rs: {subtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </span>
+          </button>
         </div>
       </div>
 

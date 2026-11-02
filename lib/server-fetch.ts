@@ -80,6 +80,6 @@ export async function serverFetch<T>(endpoint: string, options?: ServerFetchOpti
       return undefined as unknown as T;
     }
     console.error(`[serverFetch] Failed to fetch ${url}:`, error);
-    throw error;
+    return undefined as unknown as T;
   }
 }

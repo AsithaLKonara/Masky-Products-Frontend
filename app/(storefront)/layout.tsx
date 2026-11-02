@@ -15,16 +15,30 @@ export default function StorefrontLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div id="storefront-layout" className="bg-stone-50 text-stone-900 min-h-screen flex flex-col pt-[34px] transition-[padding] duration-500">
+    <div id="storefront-layout" className="text-stone-900 min-h-screen flex flex-col pt-[34px] transition-[padding] duration-500 relative">
+      {/* Fixed whole-web background image (no scroll, pinned to viewport) */}
+      <div 
+        aria-hidden="true" 
+        className="fixed inset-0 pointer-events-none z-0" 
+        style={{
+          backgroundColor: "#FEF6E4",
+          backgroundImage: "url('/hero-image/background-mushroom.png')",
+          backgroundPosition: "center center",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+        }}
+      />
       <CartProvider>
         <div className="fixed top-0 left-0 right-0 z-50">
           <PromoBanner />
           <Navbar />
         </div>
-        <main className="flex-1">
+        <main className="flex-1 relative z-10 bg-transparent">
           {children}
         </main>
-        <Footer />
+        <div className="relative z-10">
+          <Footer />
+        </div>
       </CartProvider>
     </div>
   );

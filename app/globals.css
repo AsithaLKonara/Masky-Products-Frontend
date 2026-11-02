@@ -53,6 +53,21 @@
     --scrollbar-track: #F1F5F9;
     --scrollbar-thumb: #CBD5E1;
     --scrollbar-thumb-hover: #94A3B8;
+
+    /* ── Hero Coverflow Design Tokens ── */
+    --hero-bg: #F8F5EB;
+    --hero-bg-secondary: #F2EEDF;
+    --hero-surface: #FFFCF4;
+    --hero-green-deep: #203C2B;
+    --hero-green-primary: #71865B;
+    --hero-green-sage: #A8B995;
+    --hero-green-pale: #DDE5CC;
+    --hero-text-primary: #1E2B20;
+    --hero-text-secondary: #62695A;
+    --hero-text-muted: #858777;
+    --hero-champagne: #D9C99B;
+    --hero-olive: #B4BD8C;
+    --hero-divider: #DCDCCB;
   }
 
   .dark {
@@ -153,6 +168,7 @@
   }
 }
 
+
 @layer utilities {
   .animate-marquee {
     animation: marquee 30s linear infinite;
@@ -169,7 +185,24 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  /* Hero coverflow animations */
+  @keyframes hero-fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hero-fade-up {
+    animation: hero-fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes hero-halo-pulse {
+    0%, 100% { opacity: 0.55; transform: scale(1); }
+    50%       { opacity: 0.75; transform: scale(1.04); }
+  }
+  .hero-halo-pulse {
+    animation: hero-halo-pulse 4s ease-in-out infinite;
+  }
 }
+
 
 .print-only {
   display: none;

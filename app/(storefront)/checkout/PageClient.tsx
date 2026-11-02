@@ -72,7 +72,7 @@ export default function CheckoutPage() {
       });
   }, []);
   const [appliedLoyaltyPoints, setAppliedLoyaltyPoints] = useState<number>(0);
-  
+
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
@@ -89,7 +89,7 @@ export default function CheckoutPage() {
   const [selectedAddressId, setSelectedAddressId] = useState("");
 
   const cartItems = cart?.items || (cart as any)?.data?.items || [];
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.quantity * getEffectivePrice(item.variant)), 0);
+  const subtotal = cartItems.reduce((sum: number, item: any) => sum + (item.quantity * getEffectivePrice(item.variant)), 0);
   const shippingFee = 400; // Flat fee for now
   const total = subtotal + shippingFee - appliedLoyaltyPoints;
 
@@ -201,7 +201,7 @@ export default function CheckoutPage() {
         isDefault: false
       });
     }
-    
+
     initiateCheckout.mutate(
       {
         cartId: cart.id,
@@ -232,13 +232,13 @@ export default function CheckoutPage() {
         onSuccess: (data) => {
           setPendingCheckoutData(null);
           const { order, payment } = data;
-          
+
           if (data.paymentMethod !== 'cod' && payment?.redirectUrl) {
             if (payment.isFormRedirect && payment.formData) {
               const form = document.createElement('form');
               form.method = 'POST';
               form.action = payment.redirectUrl;
-              
+
               Object.keys(payment.formData).forEach(key => {
                 const input = document.createElement('input');
                 input.type = 'hidden';
@@ -246,7 +246,7 @@ export default function CheckoutPage() {
                 input.value = payment.formData[key];
                 form.appendChild(input);
               });
-              
+
               useCartStore.getState().clearSession();
               document.body.appendChild(form);
               form.submit();
@@ -318,17 +318,17 @@ export default function CheckoutPage() {
       setIsOtpModalOpen(true);
       return;
     }
-    
+
     // Generate fingerprint right before submission
     data.deviceFingerprint = await generateDeviceFingerprint();
-    
+
     executeCheckout(data);
   };
 
   return (
     <main className="flex flex-col items-center w-full min-h-screen bg-background pt-[83px]">
       <div className="flex flex-col-reverse lg:flex-row w-full max-w-[1280px] mx-auto py-[60px] px-4 md:px-[80px] lg:px-[120px] gap-12 lg:gap-[60px]">
-        
+
         {/* Left Column: Forms */}
         <div className="flex flex-col flex-1 w-full lg:pr-[60px] lg:border-r lg:border-stone-200 gap-10">
           <div className="flex items-center justify-between flex-wrap gap-3">
@@ -371,13 +371,13 @@ export default function CheckoutPage() {
                 </div>
               </div>
             )}
-            
+
             {/* Shipping Information */}
             <div className="flex flex-col gap-6 w-full">
               <h2 className="font-poppins font-medium text-xl text-primary flex items-center justify-between">
                 Shipping Information
               </h2>
-              
+
               {addresses && addresses.length > 0 && (
                 <div className="flex flex-col gap-2 w-full mb-2">
                   <label className="font-poppins font-medium text-xs uppercase tracking-wider text-stone-500">
@@ -407,8 +407,8 @@ export default function CheckoutPage() {
                   <label className="font-poppins font-medium text-xs uppercase tracking-wider text-stone-500">
                     Full name <span className="text-accent">*</span>
                   </label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     placeholder="Enter full name"
                     {...register("fullName")}
                     className={`w-full h-[52px] px-[20px] border ${errors.fullName ? 'border-red-500' : 'border-stone-200'} rounded-full bg-white font-poppins text-sm text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all placeholder:text-stone-400`}
@@ -421,24 +421,24 @@ export default function CheckoutPage() {
                   <label className="font-poppins font-medium text-xs uppercase tracking-wider text-stone-500">
                     Address <span className="text-accent">*</span>
                   </label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     placeholder="Address Line 1"
                     {...register("addressLine1")}
                     className={`w-full h-[52px] px-[20px] border ${errors.addressLine1 ? 'border-red-500' : 'border-stone-200'} rounded-full bg-white font-poppins text-sm text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all placeholder:text-stone-400 mb-2`}
                   />
                   {errors.addressLine1 && <span className="text-red-500 text-xs mt-0 mb-2 pl-4">{errors.addressLine1.message}</span>}
-                  
-                  <input 
-                    type="text" 
+
+                  <input
+                    type="text"
                     placeholder="Address Line 2"
                     {...register("addressLine2")}
                     className={`w-full h-[52px] px-[20px] border ${errors.addressLine2 ? 'border-red-500' : 'border-stone-200'} rounded-full bg-white font-poppins text-sm text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all placeholder:text-stone-400 mb-2`}
                   />
                   {errors.addressLine2 && <span className="text-red-500 text-xs mt-0 mb-2 pl-4">{errors.addressLine2.message}</span>}
-                  
-                  <input 
-                    type="text" 
+
+                  <input
+                    type="text"
                     placeholder="Address Line 3"
                     {...register("addressLine3")}
                     className={`w-full h-[52px] px-[20px] border ${errors.addressLine3 ? 'border-red-500' : 'border-stone-200'} rounded-full bg-white font-poppins text-sm text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all placeholder:text-stone-400`}
@@ -454,7 +454,7 @@ export default function CheckoutPage() {
                       District <span className="text-accent">*</span>
                     </label>
                     <div className="relative">
-                      <select 
+                      <select
                         {...register("district")}
                         className={`w-full h-[52px] px-[20px] appearance-none border ${errors.district ? 'border-red-500' : 'border-stone-200'} rounded-full bg-white font-poppins text-sm text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all`}
                       >
@@ -474,7 +474,7 @@ export default function CheckoutPage() {
                       City <span className="text-accent">*</span>
                     </label>
                     <div className="relative">
-                      <select 
+                      <select
                         {...register("city")}
                         className={`w-full h-[52px] px-[20px] appearance-none border ${errors.city ? 'border-red-500' : 'border-stone-200'} rounded-full bg-white font-poppins text-sm text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all`}
                       >
@@ -495,7 +495,7 @@ export default function CheckoutPage() {
                     Nearest City (For Courier) <span className="text-accent">*</span>
                   </label>
                   <div className="relative">
-                    <select 
+                    <select
                       {...register("nearestCity")}
                       className={`w-full h-[52px] px-[20px] appearance-none border ${errors.nearestCity ? 'border-red-500' : 'border-stone-200'} rounded-full bg-white font-poppins text-sm text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all`}
                     >
@@ -516,7 +516,7 @@ export default function CheckoutPage() {
                     <label className="font-poppins font-medium text-xs uppercase tracking-wider text-stone-500">
                       Phone number <span className="text-accent">*</span>
                     </label>
-                    <input 
+                    <input
                       type="tel"
                       placeholder="e.g. 0712345678"
                       {...register("phone")}
@@ -534,8 +534,8 @@ export default function CheckoutPage() {
                     <label className="font-poppins font-medium text-xs uppercase tracking-wider text-stone-500">
                       Email address <span className="text-accent">*</span>
                     </label>
-                    <input 
-                      type="email" 
+                    <input
+                      type="email"
                       placeholder="Enter email address"
                       {...register("email")}
                       className={`w-full h-[52px] px-[20px] border ${errors.email ? 'border-red-500' : 'border-stone-200'} rounded-full bg-white font-poppins text-sm text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all placeholder:text-stone-400`}
@@ -548,9 +548,9 @@ export default function CheckoutPage() {
               {/* Save Address Checkbox */}
               <div className="flex flex-col gap-1 mt-2">
                 <div className="flex items-center gap-3">
-                  <input 
-                    type="checkbox" 
-                    id="saveAddress" 
+                  <input
+                    type="checkbox"
+                    id="saveAddress"
                     checked={saveAddress}
                     onChange={(e) => setSaveAddress(e.target.checked)}
                     className="w-5 h-5 accent-[#1C1917] rounded-sm cursor-pointer"
@@ -565,9 +565,9 @@ export default function CheckoutPage() {
             {/* Checkbox for T&C */}
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-3">
-                <input 
-                  type="checkbox" 
-                  id="terms" 
+                <input
+                  type="checkbox"
+                  id="terms"
                   {...register("termsAccepted")}
                   className="w-5 h-5 accent-[#1C1917] rounded-sm cursor-pointer"
                 />
@@ -584,18 +584,18 @@ export default function CheckoutPage() {
                 Billing Address <span className="text-accent">*</span>
               </h2>
               <div className="flex flex-col border border-stone-200 rounded-[24px] overflow-hidden bg-white shadow-sm">
-                
+
                 {/* Same as Shipping */}
                 <label className="flex items-center gap-4 p-4 cursor-pointer hover:bg-stone-50 transition-colors border-b border-stone-200">
                   <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 border-2 transition-colors ${billingSameAsShipping ? 'border-primary bg-primary' : 'border-stone-300 bg-white'}`}>
                     {billingSameAsShipping && <div className="w-2 h-2 rounded-full bg-white" />}
                   </div>
-                  <input 
-                    type="radio" 
+                  <input
+                    type="radio"
                     value="true"
                     checked={billingSameAsShipping === true}
                     onChange={() => setValue("billingSameAsShipping", true)}
-                    className="hidden" 
+                    className="hidden"
                   />
                   <span className="font-poppins text-sm text-primary font-medium">Same as shipping address</span>
                 </label>
@@ -605,12 +605,12 @@ export default function CheckoutPage() {
                   <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 border-2 transition-colors ${!billingSameAsShipping ? 'border-primary bg-primary' : 'border-stone-300 bg-white'}`}>
                     {!billingSameAsShipping && <div className="w-2 h-2 rounded-full bg-white" />}
                   </div>
-                  <input 
-                    type="radio" 
+                  <input
+                    type="radio"
                     value="false"
                     checked={billingSameAsShipping === false}
                     onChange={() => setValue("billingSameAsShipping", false)}
-                    className="hidden" 
+                    className="hidden"
                   />
                   <span className="font-poppins text-sm text-primary font-medium">Use a different billing address</span>
                 </label>
@@ -625,8 +625,8 @@ export default function CheckoutPage() {
                   <label className="font-poppins font-medium text-xs uppercase tracking-wider text-stone-500">
                     Billing Address <span className="text-accent">*</span>
                   </label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     placeholder="Address Line 1"
                     {...register("billingAddressLine1")}
                     className={`w-full h-[52px] px-[20px] border ${errors.billingAddressLine1 ? 'border-red-500' : 'border-stone-200'} rounded-full bg-white font-poppins text-sm text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all placeholder:text-stone-400`}
@@ -638,8 +638,8 @@ export default function CheckoutPage() {
                     <label className="font-poppins font-medium text-xs uppercase tracking-wider text-stone-500">
                       City <span className="text-accent">*</span>
                     </label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       placeholder="Enter city"
                       {...register("billingCity")}
                       className={`w-full h-[52px] px-[20px] border ${errors.billingCity ? 'border-red-500' : 'border-stone-200'} rounded-full bg-white font-poppins text-sm text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all placeholder:text-stone-400`}
@@ -650,7 +650,7 @@ export default function CheckoutPage() {
                     <label className="font-poppins font-medium text-xs uppercase tracking-wider text-stone-500">
                       Phone <span className="text-accent">*</span>
                     </label>
-                    <input 
+                    <input
                       type="tel"
                       placeholder="e.g. 0712345678"
                       {...register("billingPhone")}
@@ -668,9 +668,9 @@ export default function CheckoutPage() {
 
             {mounted && process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
               <div className="w-full flex justify-center mt-2 mb-2">
-                <Turnstile 
+                <Turnstile
                   ref={turnstileRef}
-                  siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} 
+                  siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
                   onSuccess={(token) => setValue("turnstileToken", token)}
                 />
               </div>
@@ -680,9 +680,9 @@ export default function CheckoutPage() {
               <h3 className="font-poppins font-medium text-xl text-primary">
                 Payment Method <span className="text-accent">*</span>
               </h3>
-              
+
               <div className="flex flex-col border border-stone-200 rounded-[24px] overflow-hidden bg-white shadow-sm">
-                
+
                 {filteredPaymentMethods.length === 0 ? (
                   <div className="p-8 text-center text-stone-500">No payment methods available for the selected items.</div>
                 ) : (
@@ -704,7 +704,7 @@ export default function CheckoutPage() {
                           <span className="font-poppins text-[11px] font-semibold tracking-wider uppercase text-emerald-600 bg-emerald-50 px-2 py-1 rounded-sm">{method.badge}</span>
                         )}
                       </div>
-                      
+
                       {method.id === 'onepay' && paymentMethod === 'onepay' && (
                         <div className="ml-9 mt-4 flex flex-col gap-3 animate-in slide-in-from-top-2 duration-300">
                           <div className="flex items-center gap-2 text-stone-500 bg-white p-3 rounded-lg border border-stone-200 shadow-sm text-sm font-poppins">
@@ -720,27 +720,27 @@ export default function CheckoutPage() {
 
               {/* Place Order Button */}
               <div className="flex w-full pt-6">
-                 <button 
+                <button
                   type="submit"
                   id="place-order-submit-btn"
                   disabled={initiateCheckout.isPending || cartItems.length === 0 || hasOutOfStockItem}
                   className="w-full h-[54px] flex justify-center items-center bg-primary hover:bg-stone-800 transition-colors rounded-full font-poppins font-semibold text-sm text-white uppercase tracking-widest shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {initiateCheckout.isPending 
-                    ? "Processing..." 
-                    : hasOutOfStockItem 
-                    ? "Item Out of Stock — Checkout Blocked" 
-                    : "Place Order"}
+                  {initiateCheckout.isPending
+                    ? "Processing..."
+                    : hasOutOfStockItem
+                      ? "Item Out of Stock — Checkout Blocked"
+                      : "Place Order"}
                 </button>
               </div>
             </div>
-            
+
           </form>
         </div>
 
         {/* Right Column: Order Summary & Payment */}
         <div className="flex flex-col w-full lg:w-[420px] gap-8">
-          
+
           <h2 className="font-poppins font-medium text-xl text-primary">
             Review your cart
           </h2>
@@ -752,7 +752,7 @@ export default function CheckoutPage() {
             ) : cartItems.length === 0 ? (
               <p className="text-stone-500 font-poppins text-sm">Your cart is empty.</p>
             ) : (
-              cartItems.map((item) => (
+              cartItems.map((item: any) => (
                 <div key={item.id} className="flex flex-row items-center w-full p-3 bg-white border border-stone-200 rounded-xl shadow-sm gap-4">
                   <div className="w-[70px] h-[70px] relative bg-stone-100 rounded-lg overflow-hidden shrink-0">
                     {(() => {
@@ -766,9 +766,9 @@ export default function CheckoutPage() {
                         if (item.variant.featuredImage) allImages.push(item.variant.featuredImage);
                         if (item.variant.gallery) allImages.push(...item.variant.gallery);
                       }
-                      
+
                       const imgUrl = allImages[0] || "/products/default.jpg";
-                      
+
                       return (
                         <Image src={imgUrl} alt={item.variant.product.name} fill sizes="100px" className="object-cover object-top" />
                       );
@@ -799,9 +799,9 @@ export default function CheckoutPage() {
             <div className="pl-4 text-stone-400">
               <TicketPercent size={20} />
             </div>
-            <input 
-              type="text" 
-              placeholder="Discount code" 
+            <input
+              type="text"
+              placeholder="Discount code"
               value={discountCode}
               onChange={(e) => setDiscountCode(e.target.value)}
               className="flex-1 h-[44px] bg-transparent border-none outline-none px-3 font-poppins text-sm text-primary placeholder:text-stone-400"
@@ -812,7 +812,7 @@ export default function CheckoutPage() {
           </div>
 
           {/* Loyalty Points Button */}
-          <button 
+          <button
             onClick={() => setIsLoyaltyModalOpen(true)}
             className="flex items-center justify-center gap-2 w-full h-[54px] bg-background border border-stone-300 hover:bg-stone-100 transition-colors rounded-full font-poppins font-medium text-sm text-primary"
           >
@@ -861,12 +861,12 @@ export default function CheckoutPage() {
           background: #a8a29e;
         }
       `}</style>
-      <LoyaltyPointsModal 
-        isOpen={isLoyaltyModalOpen} 
-        onClose={() => setIsLoyaltyModalOpen(false)} 
-        onApplyPoints={(points) => setAppliedLoyaltyPoints(points)} 
+      <LoyaltyPointsModal
+        isOpen={isLoyaltyModalOpen}
+        onClose={() => setIsLoyaltyModalOpen(false)}
+        onApplyPoints={(points) => setAppliedLoyaltyPoints(points)}
       />
-      <OtpVerificationModal 
+      <OtpVerificationModal
         isOpen={isOtpModalOpen}
         phone={pendingCheckoutData?.phone || ""}
         onClose={() => setIsOtpModalOpen(false)}

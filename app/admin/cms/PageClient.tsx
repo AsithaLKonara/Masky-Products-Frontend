@@ -68,10 +68,15 @@ function HeroTab() {
     const newSlide: any = {
       id: `new-${Date.now()}`,
       title: "New Slide",
-      subtitle: "Edit this subtitle.",
+      subtitle: "Premium Edition",
+      eyebrow: "THE SIGNATURE COLLECTION",
+      description: "Thoughtfully crafted details, warm natural tones, and timeless elegance.",
       cta: "Shop Now",
       ctaLink: "/shop",
-      image: "/hero-placeholder.jpg",
+      ctaSecondaryLabel: "",
+      ctaSecondaryLink: "",
+      image: "/hero-image/Product1.png",
+      accentColor: "#71865B",
       active: false,
       order: heroSlides.length + 1,
     };
@@ -97,40 +102,86 @@ function HeroTab() {
           <div key={slide.id} className={`bg-surface border rounded-xl shadow-sm overflow-hidden ${slide.active ? 'border-border' : 'border-border/50 opacity-70'}`}>
             {editingId === slide.id ? (
               <div className="p-5 flex flex-col gap-4">
+                <p className="font-inter text-xs text-muted font-semibold uppercase tracking-wider border-b border-border/40 pb-2">Content</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Title</label>
-                    <input value={editData.title || ""} onChange={e => setEditData(p => ({...p, title: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"/>
+                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Title (Headline)</label>
+                    <input value={editData.title || ""} onChange={e => setEditData(p => ({...p, title: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. Champagne"/>
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Subtitle</label>
-                    <input value={editData.subtitle || ""} onChange={e => setEditData(p => ({...p, subtitle: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"/>
+                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Subtitle (Italic line)</label>
+                    <input value={editData.subtitle || ""} onChange={e => setEditData(p => ({...p, subtitle: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. Cream Edition"/>
+                  </div>
+                  <div className="flex flex-col gap-1.5 md:col-span-2">
+                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Eyebrow Text (small uppercase above product)</label>
+                    <input value={(editData as any).eyebrow || ""} onChange={e => setEditData(p => ({...p, eyebrow: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. THE SIGNATURE COLLECTION"/>
+                  </div>
+                  <div className="flex flex-col gap-1.5 md:col-span-2">
+                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Description</label>
+                    <textarea value={(editData as any).description || ""} onChange={e => setEditData(p => ({...p, description: e.target.value}))} rows={2} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary resize-none" placeholder="Supporting description text shown below the headline"/>
+                  </div>
+                </div>
+
+                <p className="font-inter text-xs text-muted font-semibold uppercase tracking-wider border-b border-border/40 pb-2 mt-2">Calls to Action</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Primary CTA Label</label>
+                    <input value={editData.cta || ""} onChange={e => setEditData(p => ({...p, cta: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. Explore Collection"/>
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">CTA Button Text</label>
-                    <input value={editData.cta || ""} onChange={e => setEditData(p => ({...p, cta: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"/>
+                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Primary CTA Link</label>
+                    <input value={editData.ctaLink || ""} onChange={e => setEditData(p => ({...p, ctaLink: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="/shop"/>
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">CTA Link</label>
-                    <input value={editData.ctaLink || ""} onChange={e => setEditData(p => ({...p, ctaLink: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"/>
+                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Secondary CTA Label <span className="normal-case text-muted/60">(optional)</span></label>
+                    <input value={(editData as any).ctaSecondaryLabel || ""} onChange={e => setEditData(p => ({...p, ctaSecondaryLabel: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. Watch Video"/>
                   </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Secondary CTA Link <span className="normal-case text-muted/60">(optional)</span></label>
+                    <input value={(editData as any).ctaSecondaryLink || ""} onChange={e => setEditData(p => ({...p, ctaSecondaryLink: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="/about"/>
+                  </div>
+                </div>
+
+                <p className="font-inter text-xs text-muted font-semibold uppercase tracking-wider border-b border-border/40 pb-2 mt-2">Visual</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5 md:col-span-2">
                     <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Slide Image</label>
                     <div className="flex gap-3 items-center">
                       {editData.image && (
-                        <div className="relative w-20 h-14 bg-surface-elevated rounded-lg overflow-hidden shrink-0 border border-border">
-                          <Image src={editData.image} alt="preview" fill sizes="100px" className="object-cover" />
+                        <div className="relative w-20 h-16 bg-surface-elevated rounded-lg overflow-hidden shrink-0 border border-border">
+                          <Image src={editData.image} alt="preview" fill sizes="100px" className="object-contain" />
                         </div>
                       )}
                       <div className="flex flex-col gap-2 flex-1">
-                        <input value={editData.image || ""} onChange={e => setEditData(p => ({...p, image: e.target.value}))} placeholder="/path/to/image.jpg" className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary font-mono text-xs"/>
+                        <input value={editData.image || ""} onChange={e => setEditData(p => ({...p, image: e.target.value}))} placeholder="/hero-image/Product1.png" className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary font-mono text-xs"/>
                         <button type="button" onClick={() => setShowPicker(true)} className="flex items-center gap-2 px-3 py-2 bg-surface-elevated hover:bg-border text-foreground/80 border border-border rounded-lg font-inter font-semibold text-xs transition-colors w-fit">
                           <ImageIcon size={13}/> Pick from Media Library
                         </button>
                       </div>
                     </div>
                   </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Accent / Halo Color</label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="color"
+                        value={(editData as any).accentColor || "#71865B"}
+                        onChange={e => setEditData(p => ({...p, accentColor: e.target.value}))}
+                        className="w-9 h-9 rounded-lg border border-border cursor-pointer p-0.5 bg-surface"
+                        title="Pick the halo color shown behind the active slide"
+                      />
+                      <input
+                        type="text"
+                        value={(editData as any).accentColor || ""}
+                        onChange={e => setEditData(p => ({...p, accentColor: e.target.value}))}
+                        placeholder="#71865B"
+                        className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary font-mono text-xs flex-1"
+                      />
+                    </div>
+                    <p className="font-inter text-[10px] text-muted/60">This color forms the soft ambient halo behind the active product in the carousel.</p>
+                  </div>
                 </div>
+
                 <div className="flex gap-3 justify-end border-t border-border/50 pt-4">
                   <button onClick={cancelEdit} className="px-4 py-2 border border-border text-foreground/80 rounded-lg font-inter text-sm hover:bg-surface-elevated transition-colors">Cancel</button>
                   <button onClick={saveEdit} className="px-4 py-2 bg-foreground text-white rounded-lg font-inter text-sm hover:bg-foreground/90 transition-colors flex items-center gap-2">
@@ -175,38 +226,81 @@ function HeroTab() {
         {editingId?.startsWith('new-') && (
            <div className={`bg-surface border rounded-xl shadow-sm overflow-hidden border-border`}>
               <div className="p-5 flex flex-col gap-4">
+                <p className="font-inter text-xs font-bold text-foreground">New Hero Slide</p>
+                <p className="font-inter text-xs text-muted font-semibold uppercase tracking-wider border-b border-border/40 pb-2">Content</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Title</label>
-                    <input value={editData.title || ""} onChange={e => setEditData(p => ({...p, title: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"/>
+                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Title (Headline)</label>
+                    <input value={editData.title || ""} onChange={e => setEditData(p => ({...p, title: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. Champagne"/>
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Subtitle</label>
-                    <input value={editData.subtitle || ""} onChange={e => setEditData(p => ({...p, subtitle: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"/>
+                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Subtitle (Italic line)</label>
+                    <input value={editData.subtitle || ""} onChange={e => setEditData(p => ({...p, subtitle: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. Cream Edition"/>
+                  </div>
+                  <div className="flex flex-col gap-1.5 md:col-span-2">
+                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Eyebrow Text</label>
+                    <input value={(editData as any).eyebrow || ""} onChange={e => setEditData(p => ({...p, eyebrow: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. THE SIGNATURE COLLECTION"/>
+                  </div>
+                  <div className="flex flex-col gap-1.5 md:col-span-2">
+                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Description</label>
+                    <textarea value={(editData as any).description || ""} onChange={e => setEditData(p => ({...p, description: e.target.value}))} rows={2} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary resize-none" placeholder="Supporting description text"/>
+                  </div>
+                </div>
+                <p className="font-inter text-xs text-muted font-semibold uppercase tracking-wider border-b border-border/40 pb-2 mt-2">Calls to Action</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Primary CTA Label</label>
+                    <input value={editData.cta || ""} onChange={e => setEditData(p => ({...p, cta: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="Explore Collection"/>
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">CTA Button Text</label>
-                    <input value={editData.cta || ""} onChange={e => setEditData(p => ({...p, cta: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"/>
+                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Primary CTA Link</label>
+                    <input value={editData.ctaLink || ""} onChange={e => setEditData(p => ({...p, ctaLink: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="/shop"/>
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">CTA Link</label>
-                    <input value={editData.ctaLink || ""} onChange={e => setEditData(p => ({...p, ctaLink: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"/>
+                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Secondary CTA Label <span className="normal-case text-muted/60">(optional)</span></label>
+                    <input value={(editData as any).ctaSecondaryLabel || ""} onChange={e => setEditData(p => ({...p, ctaSecondaryLabel: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="Watch Video"/>
                   </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Secondary CTA Link <span className="normal-case text-muted/60">(optional)</span></label>
+                    <input value={(editData as any).ctaSecondaryLink || ""} onChange={e => setEditData(p => ({...p, ctaSecondaryLink: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="/about"/>
+                  </div>
+                </div>
+                <p className="font-inter text-xs text-muted font-semibold uppercase tracking-wider border-b border-border/40 pb-2 mt-2">Visual</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5 md:col-span-2">
                     <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Slide Image</label>
                     <div className="flex gap-3 items-center">
                       {editData.image && (
-                        <div className="relative w-20 h-14 bg-surface-elevated rounded-lg overflow-hidden shrink-0 border border-border">
-                          <Image src={editData.image} alt="preview" fill sizes="100px" className="object-cover" />
+                        <div className="relative w-20 h-16 bg-surface-elevated rounded-lg overflow-hidden shrink-0 border border-border">
+                          <Image src={editData.image} alt="preview" fill sizes="100px" className="object-contain" />
                         </div>
                       )}
                       <div className="flex flex-col gap-2 flex-1">
-                        <input value={editData.image || ""} onChange={e => setEditData(p => ({...p, image: e.target.value}))} placeholder="/path/to/image.jpg" className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary font-mono text-xs"/>
+                        <input value={editData.image || ""} onChange={e => setEditData(p => ({...p, image: e.target.value}))} placeholder="/hero-image/Product1.png" className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary font-mono text-xs"/>
                         <button type="button" onClick={() => setShowPicker(true)} className="flex items-center gap-2 px-3 py-2 bg-surface-elevated hover:bg-border text-foreground/80 border border-border rounded-lg font-inter font-semibold text-xs transition-colors w-fit">
                           <ImageIcon size={13}/> Pick from Media Library
                         </button>
                       </div>
                     </div>
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Accent / Halo Color</label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="color"
+                        value={(editData as any).accentColor || "#71865B"}
+                        onChange={e => setEditData(p => ({...p, accentColor: e.target.value}))}
+                        className="w-9 h-9 rounded-lg border border-border cursor-pointer p-0.5 bg-surface"
+                      />
+                      <input
+                        type="text"
+                        value={(editData as any).accentColor || ""}
+                        onChange={e => setEditData(p => ({...p, accentColor: e.target.value}))}
+                        placeholder="#71865B"
+                        className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary font-mono text-xs flex-1"
+                      />
+                    </div>
+                    <p className="font-inter text-[10px] text-muted/60">Soft ambient halo color shown behind the active product.</p>
                   </div>
                 </div>
                 <div className="flex gap-3 justify-end border-t border-border/50 pt-4">

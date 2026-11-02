@@ -40,7 +40,7 @@ export default async function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-transparent">
       <Hero />
       {/* Infinite Scroll Ribbon */}
       <div className="w-full bg-[#1A1A1A] py-3 overflow-hidden flex items-center">
@@ -94,6 +94,6 @@ export default async function Home() {
           <TestimonialSection />
         </>
       )}
-    </main>
+    </div>
   );
 }
