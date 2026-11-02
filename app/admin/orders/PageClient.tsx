@@ -73,6 +73,42 @@ export default function OrdersPage() {
         </span>
       ) 
     },
+    {
+      header: "Channel",
+      accessor: (row: any) => {
+        const type = (row.type || row.channel || "ECOMMERCE").toUpperCase();
+        if (type === "DARAZ") {
+          return (
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold font-inter bg-amber-500/15 text-amber-500 border border-amber-500/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+              Daraz
+            </span>
+          );
+        }
+        if (type === "EBAY") {
+          return (
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold font-inter bg-blue-500/15 text-blue-500 border border-blue-500/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+              eBay
+            </span>
+          );
+        }
+        if (type === "AMAZON") {
+          return (
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold font-inter bg-orange-500/15 text-orange-500 border border-orange-500/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
+              Amazon
+            </span>
+          );
+        }
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold font-inter bg-surface-subtle text-muted border border-border">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            Web Store
+          </span>
+        );
+      },
+    },
     { 
       header: "Customer", 
       accessor: (row: any) => (
@@ -151,8 +187,11 @@ export default function OrdersPage() {
         onChange={e => { setType(e.target.value); setPage(1); }}
         className="bg-surface border border-border rounded-lg py-2 px-3 text-sm font-inter text-foreground outline-none focus:ring-1 focus:ring-primary hover:bg-surface-elevated transition-colors"
       >
-        <option value="">All Types</option>
-        <option value="ECOMMERCE">Online Store</option>
+        <option value="">All Channels</option>
+        <option value="ECOMMERCE">Web Store</option>
+        <option value="DARAZ">Daraz Marketplace</option>
+        <option value="EBAY">eBay Marketplace</option>
+        <option value="AMAZON">Amazon SP-API</option>
         {FEATURES.ENABLE_POS && <option value="POS">In-Store (POS)</option>}
         <option value="MANUAL">Manual</option>
       </select>

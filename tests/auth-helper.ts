@@ -77,6 +77,21 @@ export async function setupAdminSession(context: BrowserContext, page: Page) {
     });
   });
 
+  // Mock /auth/refresh API endpoint
+  await page.route('**/api/v1/auth/refresh', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        status: 'success',
+        data: {
+          accessToken: token,
+          user: mockUser,
+        },
+      }),
+    });
+  });
+
   // Initialize both laural_user and auth-storage before page loads
   await page.addInitScript((user) => {
     localStorage.setItem('laural_user', JSON.stringify(user));

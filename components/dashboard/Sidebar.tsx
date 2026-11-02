@@ -32,6 +32,7 @@ import {
   ChevronDown,
   ChevronRight,
   ExternalLink,
+  Globe2,
 } from "lucide-react";
 
 interface NavItem {
@@ -123,6 +124,12 @@ export default function Sidebar({
           icon: CreditCard,
           href: "/admin/payments",
           permission: "payments:view_transactions",
+        },
+        {
+          name: "Channels",
+          icon: Globe2,
+          href: "/admin/channels",
+          permission: ["orders:view", "products:view", "reports:view_dashboard"],
         },
       ],
     },
