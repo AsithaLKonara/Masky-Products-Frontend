@@ -29,10 +29,14 @@ test.describe('Collapsible Sidebar & Icon Rail Menu Verification', () => {
     await expect(aside).toHaveClass(/w-\[240px\]/);
     await expect(aside.getByText('MASKY PRODUCT')).toBeVisible();
 
-    // 3. Click Collapse Button (Sidebar header toggle button)
-    const collapseBtn = aside.locator('button[aria-label="Collapse sidebar"]');
-    await expect(collapseBtn).toBeVisible();
-    await collapseBtn.click();
+    // Verify sidebar has NO duplicate collapse button (only header has the button)
+    const asideCollapseBtn = aside.locator('button[aria-label="Collapse sidebar"]');
+    await expect(asideCollapseBtn).toHaveCount(0);
+
+    // 3. Click Header Collapse Button
+    const headerCollapseBtn = page.locator('header button[aria-label="Collapse sidebar"]');
+    await expect(headerCollapseBtn).toBeVisible();
+    await headerCollapseBtn.click();
     await page.waitForTimeout(400);
 
     // 4. Verify Collapsed State (Rail Icon Menu)

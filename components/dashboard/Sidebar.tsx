@@ -32,8 +32,6 @@ import {
   ChevronDown,
   ChevronRight,
   ExternalLink,
-  PanelLeftClose,
-  PanelLeftOpen,
 } from "lucide-react";
 
 interface NavItem {
@@ -323,28 +321,15 @@ export default function Sidebar({
               </div>
             </Link>
 
-            <div className="flex items-center gap-1">
-              {onToggleCollapse && (
-                <button
-                  type="button"
-                  onClick={onToggleCollapse}
-                  className="hidden md:flex items-center justify-center w-7 h-7 text-muted hover:text-foreground hover:bg-surface-elevated rounded-lg transition-colors border border-transparent hover:border-border cursor-pointer"
-                  title="Collapse sidebar"
-                  aria-label="Collapse sidebar"
-                >
-                  <PanelLeftClose size={16} />
-                </button>
-              )}
-              {setIsOpen && (
-                <button
-                  className="md:hidden text-muted hover:text-foreground p-1 rounded-lg hover:bg-surface-elevated cursor-pointer"
-                  onClick={() => setIsOpen(false)}
-                  aria-label="Close menu"
-                >
-                  <X size={18} />
-                </button>
-              )}
-            </div>
+            {setIsOpen && (
+              <button
+                className="md:hidden text-muted hover:text-foreground p-1 rounded-lg hover:bg-surface-elevated cursor-pointer"
+                onClick={() => setIsOpen(false)}
+                aria-label="Close menu"
+              >
+                <X size={18} />
+              </button>
+            )}
           </>
         ) : (
           <button
