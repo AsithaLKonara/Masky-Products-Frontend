@@ -8,10 +8,10 @@ import { Category } from "@/types/category";
 import { PLACEHOLDER_IMAGE } from "@/lib/placeholder";
 
 const FALLBACK_CATEGORIES: Category[] = [
-  { id: "cat-fresh", name: "Fresh mushrooms product", slug: "fresh-mushrooms-product", imageUrl: "/isolated-oyster-mushroom-cutout-on-white-background-free-png.webp" } as Category,
-  { id: "cat-dehydrated", name: "Dehydrated product", slug: "dehydrated-product", imageUrl: "/hero-image/Product1.png" } as Category,
-  { id: "cat-ready", name: "Redy to eat product", slug: "redy-to-eat-product", imageUrl: "/hero-image/Product2.png" } as Category,
-  { id: "cat-frozen", name: "Frezon product", slug: "frezon-product", imageUrl: "/hero-image/Product3.png" } as Category,
+  { id: "cat-fresh", name: "Fresh mushrooms product", slug: "fresh-mushrooms-product", imageUrl: "/products/fresh-oyster-mushrooms-200g.jpg" } as Category,
+  { id: "cat-dehydrated", name: "Dehydrated product", slug: "dehydrated-product", imageUrl: "/products/dehydrated-oyster-mushroom.jpg" } as Category,
+  { id: "cat-ready", name: "Redy to eat product", slug: "redy-to-eat-product", imageUrl: "/products/mushroom-chili-paste-jar-200g.jpg" } as Category,
+  { id: "cat-frozen", name: "Frezon product", slug: "frezon-product", imageUrl: "/products/frozen-oyster-mushrooms-200g.jpg" } as Category,
 ];
 
 export default function CollectionsSection({ initialData }: { initialData?: PaginatedResponse<Category> }) {

@@ -247,9 +247,9 @@ export default function ShopContent({ initialData }: { initialData?: PaginatedRe
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 w-full">
-              {products.map((product: Product) => (
+              {products.map((product: Product, idx: number) => (
                 <div key={product.id} className="flex justify-center w-full animate-in fade-in zoom-in-95 duration-300">
-                  <ProductCard product={product} />
+                  <ProductCard product={product} priority={idx < 8} />
                 </div>
               ))}
             </div>
