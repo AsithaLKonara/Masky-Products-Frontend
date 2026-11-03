@@ -36,6 +36,8 @@ export interface Product {
   sizeGuideEnabled?: boolean;
   sizeGuideContent?: string | null;
   sizeGuideImageUrl?: string | null;
+  manufactureDate?: string | null;
+  expiryDate?: string | null;
   createdAt: string;
   updatedAt: string;
   variants?: ProductVariant[];

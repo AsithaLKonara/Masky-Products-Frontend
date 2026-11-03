@@ -131,6 +131,8 @@ export const createProductSchema = z.object({
   sizeGuideEnabled: z.boolean().optional(),
   sizeGuideContent: z.string().optional(),
   sizeGuideImageUrl: z.string().optional(),
+  manufactureDate: z.string().optional(),
+  expiryDate: z.string().optional(),
 }).strip();
 
 export type CreateProductFormData = z.infer<typeof createProductSchema>;

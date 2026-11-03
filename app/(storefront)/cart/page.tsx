@@ -120,9 +120,26 @@ export default function CartPage() {
 
         {/* Cart Main Content */}
         {isPending ? (
-          <div className="min-h-[400px] flex flex-col items-center justify-center gap-4 text-[#62695A]">
-            <Loader2 size={32} className="animate-spin text-[#203C2B]" />
-            <p className="font-poppins text-xs uppercase tracking-wider">Accessing your harvest bag...</p>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 animate-pulse my-4">
+            <div className="lg:col-span-8 flex flex-col gap-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex gap-4 p-4 rounded-2xl bg-white/70 border border-[#DCDCCB] items-center">
+                  <div className="w-20 h-20 rounded-xl bg-[#203C2B]/10 shrink-0" />
+                  <div className="flex-1 flex flex-col gap-2">
+                    <div className="h-4 w-48 bg-[#203C2B]/15 rounded" />
+                    <div className="h-3 w-24 bg-[#71865B]/20 rounded" />
+                    <div className="h-4 w-20 bg-[#203C2B]/20 rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="lg:col-span-4 h-72 rounded-3xl bg-white/70 border border-[#DCDCCB] p-6 flex flex-col gap-4">
+              <div className="h-5 w-32 bg-[#203C2B]/15 rounded" />
+              <div className="h-px w-full bg-[#DCDCCB]" />
+              <div className="h-4 w-full bg-[#203C2B]/10 rounded" />
+              <div className="h-4 w-full bg-[#203C2B]/10 rounded" />
+              <div className="h-12 w-full rounded-full bg-[#203C2B]/15 mt-auto" />
+            </div>
           </div>
         ) : items.length === 0 ? (
           /* Empty State */

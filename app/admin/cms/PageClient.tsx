@@ -4,12 +4,14 @@ import { useState, useRef, useEffect } from "react";
 import {
   Layout, Image as ImageIcon, FileText, Megaphone, Plus, Trash2,
   GripVertical, Eye, EyeOff, Edit3, Check, X, ChevronDown, ChevronUp,
-  Globe, Save, ExternalLink, Video, Sliders, Columns2, Sparkles, Film
+  Globe, Save, ExternalLink, Video, Sliders, Columns2, Sparkles, Film,
+  Mail, Send, Users, Download, RefreshCw, CheckCircle, AlertCircle
 } from "lucide-react";
 import PageHeader from "@/components/admin/PageHeader";
 import MediaPickerModal from "@/components/admin/MediaPickerModal";
 import type { MediaFile } from "@/components/admin/MediaPickerModal";
 import Image from "next/image";
+import api from "@/services/api";
 
 import { useCms } from "@/hooks/useCms";
 import { HeroSlide, Banner, HomepageSection, StaticPage, HeroConfig } from "@/services/cms.service";
@@ -1389,12 +1391,449 @@ function PagesTab() {
   );
 }
 
+// ─── Private Gazette Tab ──────────────────────────────────────────────────────
+
+function GazetteTab() {
+  const [subscribers, setSubscribers] = useState<any[]>([]);
+  const [broadcasts, setBroadcasts] = useState<any[]>([]);
+  const [totalSubscribers, setTotalSubscribers] = useState(0);
+  const [activeCount, setActiveCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [showBroadcastModal, setShowBroadcastModal] = useState(false);
+  const [broadcastForm, setBroadcastForm] = useState({
+    subject: "",
+    previewText: "",
+    contentHtml: "<p>We are delighted to announce our latest small-batch reserve of organic dehydrated gourmet mushrooms.</p><p>Carefully harvested and slowly dehydrated at gentle temperatures to protect precious earthy aromas and savory umami notes.</p>",
+    testEmail: "",
+  });
+  const [broadcasting, setBroadcasting] = useState(false);
+  const [broadcastResult, setBroadcastResult] = useState<string | null>(null);
+
+  const fetchGazetteData = async () => {
+    setLoading(true);
+    try {
+      const [subRes, bRes] = await Promise.all([
+        api.get("/cms/gazette/subscribers", {
+          params: { search: search || undefined, status: statusFilter !== "ALL" ? statusFilter : undefined }
+        }),
+        api.get("/cms/gazette/broadcasts"),
+      ]);
+      setSubscribers(subRes.data?.subscribers || []);
+      setTotalSubscribers(subRes.data?.total || 0);
+      setActiveCount(subRes.data?.activeCount || 0);
+      setBroadcasts(bRes.data || []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchGazetteData();
+  }, [search, statusFilter]);
+
+  const handleDeleteSubscriber = async (id: string) => {
+    if (!confirm("Are you sure you want to remove this subscriber from the Private Gazette?")) return;
+    try {
+      await api.delete(`/cms/gazette/subscribers/${id}`);
+      fetchGazetteData();
+    } catch (err: any) {
+      alert("Failed to remove subscriber");
+    }
+  };
+
+  const handleExportCsv = () => {
+    if (!subscribers.length) {
+      alert("No subscribers found to export.");
+      return;
+    }
+    const headers = ["Email", "Status", "Source", "Subscribed Date"];
+    const rows = subscribers.map((s) => [
+      `"${s.email}"`,
+      `"${s.status}"`,
+      `"${s.source}"`,
+      `"${new Date(s.createdAt).toISOString()}"`,
+    ]);
+    const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `masky_gazette_subscribers_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleSendBroadcast = async (sendToAll: boolean) => {
+    if (!broadcastForm.subject.trim() || !broadcastForm.contentHtml.trim()) {
+      alert("Please provide both a subject line and email body content.");
+      return;
+    }
+    if (!sendToAll && !broadcastForm.testEmail.trim()) {
+      alert("Please enter an email address for the test dispatch.");
+      return;
+    }
+    if (sendToAll && !confirm(`Confirm sending this broadcast to all ${activeCount} active Private Gazette subscribers?`)) {
+      return;
+    }
+
+    setBroadcasting(true);
+    setBroadcastResult(null);
+    try {
+      const res = await api.post("/cms/gazette/broadcast", {
+        subject: broadcastForm.subject,
+        previewText: broadcastForm.previewText,
+        contentHtml: broadcastForm.contentHtml,
+        testEmail: sendToAll ? undefined : broadcastForm.testEmail,
+        sendToAll,
+      });
+
+      if (sendToAll) {
+        setBroadcastResult(`Dispatched successfully to ${res.data?.sentCount || 0} active subscribers!`);
+        fetchGazetteData();
+        setTimeout(() => {
+          setShowBroadcastModal(false);
+          setBroadcastResult(null);
+        }, 3000);
+      } else {
+        setBroadcastResult(`Test dispatch successfully delivered to ${broadcastForm.testEmail}!`);
+      }
+    } catch (err: any) {
+      alert(err.response?.data?.error || "Broadcast dispatch failed");
+    } finally {
+      setBroadcasting(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-6">
+      {/* Top Metric Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-surface border border-border p-5 rounded-2xl flex items-center justify-between shadow-2xs">
+          <div>
+            <span className="font-inter text-xs text-muted font-medium uppercase tracking-wider">Active Gazette Members</span>
+            <h3 className="font-inter text-2xl font-bold text-foreground mt-1">{activeCount}</h3>
+            <span className="font-inter text-[11px] text-primary mt-0.5 inline-block">Direct Marketing Reach</span>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+            <Users size={22} />
+          </div>
+        </div>
+
+        <div className="bg-surface border border-border p-5 rounded-2xl flex items-center justify-between shadow-2xs">
+          <div>
+            <span className="font-inter text-xs text-muted font-medium uppercase tracking-wider">Dispatches Sent</span>
+            <h3 className="font-inter text-2xl font-bold text-foreground mt-1">{broadcasts.length}</h3>
+            <span className="font-inter text-[11px] text-muted mt-0.5 inline-block">Historical Campaigns</span>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center text-foreground">
+            <Send size={22} />
+          </div>
+        </div>
+
+        <div className="bg-surface border border-border p-5 rounded-2xl flex items-center justify-between shadow-2xs">
+          <div>
+            <span className="font-inter text-xs text-muted font-medium uppercase tracking-wider">Delivery Gateway</span>
+            <h3 className="font-inter text-2xl font-bold text-emerald-600 mt-1">Resend v1</h3>
+            <span className="font-inter text-[11px] text-emerald-700 mt-0.5 inline-block">Operational • Quiet Luxury</span>
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600">
+            <CheckCircle size={22} />
+          </div>
+        </div>
+      </div>
+
+      {/* Action Bar */}
+      <div className="bg-surface border border-border p-4 rounded-2xl flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shadow-2xs">
+        <div className="flex flex-1 items-center gap-2">
+          <input
+            type="text"
+            placeholder="Search subscribers by email..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="flex-1 max-w-sm h-10 px-3.5 rounded-xl border border-border bg-background font-inter text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="h-10 px-3 rounded-xl border border-border bg-background font-inter text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer"
+          >
+            <option value="ALL">All Status</option>
+            <option value="ACTIVE">Active Only</option>
+            <option value="UNSUBSCRIBED">Unsubscribed</option>
+          </select>
+          <button
+            onClick={fetchGazetteData}
+            title="Refresh List"
+            className="w-10 h-10 rounded-xl border border-border flex items-center justify-center text-muted hover:text-foreground hover:bg-surface-elevated transition-colors cursor-pointer"
+          >
+            <RefreshCw size={15} />
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleExportCsv}
+            className="h-10 px-4 rounded-xl border border-border flex items-center gap-1.5 font-inter text-xs font-semibold text-foreground hover:bg-surface-elevated transition-colors cursor-pointer shadow-2xs"
+          >
+            <Download size={14} />
+            <span>Export CSV</span>
+          </button>
+          <button
+            onClick={() => setShowBroadcastModal(true)}
+            className="h-10 px-4 rounded-xl bg-foreground hover:bg-foreground/90 text-background flex items-center gap-1.5 font-inter text-xs font-semibold transition-colors cursor-pointer shadow-sm"
+          >
+            <Send size={14} />
+            <span>Compose Dispatch</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Subscribers Table */}
+      <div className="bg-surface border border-border rounded-2xl overflow-hidden shadow-2xs">
+        <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Mail size={16} className="text-primary" />
+            <h4 className="font-inter font-bold text-sm text-foreground">Private Gazette Subscribers ({totalSubscribers})</h4>
+          </div>
+          <span className="font-inter text-xs text-muted">Auto-synced with Storefront Footer</span>
+        </div>
+
+        {loading ? (
+          <div className="p-12 flex flex-col items-center justify-center gap-2">
+            <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+            <span className="font-inter text-xs text-muted">Loading Gazette subscriber roster...</span>
+          </div>
+        ) : subscribers.length === 0 ? (
+          <div className="p-12 text-center font-inter text-xs text-muted">
+            No subscribers match the current filter.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left font-inter text-xs">
+              <thead className="bg-surface-elevated border-b border-border text-muted font-medium">
+                <tr>
+                  <th className="py-3 px-5">Subscriber Email</th>
+                  <th className="py-3 px-4">Status</th>
+                  <th className="py-3 px-4">Origin / Source</th>
+                  <th className="py-3 px-4">Subscribed At</th>
+                  <th className="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {subscribers.map((sub) => (
+                  <tr key={sub.id} className="hover:bg-surface-elevated/40 transition-colors">
+                    <td className="py-3.5 px-5 font-semibold text-foreground flex items-center gap-2.5">
+                      <div className="w-7 h-7 rounded-full bg-primary/10 text-primary font-bold text-[11px] flex items-center justify-center shrink-0 uppercase">
+                        {sub.email.charAt(0)}
+                      </div>
+                      <span className="truncate max-w-xs">{sub.email}</span>
+                    </td>
+                    <td className="py-3.5 px-4">
+                      {sub.status === "ACTIVE" ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 font-medium text-[11px]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          Active
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-stone-500/10 border border-stone-500/20 text-stone-600 font-medium text-[11px]">
+                          Unsubscribed
+                        </span>
+                      )}
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <span className="px-2 py-0.5 rounded-md bg-surface-elevated text-muted font-medium text-[11px] uppercase tracking-wider">
+                        {sub.source || "FOOTER"}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4 text-muted">
+                      {new Date(sub.createdAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </td>
+                    <td className="py-3.5 px-4 text-right">
+                      <button
+                        onClick={() => handleDeleteSubscriber(sub.id)}
+                        title="Remove Subscriber"
+                        className="p-1.5 text-muted hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors cursor-pointer"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Broadcast History */}
+      {broadcasts.length > 0 && (
+        <div className="bg-surface border border-border rounded-2xl overflow-hidden shadow-2xs">
+          <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+            <h4 className="font-inter font-bold text-sm text-foreground">Past Gazette Dispatches ({broadcasts.length})</h4>
+          </div>
+          <div className="divide-y divide-border">
+            {broadcasts.map((b) => (
+              <div key={b.id} className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="flex flex-col">
+                  <h5 className="font-inter font-semibold text-xs text-foreground">{b.subject}</h5>
+                  <span className="font-inter text-[11px] text-muted mt-0.5">
+                    {b.previewText || "Small-batch harvest bulletin"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  <span className="px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-inter text-[11px] font-semibold">
+                    {b.sentCount} recipients
+                  </span>
+                  <span className="font-inter text-[11px] text-muted">
+                    {new Date(b.sentAt || b.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Compose Dispatch Modal */}
+      {showBroadcastModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in">
+          <div className="w-full max-w-xl bg-surface border border-border rounded-2xl p-6 shadow-2xl flex flex-col gap-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-border pb-3">
+              <div className="flex items-center gap-2">
+                <Send size={18} className="text-primary" />
+                <h3 className="font-inter font-bold text-base text-foreground">Compose Private Gazette Dispatch</h3>
+              </div>
+              <button
+                onClick={() => setShowBroadcastModal(false)}
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-muted hover:text-foreground cursor-pointer"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <div>
+                <label className="font-inter text-xs font-semibold text-foreground block mb-1">
+                  Dispatch Subject Line *
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Autumn Harvest Chronicle: Reserve Abalone & Oyster Batches"
+                  value={broadcastForm.subject}
+                  onChange={(e) => setBroadcastForm({ ...broadcastForm, subject: e.target.value })}
+                  className="w-full h-10 px-3.5 rounded-xl border border-border bg-background font-inter text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+
+              <div>
+                <label className="font-inter text-xs font-semibold text-foreground block mb-1">
+                  Preview Pre-header Snippet
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Small-batch organic harvest now ready for private member ordering"
+                  value={broadcastForm.previewText}
+                  onChange={(e) => setBroadcastForm({ ...broadcastForm, previewText: e.target.value })}
+                  className="w-full h-10 px-3.5 rounded-xl border border-border bg-background font-inter text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+
+              <div>
+                <label className="font-inter text-xs font-semibold text-foreground block mb-1">
+                  Dispatch Body HTML / Message *
+                </label>
+                <textarea
+                  rows={6}
+                  value={broadcastForm.contentHtml}
+                  onChange={(e) => setBroadcastForm({ ...broadcastForm, contentHtml: e.target.value })}
+                  placeholder="Enter message body HTML or paragraphs..."
+                  className="w-full p-3 rounded-xl border border-border bg-background font-inter text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+                <span className="font-inter text-[10px] text-muted">
+                  Will be automatically wrapped in Masky Product luxury quiet earth-tone header and footer.
+                </span>
+              </div>
+
+              <div className="pt-2 border-t border-border flex flex-col gap-2">
+                <label className="font-inter text-xs font-semibold text-muted block">
+                  Send Test Preview (Optional)
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="email"
+                    placeholder="Enter test email address..."
+                    value={broadcastForm.testEmail}
+                    onChange={(e) => setBroadcastForm({ ...broadcastForm, testEmail: e.target.value })}
+                    className="flex-1 h-9 px-3 rounded-lg border border-border bg-background font-inter text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
+                  <button
+                    type="button"
+                    disabled={broadcasting}
+                    onClick={() => handleSendBroadcast(false)}
+                    className="h-9 px-3 rounded-lg border border-border font-inter text-xs font-semibold hover:bg-surface-elevated transition-colors cursor-pointer"
+                  >
+                    Send Test
+                  </button>
+                </div>
+              </div>
+
+              {broadcastResult && (
+                <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 font-inter text-xs flex items-center gap-2">
+                  <CheckCircle size={15} />
+                  <span>{broadcastResult}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-border">
+              <button
+                type="button"
+                onClick={() => setShowBroadcastModal(false)}
+                className="h-10 px-4 rounded-xl border border-border font-inter text-xs font-semibold hover:bg-surface-elevated transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={broadcasting}
+                onClick={() => handleSendBroadcast(true)}
+                className="h-10 px-5 rounded-xl bg-foreground hover:bg-foreground/90 text-background font-inter text-xs font-semibold flex items-center gap-2 cursor-pointer shadow-sm disabled:opacity-50"
+              >
+                {broadcasting ? (
+                  <div className="w-4 h-4 border-2 border-background border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <Send size={14} />
+                    <span>Broadcast to {activeCount} Members</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Main Page ─────────────────────────────────────────────────────────────────
 
 const TABS = [
   { id: "hero", label: "Hero Slides", icon: ImageIcon },
   { id: "banners", label: "Promo Banners", icon: Megaphone },
   { id: "homepage", label: "Homepage Layout", icon: Layout },
+  { id: "gazette", label: "Private Gazette", icon: Mail },
 ];
 
 export default function AdminCMSPage() {
@@ -1404,7 +1843,7 @@ export default function AdminCMSPage() {
     <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <PageHeader
         title="Content Management"
-        subtitle="Manage homepage sections, promotional banners, hero slides, and static pages."
+        subtitle="Manage homepage sections, promotional banners, hero slides, and private reserve gazettes."
         actionLabel="View Storefront"
         actionHref="/"
       />
@@ -1417,7 +1856,7 @@ export default function AdminCMSPage() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg font-inter font-semibold text-sm transition-all ${
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg font-inter font-semibold text-sm transition-all cursor-pointer ${
                 activeTab === tab.id
                   ? "bg-foreground text-background shadow-sm"
                   : "text-muted hover:bg-surface-elevated hover:text-foreground"
@@ -1435,6 +1874,7 @@ export default function AdminCMSPage() {
         {activeTab === "hero" && <HeroTab/>}
         {activeTab === "banners" && <BannersTab/>}
         {activeTab === "homepage" && <HomepageTab/>}
+        {activeTab === "gazette" && <GazetteTab/>}
       </div>
     </div>
   );

@@ -2,13 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, Phone, Mail, ArrowRight } from "lucide-react";
+import { MapPin, Phone, Mail, ArrowRight, CheckCircle, AlertCircle } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useCategories } from "@/hooks/useCategories";
 import { useCms } from "@/hooks/useCms";
 import { useBranches } from "@/hooks/useInventory";
 import { usePublicSettings } from "@/hooks/useSettings";
 import { useState, useEffect } from "react";
+import api from "@/services/api";
 
 export default function Footer() {
   const [mounted, setMounted] = useState(false);
@@ -23,6 +24,32 @@ export default function Footer() {
   
   const mainBranch = branchesData?.data?.[0] || branchesData?.[0];
   const supportEmail = settingsData?.find((s: any) => s.key === "support_email")?.value;
+
+  const [gazetteEmail, setGazetteEmail] = useState("");
+  const [gazetteStatus, setGazetteStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [gazetteMsg, setGazetteMsg] = useState("");
+
+  const handleGazetteSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const clean = gazetteEmail.trim().toLowerCase();
+    if (!clean || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean)) {
+      setGazetteStatus("error");
+      setGazetteMsg("Please enter a valid email address");
+      return;
+    }
+
+    setGazetteStatus("loading");
+    setGazetteMsg("");
+    try {
+      const res = await api.post("/cms/gazette/subscribe", { email: clean, source: "FOOTER" });
+      setGazetteStatus("success");
+      setGazetteMsg(res.data?.message || "Welcome to our inner circle. Membership confirmation dispatched.");
+      setGazetteEmail("");
+    } catch (err: any) {
+      setGazetteStatus("error");
+      setGazetteMsg(err.response?.data?.error || "Subscription failed. Please try again.");
+    }
+  };
   
   if (pathname === "/login") return null;
 
@@ -177,7 +204,7 @@ export default function Footer() {
                 Receive private reserve announcements, harvest chronicles, and exclusive tasting invitations.
               </p>
               
-              <div className="flex flex-col gap-2.5 w-full mt-1">
+              <form onSubmit={handleGazetteSubscribe} className="flex flex-col gap-2.5 w-full mt-1">
                 <div 
                   className="flex items-center px-3.5 w-full h-11 rounded-full"
                   style={{
@@ -188,22 +215,49 @@ export default function Footer() {
                   <Mail size={16} className="text-[#A8B995] shrink-0" />
                   <input 
                     type="email" 
+                    value={gazetteEmail}
+                    onChange={(e) => {
+                      setGazetteEmail(e.target.value);
+                      if (gazetteStatus === "error") setGazetteStatus("idle");
+                    }}
                     placeholder="Enter your email" 
+                    disabled={gazetteStatus === "loading"}
                     className="flex-1 bg-transparent border-none outline-none text-xs text-[#FFFCF4] placeholder:text-[#FFFCF4]/50 ml-2" 
                   />
                 </div>
                 <button 
-                  type="button"
-                  className="group flex justify-center items-center gap-2 w-full h-11 rounded-full transition-all duration-300 hover:scale-[1.02] active:scale-95"
+                  type="submit"
+                  disabled={gazetteStatus === "loading"}
+                  className="group flex justify-center items-center gap-2 w-full h-11 rounded-full transition-all duration-300 hover:scale-[1.02] active:scale-95 disabled:opacity-50 cursor-pointer"
                   style={{
                     background: "linear-gradient(135deg, #71865B 0%, #4D5E3C 100%)",
                     boxShadow: "0 4px 15px rgba(113,134,91,0.3)",
                   }}
                 >
-                  <span className="font-poppins font-medium text-xs uppercase tracking-wider text-[#FFFCF4]">Subscribe</span>
-                  <ArrowRight size={13} className="text-[#FFFCF4] transition-transform duration-300 group-hover:translate-x-1" />
+                  {gazetteStatus === "loading" ? (
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <span className="font-poppins font-medium text-xs uppercase tracking-wider text-[#FFFCF4]">Subscribe</span>
+                      <ArrowRight size={13} className="text-[#FFFCF4] transition-transform duration-300 group-hover:translate-x-1" />
+                    </>
+                  )}
                 </button>
-              </div>
+
+                {gazetteStatus === "success" && (
+                  <div className="flex items-start gap-1.5 p-2.5 rounded-xl bg-[#71865B]/25 border border-[#71865B]/40 text-[#A8B995] text-[11px] font-poppins leading-tight mt-1">
+                    <CheckCircle size={14} className="shrink-0 text-[#A8B995] mt-0.5" />
+                    <span>{gazetteMsg}</span>
+                  </div>
+                )}
+
+                {gazetteStatus === "error" && (
+                  <div className="flex items-start gap-1.5 p-2 rounded-xl bg-red-500/20 border border-red-500/30 text-red-200 text-[11px] font-poppins leading-tight mt-1">
+                    <AlertCircle size={14} className="shrink-0 text-red-300 mt-0.5" />
+                    <span>{gazetteMsg}</span>
+                  </div>
+                )}
+              </form>
             </div>
           </div>
         </div>

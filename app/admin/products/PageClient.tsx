@@ -1,7 +1,7 @@
 "use client";
 import AdminStatCards from "@/components/admin/AdminStatCards";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import PageHeader from "@/components/dashboard/PageHeader";
 import FilterBar from "@/components/dashboard/FilterBar";
 import DataTable from "@/components/dashboard/DataTable";
@@ -9,10 +9,11 @@ import { StatusBadge } from "@/components/dashboard/Badges";
 import ProductFormModal from "@/components/dashboard/ProductFormModal";
 import BulkEditModal from "@/components/admin/BulkEditModal";
 import Link from "next/link";
-import { Barcode, Edit, ArchiveRestore, CheckCircle2, Printer, X } from "lucide-react";
+import { Barcode, Edit, ArchiveRestore, CheckCircle2, Printer, X, AlertCircle, Calendar, Sparkles } from "lucide-react";
 import BarcodeLib from "react-barcode";
 import { useReactToPrint } from "react-to-print";
 import { useProducts, useDeleteProduct, useBulkEditProducts } from "@/hooks/useProducts";
+import { useCategories } from "@/hooks/useCategories";
 import { Product } from "@/types/product";
 import { globalDialog } from "@/store/dialog.store";
 import { toast } from "@/store/toast.store";
@@ -23,6 +24,7 @@ export default function ProductsPage() {
   const [printingProduct, setPrintingProduct] = useState<{name: string, variants: any[]} | null>(null);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [showBulkEditModal, setShowBulkEditModal] = useState(false);
+  const [expiryFilter, setExpiryFilter] = useState<'ALL' | 'EXPIRING' | 'EXPIRED'>('ALL');
 
   const [page, setPage] = useState(1);
   const take = 12;
@@ -31,6 +33,9 @@ export default function ProductsPage() {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
+  const { data: categoriesData } = useCategories();
+  const categories = categoriesData?.data || [];
+
   const { data: response, isLoading } = useProducts({
     skip: (page - 1) * take,
     take: take,
@@ -38,15 +43,43 @@ export default function ProductsPage() {
     category: categoryFilter === "All Categories" ? undefined : (categoryFilter || undefined),
     status: statusFilter === "All Status" ? undefined : (statusFilter || undefined)
   } as any);
+  
   const products = response?.data || [];
   const meta = response?.meta || { total: 0, skip: 0, take: take };
   const totalPages = Math.ceil(meta.total / (meta.take || take)) || 1;
   const deleteProductMutation = useDeleteProduct();
   const bulkEditProductsMutation = useBulkEditProducts();
 
+  // Expiry Calculations
+  const expiredProducts = useMemo(() => {
+    return products.filter((p: any) => p.expiryDate && new Date(p.expiryDate).getTime() < Date.now());
+  }, [products]);
+
+  const expiringSoonProducts = useMemo(() => {
+    return products.filter((p: any) => {
+      if (!p.expiryDate) return false;
+      const diff = new Date(p.expiryDate).getTime() - Date.now();
+      return diff >= 0 && diff <= 30 * 86400000;
+    });
+  }, [products]);
+
+  const displayedProducts = useMemo(() => {
+    if (expiryFilter === 'EXPIRED') {
+      return products.filter((p: any) => p.expiryDate && new Date(p.expiryDate).getTime() < Date.now());
+    }
+    if (expiryFilter === 'EXPIRING') {
+      return products.filter((p: any) => {
+        if (!p.expiryDate) return false;
+        const diff = new Date(p.expiryDate).getTime() - Date.now();
+        return diff >= 0 && diff <= 30 * 86400000;
+      });
+    }
+    return products;
+  }, [products, expiryFilter]);
+
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
-      setSelectedProducts(products.map((p: Product) => p.id));
+      setSelectedProducts(displayedProducts.map((p: Product) => p.id));
     } else {
       setSelectedProducts([]);
     }
@@ -99,30 +132,35 @@ export default function ProductsPage() {
 
   const columns = [
     {
-      header: <input type="checkbox" checked={selectedProducts.length === products.length && products.length > 0} onChange={handleSelectAll} className="rounded text-foreground focus:ring-accent border-border" />,
+      header: <input type="checkbox" checked={selectedProducts.length === displayedProducts.length && displayedProducts.length > 0} onChange={handleSelectAll} className="rounded text-foreground focus:ring-accent border-border" />,
       accessor: (row: any) => <input type="checkbox" checked={selectedProducts.includes(row.id)} onChange={() => handleSelectOne(row.id)} onClick={e => e.stopPropagation()} className="rounded text-foreground focus:ring-accent border-border" />
     },
     { 
       header: "SKU", 
-      accessor: (row: any) => row.sku || 'N/A', 
+      accessor: (row: any) => row.sku || row.variants?.[0]?.sku || '—', 
       className: "font-mono text-muted text-xs font-medium" 
     },
     {
-      header: "Product",
+      header: "Product Title",
       accessor: (row: any) => (
-        <button onClick={() => handleEdit(row)} className="font-semibold text-foreground hover:text-accent transition-colors text-left">
-          {row.name}
-        </button>
+        <div className="flex flex-col">
+          <button onClick={() => handleEdit(row)} className="font-semibold text-foreground hover:text-accent transition-colors text-left text-sm">
+            {row.name}
+          </button>
+          <span className="text-[11px] text-muted font-mono mt-0.5">
+            {row.variants?.length || 0} Custom Variant{row.variants?.length !== 1 ? 's' : ''}
+          </span>
+        </div>
       ),
     },
     { header: "Category", accessor: (row: any) => row.category?.name || <span className="text-muted">Uncategorized</span> },
     { 
-      header: "Price", 
+      header: "Base Price", 
       accessor: (row: any) => {
         const price = row.variants?.[0]?.price || 0;
         return `Rs ${price.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
       },
-      className: "font-mono font-black text-xs text-foreground tracking-tight" 
+      className: "font-mono font-bold text-xs text-foreground tracking-tight" 
     },
     { 
       header: "Stock", 
@@ -132,6 +170,49 @@ export default function ProductsPage() {
           <span className={totalQuantity === 0 ? "font-mono text-xs font-bold text-rose-500 italic" : totalQuantity <= 10 ? "font-mono text-xs font-bold text-amber-500" : "font-mono text-xs font-bold text-foreground"}>
             {totalQuantity}
           </span>
+        );
+      }
+    },
+    {
+      header: "Shelf Life & Expiry",
+      accessor: (row: any) => {
+        if (!row.expiryDate) {
+          return <span className="text-muted text-xs font-mono">—</span>;
+        }
+        const expDate = new Date(row.expiryDate);
+        const now = Date.now();
+        const diffMs = expDate.getTime() - now;
+        const diffDays = Math.ceil(diffMs / 86400000);
+
+        if (diffMs < 0) {
+          return (
+            <div className="flex flex-col gap-0.5">
+              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full w-fit">
+                🔴 Expired
+              </span>
+              <span className="text-[10px] text-muted font-mono">{expDate.toLocaleDateString()}</span>
+            </div>
+          );
+        }
+
+        if (diffDays <= 30) {
+          return (
+            <div className="flex flex-col gap-0.5">
+              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-800 bg-amber-50 border border-amber-300 px-2 py-0.5 rounded-full w-fit">
+                ⏳ {diffDays}d left
+              </span>
+              <span className="text-[10px] text-muted font-mono">{expDate.toLocaleDateString()}</span>
+            </div>
+          );
+        }
+
+        return (
+          <div className="flex flex-col gap-0.5">
+            <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full w-fit">
+              🌿 {diffDays}d active
+            </span>
+            <span className="text-[10px] text-muted font-mono">{expDate.toLocaleDateString()}</span>
+          </div>
         );
       }
     },
@@ -173,11 +254,9 @@ export default function ProductsPage() {
         className="bg-surface border border-border rounded-lg py-2 px-3 text-sm font-inter text-foreground outline-none focus:ring-1 focus:ring-primary hover:bg-surface-elevated transition-colors"
       >
         <option value="">All Categories</option>
-        {/* In reality, you'd map from useCategories here, but hardcoding for now as it was before */}
-        <option value="T-Shirts">T-Shirts</option>
-        <option value="Shirts">Shirts</option>
-        <option value="Dresses">Dresses</option>
-        <option value="Pants">Pants</option>
+        {categories.map((c: any) => (
+          <option key={c.slug} value={c.slug}>{c.name}</option>
+        ))}
       </select>
       <select 
         value={statusFilter}
@@ -193,7 +272,7 @@ export default function ProductsPage() {
       </select>
       <button
         onClick={handleAdd}
-        className="bg-foreground text-background hover:opacity-80 active:scale-95 px-5 py-2 rounded-lg font-inter text-sm font-semibold transition-all whitespace-nowrap ml-auto shadow-md flex items-center gap-2"
+        className="bg-[#203C2B] text-white hover:bg-[#2d523c] active:scale-95 px-5 py-2 rounded-lg font-inter text-sm font-semibold transition-all whitespace-nowrap ml-auto shadow-sm flex items-center gap-2 cursor-pointer"
       >
         + Add Product
       </button>
@@ -204,17 +283,79 @@ export default function ProductsPage() {
     <>
       <div className="flex flex-col p-4 md:p-10 max-w-[1280px] mx-auto w-full">
         <PageHeader
-          title="Products"
-          description="Manage your product catalog, categories, and inventory base."
+          title="Mushroom Products & Catalog"
+          description="Manage authentic mushroom harvests, custom package variants, and batch shelf life."
         />
 
-        <div className="mb-6"><AdminStatCards metrics={[
-  { title: "Total", value: meta?.total?.toString() || products.length.toString(), theme: "white-blue" },
-  { title: "Active", value: products.filter((p: any) => p.status === "ACTIVE").length.toString(), theme: "white-stone" },
-  { title: "Pending", value: products.filter((p: any) => p.status === "DRAFT").length.toString(), theme: "orange" }
-]} /></div>
-      <FilterBar
-          placeholder="Search products by name or SKU..."
+        <div className="mb-6">
+          <AdminStatCards metrics={[
+            { title: "Total Products", value: meta?.total?.toString() || products.length.toString(), theme: "white-blue" },
+            { title: "Active Catalog", value: products.filter((p: any) => p.status === "ACTIVE").length.toString(), theme: "white-stone" },
+            { title: "Expiring Soon", value: expiringSoonProducts.length.toString(), theme: expiringSoonProducts.length > 0 ? "orange" : "white-stone" }
+          ]} />
+        </div>
+
+        {/* Expiry Alert Notification Banner */}
+        {(expiredProducts.length > 0 || expiringSoonProducts.length > 0) && (
+          <div className="mb-6 p-4 rounded-2xl bg-[#FFFBF0] border border-[#E7D6A8] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-start md:items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-amber-500/15 text-amber-800 flex items-center justify-center shrink-0">
+                <AlertCircle size={22} />
+              </div>
+              <div>
+                <h4 className="font-inter font-bold text-sm text-[#203C2B]">
+                  Shelf Life & Expiry Attention Required
+                </h4>
+                <p className="font-inter text-xs text-[#62695A] mt-0.5">
+                  {expiredProducts.length > 0 && (
+                    <span className="text-red-700 font-semibold mr-2">
+                      🚨 {expiredProducts.length} product batch has expired.
+                    </span>
+                  )}
+                  {expiringSoonProducts.length > 0 && (
+                    <span className="text-amber-800 font-medium">
+                      ⏳ {expiringSoonProducts.length} product(s) expiring within 30 days.
+                    </span>
+                  )}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => setExpiryFilter(expiryFilter === 'EXPIRING' ? 'ALL' : 'EXPIRING')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-inter font-semibold transition-all cursor-pointer ${
+                  expiryFilter === 'EXPIRING' 
+                    ? 'bg-amber-700 text-white shadow-xs' 
+                    : 'bg-amber-100 text-amber-900 hover:bg-amber-200'
+                }`}
+              >
+                Expiring Soon ({expiringSoonProducts.length})
+              </button>
+              <button
+                onClick={() => setExpiryFilter(expiryFilter === 'EXPIRED' ? 'ALL' : 'EXPIRED')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-inter font-semibold transition-all cursor-pointer ${
+                  expiryFilter === 'EXPIRED' 
+                    ? 'bg-red-700 text-white shadow-xs' 
+                    : 'bg-red-100 text-red-800 hover:bg-red-200'
+                }`}
+              >
+                Expired ({expiredProducts.length})
+              </button>
+              {expiryFilter !== 'ALL' && (
+                <button
+                  onClick={() => setExpiryFilter('ALL')}
+                  className="px-3 py-1.5 rounded-lg text-xs font-inter text-[#203C2B] bg-white border border-[#DCDCCB] hover:bg-surface-elevated cursor-pointer"
+                >
+                  Show All ({products.length})
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        <FilterBar
+          placeholder="Search products by title, SKU, or packaging..."
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           filters={filters}
@@ -222,7 +363,7 @@ export default function ProductsPage() {
 
         <div className="overflow-hidden mt-6">
           <DataTable
-            data={products}
+            data={displayedProducts}
             columns={columns}
             keyExtractor={(row) => row.id}
             pagination={{ 
@@ -282,7 +423,6 @@ export default function ProductsPage() {
 }
 
 // ── Per-variant + Bulk Barcode Print Modal ───────────────────────────────────
-// ── Label size presets ───────────────────────────────────────────────────────
 const LABEL_SIZES = [
   { id: 'auto',    label: 'Auto (Printer)',   desc: 'Let printer decide',   css: 'auto',       bW: 1.5, bH: 45 },
   { id: '30x20',   label: '30 × 20 mm',       desc: 'Tiny roll',            css: '30mm 20mm',  bW: 0.8, bH: 20 },
@@ -344,7 +484,7 @@ function ProductVariantsBarcodeModal({
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-border bg-surface-elevated shrink-0">
           <div>
-            <h2 className="font-inter font-bold text-lg text-foreground">Variant Barcodes</h2>
+            <h2 className="font-inter font-bold text-lg text-foreground">Packaging Barcodes</h2>
             <p className="text-sm text-muted font-inter mt-0.5">
               {productName} &mdash; {variantsWithBarcodes.length} variant{variantsWithBarcodes.length !== 1 ? 's' : ''} with barcodes
             </p>
@@ -353,12 +493,12 @@ function ProductVariantsBarcodeModal({
             <button
               onClick={() => handleBulkPrint()}
               disabled={variantsWithBarcodes.length === 0}
-              className="flex items-center gap-2 px-4 py-2 bg-foreground text-white font-inter font-medium text-sm rounded-lg hover:bg-foreground/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-4 py-2 bg-foreground text-white font-inter font-medium text-sm rounded-lg hover:bg-foreground/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             >
               <Printer size={15} />
               Print All ({variantsWithBarcodes.length})
             </button>
-            <button onClick={onClose} className="p-2 text-muted/70 hover:text-foreground hover:bg-surface-elevated rounded-lg transition-colors">
+            <button onClick={onClose} className="p-2 text-muted/70 hover:text-foreground hover:bg-surface-elevated rounded-lg transition-colors cursor-pointer">
               <X size={20} />
             </button>
           </div>
@@ -372,7 +512,7 @@ function ProductVariantsBarcodeModal({
               <button
                 key={s.id}
                 onClick={() => setLabelSizeId(s.id)}
-                className={`flex flex-col items-start px-3 py-1.5 rounded-lg border text-left transition-all text-xs font-inter ${
+                className={`flex flex-col items-start px-3 py-1.5 rounded-lg border text-left transition-all text-xs font-inter cursor-pointer ${
                   labelSizeId === s.id
                     ? 'bg-foreground border-foreground text-white'
                     : 'bg-surface border-border text-foreground/80 hover:border-border'
@@ -395,22 +535,25 @@ function ProductVariantsBarcodeModal({
             {variants.length === 0 ? (
               <p className="text-sm text-muted/70 font-inter px-4 py-6 text-center">No variants found</p>
             ) : (
-              variants.map((v: any, i: number) => (
-                <button
-                  key={v.id || i}
-                  onClick={() => setSelectedVariantIdx(i)}
-                  className={`w-full text-left px-4 py-3 border-b border-border/50 transition-colors text-sm font-inter ${
-                    selectedVariantIdx === i
-                      ? 'bg-foreground text-white'
-                      : 'hover:bg-surface-elevated text-foreground/80'
-                  }`}
-                >
-                  <p className="font-semibold text-xs mb-0.5">{v.size} / {v.color}</p>
-                  <p className={`text-[10px] font-mono truncate ${selectedVariantIdx === i ? 'text-border' : 'text-muted/70'}`}>
-                    {v.barcode ? v.barcode : 'No barcode'}
-                  </p>
-                </button>
-              ))
+              variants.map((v: any, i: number) => {
+                const label = v.name || v.size || `Variant ${i + 1}`;
+                return (
+                  <button
+                    key={v.id || i}
+                    onClick={() => setSelectedVariantIdx(i)}
+                    className={`w-full text-left px-4 py-3 border-b border-border/50 transition-colors text-sm font-inter cursor-pointer ${
+                      selectedVariantIdx === i
+                        ? 'bg-foreground text-white'
+                        : 'hover:bg-surface-elevated text-foreground/80'
+                    }`}
+                  >
+                    <p className="font-semibold text-xs mb-0.5">{label}</p>
+                    <p className={`text-[10px] font-mono truncate ${selectedVariantIdx === i ? 'text-border' : 'text-muted/70'}`}>
+                      {v.barcode ? v.barcode : 'No barcode'}
+                    </p>
+                  </button>
+                );
+              })
             )}
           </div>
 
@@ -420,7 +563,6 @@ function ProductVariantsBarcodeModal({
               <>
                 {selectedVariant.barcode ? (
                   <div className="flex flex-col items-center gap-5 w-full">
-                    {/* Live preview label */}
                     <div className="flex items-center gap-2 text-xs text-muted font-inter">
                       <span>Previewing as:</span>
                       <span className="font-semibold text-foreground/90">{activeSize.label}</span>
@@ -428,11 +570,11 @@ function ProductVariantsBarcodeModal({
                     <div className="bg-surface rounded-xl shadow-sm border border-border p-6 flex flex-col items-center w-full max-w-xs">
                       <div ref={singleRef} className="react-to-print-content" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'white', padding: '8px', width: '100%', fontFamily: 'sans-serif' }}>
                         <p style={{ fontWeight: 700, fontSize: '11px', textAlign: 'center', margin: '0 0 3px 0', color: '#1c1917' }}>{productName}</p>
-                        <p style={{ fontSize: '10px', textAlign: 'center', margin: '0 0 6px 0', color: '#78716c' }}>{selectedVariant.size} / {selectedVariant.color}</p>
+                        <p style={{ fontSize: '10px', textAlign: 'center', margin: '0 0 6px 0', color: '#78716c' }}>{selectedVariant.name || selectedVariant.size}</p>
                         <BarcodeLib value={getDisplayCode(selectedVariant.barcode)} format="CODE128" width={activeSize.bW} height={activeSize.bH} displayValue fontSize={10} margin={3} />
                       </div>
                     </div>
-                    <button onClick={() => handleSinglePrint()} className="flex items-center gap-2 px-5 py-2.5 bg-foreground text-white font-inter font-semibold text-sm rounded-lg hover:bg-foreground/90 transition-colors">
+                    <button onClick={() => handleSinglePrint()} className="flex items-center gap-2 px-5 py-2.5 bg-[#203C2B] text-white font-inter font-semibold text-sm rounded-lg hover:bg-[#2d523c] transition-colors cursor-pointer">
                       <Printer size={15} /> Print This Barcode
                     </button>
                   </div>
@@ -454,7 +596,7 @@ function ProductVariantsBarcodeModal({
           </div>
         </div>
 
-        {/* Bulk print area — off-screen so react-to-print can render it */}
+        {/* Bulk print area */}
         <div style={{ position: 'fixed', left: '-9999px', top: 0, width: activeSize.id === 'a4' ? '21cm' : activeSize.css.replace(' ', ' x ').split(' ')[0], pointerEvents: 'none' }} aria-hidden="true">
           <div
             ref={bulkRef}
@@ -471,7 +613,7 @@ function ProductVariantsBarcodeModal({
             {variantsWithBarcodes.map((v: any, i: number) => (
               <div key={v.id || i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', border: '1px solid #e7e5e4', padding: '6px', background: 'white' }}>
                 <p style={{ fontWeight: 700, fontSize: '9px', textAlign: 'center', color: '#1c1917', margin: '0 0 2px 0' }}>{productName}</p>
-                <p style={{ fontSize: '8px', textAlign: 'center', color: '#78716c', margin: '0 0 3px 0' }}>{v.size} / {v.color}</p>
+                <p style={{ fontSize: '8px', textAlign: 'center', color: '#78716c', margin: '0 0 3px 0' }}>{v.name || v.size}</p>
                 <BarcodeLib value={getDisplayCode(v.barcode)} format="CODE128" width={activeSize.bW} height={activeSize.bH} displayValue fontSize={8} margin={2} />
               </div>
             ))}
@@ -482,4 +624,3 @@ function ProductVariantsBarcodeModal({
     </div>
   );
 }
-

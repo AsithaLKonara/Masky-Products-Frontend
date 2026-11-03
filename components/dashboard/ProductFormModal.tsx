@@ -19,10 +19,13 @@ import {
   Globe,
   Barcode,
   Printer,
+  Calendar,
+  Clock,
+  Sparkles,
 } from "lucide-react";
 import BarcodeLib from "react-barcode";
 import { useReactToPrint } from "react-to-print";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createProductSchema, CreateProductFormData } from "@/lib/validations";
 import { useCreateProduct, useUpdateProduct } from "@/hooks/useProducts";
@@ -35,8 +38,9 @@ import Image from "next/image";
 
 interface Variant {
   id: string;
+  name: string;
   size: string;
-  color: string;
+  color?: string;
   sku: string;
   barcode: string;
   stock: { [branch: string]: number };
@@ -47,20 +51,29 @@ interface Variant {
 interface ProductFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  productToEdit?: any; // any because we might pass a full Product with nested variants
+  productToEdit?: any;
 }
 
-const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "3XL", "28", "30", "32", "34", "36", "38"];
-const COLORS = ["Black", "White", "Navy", "Grey", "Brown", "Beige", "Olive", "Burgundy", "Sky Blue", "Pink"];
+const MUSHROOM_VARIANT_PRESETS = [
+  "100g Pouch",
+  "200g Fresh Pack",
+  "250g Pouch",
+  "500g Pouch",
+  "1kg Bulk Pack",
+  "80g Sealed Tub",
+  "200g Glass Jar",
+  "Trio Gift Pack (3 x 150ml)",
+];
+
 const PAYMENT_GATEWAYS = ["Koko", "Mintpay", "OnePay", "Payzy", "COD"];
 
 const SECTION_TABS = [
-  { id: "basic", label: "Basic Info", icon: Package },
+  { id: "basic", label: "Basic Info & Shelf Life", icon: Package },
   { id: "media", label: "Media", icon: ImagePlus },
-  { id: "variants", label: "Variants", icon: Layers },
+  { id: "variants", label: "Custom Variants", icon: Layers },
   { id: "pricing", label: "Pricing", icon: DollarSign },
   { id: "inventory", label: "Inventory", icon: Box },
-  { id: "sizeguide", label: "Size Guide", icon: Ruler },
+  { id: "sizeguide", label: "Specifications", icon: Ruler },
   { id: "payment", label: "Payment Methods", icon: CreditCard },
   { id: "seo", label: "SEO & Visibility", icon: Globe },
 ];
@@ -69,31 +82,26 @@ function generateSlug(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
-function generateSKU(name: string, size: string, color: string) {
-  const prefix = name ? name.toUpperCase().split(" ").map(w => w[0]).join("").slice(0, 3) : "PRD";
-  const s = size.toUpperCase().slice(0, 2);
-  const c = color.toUpperCase().slice(0, 2);
-  return `LC-${prefix}-${s}-${c}`;
+function generateSKU(name: string, variantLabel: string) {
+  const prefix = name ? name.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 4) : "MSK";
+  const v = variantLabel.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 4) || "VAR";
+  return `MSK-${prefix}-${v}`;
+}
+
+function generateUniqueBarcode(): string {
+  return `20${Math.floor(10000000000 + Math.random() * 89999999999)}`;
 }
 
 export default function ProductFormModal({ isOpen, onClose, productToEdit }: ProductFormModalProps) {
   const [activeTab, setActiveTab] = useState("basic");
   const [slugEdited, setSlugEdited] = useState(false);
-  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
-  const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [variants, setVariants] = useState<Variant[]>([]);
+  const [customVariantInput, setCustomVariantInput] = useState("");
   const [selectedPaymentMethods, setSelectedPaymentMethods] = useState<string[]>([...PAYMENT_GATEWAYS]);
   const [sizeGuideEnabled, setSizeGuideEnabled] = useState(false);
-  const [sizeGuideContent, setSizeGuideContent] = useState("S — Chest: 36\", Waist: 30\"\nM — Chest: 38\", Waist: 32\"\nL — Chest: 40\", Waist: 34\"\nXL — Chest: 42\", Waist: 36\"");
+  const [sizeGuideContent, setSizeGuideContent] = useState("100g Pouch — Yields 800g reconstituted culinary mushrooms\n250g Pouch — Ideal for family kitchen pantry\n500g Pouch — Commercial / Food service pack");
   const [sizeGuideImageUrl, setSizeGuideImageUrl] = useState("");
   
-  const [customSizes, setCustomSizes] = useState<string[]>([]);
-  const [customColors, setCustomColors] = useState<{name: string, hex: string}[]>([]);
-  const [newSize, setNewSize] = useState("");
-  const [newColorName, setNewColorName] = useState("");
-  const [newColorHex, setNewColorHex] = useState("#000000");
-  const [isAddingSize, setIsAddingSize] = useState(false);
-  const [isAddingColor, setIsAddingColor] = useState(false);
   const [images, setImages] = useState<string[]>(["", "", "", ""]);
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
   const [activeImageSlot, setActiveImageSlot] = useState<number | null>(null);
@@ -127,17 +135,20 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
       metaDesc: "",
       sizeGuideEnabled: false,
       sizeGuideContent: "",
-      sizeGuideImageUrl: ""
+      sizeGuideImageUrl: "",
+      manufactureDate: "",
+      expiryDate: "",
     }
   });
 
   const productName = watch("name");
-  const slug = watch("slug");
   const metaTitle = watch("metaTitle");
   const metaDesc = watch("metaDesc");
   const basePrice = watch("basePrice");
   const compareAtPrice = watch("compareAtPrice");
   const costPrice = watch("costPrice");
+  const watchExpiryDate = watch("expiryDate");
+  const watchMfgDate = watch("manufactureDate");
 
   // Keep slug in sync unless manually edited
   useEffect(() => {
@@ -152,11 +163,14 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
       setValue("name", productToEdit.name || "");
       setValue("slug", productToEdit.slug || "");
       setValue("description", productToEdit.description || "");
-      setValue("category", productToEdit.categoryId || ""); // Note: might need ID to Name mapping depending on select
+      setValue("category", productToEdit.categoryId || "");
       setSlugEdited(true);
       setSizeGuideEnabled(productToEdit.sizeGuideEnabled || false);
-      setSizeGuideContent(productToEdit.sizeGuideContent || "S — Chest: 36\", Waist: 30\"\nM — Chest: 38\", Waist: 32\"\nL — Chest: 40\", Waist: 34\"\nXL — Chest: 42\", Waist: 36\"");
+      setSizeGuideContent(productToEdit.sizeGuideContent || "100g Pouch — Yields 800g reconstituted mushrooms\n250g Pouch — Pantry standard");
       setSizeGuideImageUrl(productToEdit.sizeGuideImageUrl || "");
+      setValue("manufactureDate", productToEdit.manufactureDate ? new Date(productToEdit.manufactureDate).toISOString().split('T')[0] : "");
+      setValue("expiryDate", productToEdit.expiryDate ? new Date(productToEdit.expiryDate).toISOString().split('T')[0] : "");
+
       if (productToEdit.allowedPaymentMethods) {
         setSelectedPaymentMethods(productToEdit.allowedPaymentMethods);
       } else {
@@ -168,46 +182,44 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
         setValue("basePrice", (firstVariant.price).toString());
         if (firstVariant.salePrice) setValue("compareAtPrice", (firstVariant.salePrice).toString());
 
-        const loadedVariants = productToEdit.variants.map((v: any) => ({
-          id: v.id,
-          size: v.size || "",
-          color: v.color || "",
-          sku: v.sku || "",
-          barcode: v.barcode || `20${Math.floor(10000000000 + Math.random() * 89999999999)}`,
-          stock: branchCodes.reduce((acc: any, code: string) => {
-            const branchInventory = v.inventoryItems?.find((inv: any) => inv.branch?.code === code);
-            acc[code] = branchInventory?.quantity || 0;
-            return acc;
-          }, {}),
-          price: v.price.toString(),
-          compareAtPrice: v.salePrice ? v.salePrice.toString() : "",
-        }));
+        const loadedVariants = productToEdit.variants.map((v: any) => {
+          const variantLabel = v.name || v.size || (v.color ? `${v.size || ''} ${v.color}`.trim() : "Standard");
+          return {
+            id: v.id,
+            name: variantLabel,
+            size: v.size || variantLabel,
+            color: v.color || "",
+            sku: v.sku || generateSKU(productToEdit.name, variantLabel),
+            barcode: v.barcode || generateUniqueBarcode(),
+            stock: branchCodes.reduce((acc: any, code: string) => {
+              const branchInventory = v.inventoryItems?.find((inv: any) => inv.branch?.code === code);
+              acc[code] = branchInventory?.quantity || 0;
+              return acc;
+            }, {}),
+            price: v.price.toString(),
+            compareAtPrice: v.salePrice ? v.salePrice.toString() : "",
+          };
+        });
 
         if (firstVariant.featuredImage) {
           const newImages = [firstVariant.featuredImage, ...(firstVariant.gallery || []), "", "", ""].slice(0, 4);
           setImages(newImages);
         }
 
-        const sizes = Array.from(new Set(loadedVariants.map((v: any) => v.size).filter(Boolean))) as string[];
-        const colors = Array.from(new Set(loadedVariants.map((v: any) => v.color).filter(Boolean))) as string[];
-        
-        setSelectedSizes(sizes);
-        setSelectedColors(colors);
         setVariants(loadedVariants);
       }
     } else if (!productToEdit && isOpen) {
-      // Reset form for new product
       setValue("name", "");
       setValue("slug", "");
       setValue("description", "");
       setValue("basePrice", "");
       setValue("compareAtPrice", "");
+      setValue("manufactureDate", "");
+      setValue("expiryDate", "");
       setSlugEdited(false);
       setSizeGuideEnabled(false);
-      setSizeGuideContent("S — Chest: 36\", Waist: 30\"\nM — Chest: 38\", Waist: 32\"\nL — Chest: 40\", Waist: 34\"\nXL — Chest: 42\", Waist: 36\"");
+      setSizeGuideContent("100g Pouch — Yields 800g reconstituted culinary mushrooms\n250g Pouch — Pantry standard");
       setSizeGuideImageUrl("");
-      setSelectedSizes([]);
-      setSelectedColors([]);
       setVariants([]);
       setImages(["", "", "", ""]);
       setActiveTab("basic");
@@ -216,62 +228,27 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
 
   if (!isOpen) return null;
 
-  function handleAddCustomSize() {
-    if (newSize.trim() && !SIZES.includes(newSize.trim()) && !customSizes.includes(newSize.trim())) {
-      setCustomSizes(prev => [...prev, newSize.trim()]);
-      setSelectedSizes(prev => [...prev, newSize.trim()]);
+  function addVariantWithLabel(label: string) {
+    const trimmed = label.trim();
+    if (!trimmed) return;
+    if (variants.some(v => (v.name || v.size)?.toLowerCase() === trimmed.toLowerCase())) {
+      toast.error(`Variant "${trimmed}" is already added.`);
+      return;
     }
-    setNewSize("");
-    setIsAddingSize(false);
-  }
-
-  function handleAddCustomColor() {
-    const name = newColorName.trim();
-    if (name && !COLORS.includes(name) && !customColors.some(c => c.name === name)) {
-      setCustomColors(prev => [...prev, { name, hex: newColorHex || "#000000" }]);
-      setSelectedColors(prev => [...prev, name]);
-    }
-    setNewColorName("");
-    setNewColorHex("#000000");
-    setIsAddingColor(false);
-  }
-
-  function toggleSize(size: string) {
-    setSelectedSizes(prev => prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]);
-  }
-
-  function toggleColor(color: string) {
-    setSelectedColors(prev => prev.includes(color) ? prev.filter(c => c !== color) : [...prev, color]);
-  }
-
-  function generateUniqueBarcode(): string {
-    return `20${Math.floor(10000000000 + Math.random() * 89999999999)}`;
-  }
-
-  function generateVariants() {
-    const newVariants: Variant[] = [];
-    for (const size of selectedSizes) {
-      for (const color of selectedColors) {
-        const existingVariant = variants.find(v => v.size === size && v.color === color);
-        if (!existingVariant) {
-          newVariants.push({
-            id: `${size}-${color}`,
-            size,
-            color,
-            sku: generateSKU(productName || "PROD", size, color),
-            barcode: generateUniqueBarcode(), // Auto-generate barcode on creation
-            stock: Object.fromEntries(branchCodes.map((b: string) => [b, initialGlobalStock])),
-            price: basePrice || "",
-            compareAtPrice: compareAtPrice || "",
-          });
-        }
-      }
-    }
-    setVariants(prev => {
-      const existing = prev.filter(v => selectedSizes.includes(v.size) && selectedColors.includes(v.color));
-      return [...existing, ...newVariants];
-    });
-    setActiveTab("variants");
+    const newVariant: Variant = {
+      id: `var-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      name: trimmed,
+      size: trimmed,
+      color: "",
+      sku: generateSKU(productName || "PROD", trimmed),
+      barcode: generateUniqueBarcode(),
+      stock: Object.fromEntries(branchCodes.map((b: string) => [b, initialGlobalStock])),
+      price: basePrice || "",
+      compareAtPrice: compareAtPrice || "",
+    };
+    setVariants(prev => [...prev, newVariant]);
+    setCustomVariantInput("");
+    toast.success(`Added variant "${trimmed}"`);
   }
 
   function updateVariantStock(id: string, branch: string, val: number) {
@@ -279,7 +256,16 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
   }
 
   function updateVariantField(id: string, field: keyof Variant, val: string) {
-    setVariants(prev => prev.map(v => v.id === id ? { ...v, [field]: val } : v));
+    setVariants(prev => prev.map(v => {
+      if (v.id === id) {
+        const updated = { ...v, [field]: val };
+        if (field === "name") {
+          updated.size = val;
+        }
+        return updated;
+      }
+      return v;
+    }));
   }
 
   function removeVariant(id: string) {
@@ -287,7 +273,7 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
   }
 
   function applyStockToAll() {
-    if (variants.length === 0) return toast.error("Generate variants first");
+    if (variants.length === 0) return toast.error("Create at least one variant first");
     setVariants(prev => prev.map(v => ({
       ...v,
       stock: Object.fromEntries(branchCodes.map((b: string) => [b, initialGlobalStock]))
@@ -301,12 +287,17 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
 
   const onSubmit = async (data: CreateProductFormData) => {
     try {
+      if (variants.length === 0) {
+        toast.error("Please add at least one custom variant (e.g. 100g, 250g, Standard Pack) in the Custom Variants tab.");
+        setActiveTab("variants");
+        return;
+      }
+
       const formatVariantPayload = (v: Variant, isUpdate: boolean = false) => {
         const branchCodeToId = Object.fromEntries(
           (branchesData || []).map((b: any) => [b.code, b.id])
         );
         
-        // Find existing variant to know which inventory items already exist
         const existingVariant = isUpdate && productToEdit 
           ? productToEdit.variants?.find((pv: any) => pv.id === v.id) 
           : null;
@@ -338,11 +329,12 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
         if (inventoryUpdate.length > 0) inventoryItems.update = inventoryUpdate;
 
         return {
-          size: v.size,
-          color: v.color,
+          name: v.name || v.size || "Standard",
+          size: v.size || v.name || "Standard",
+          color: null,
           sku: v.sku || null,
           barcode: v.barcode || null,
-          price: parseFloat(v.price || "0"),
+          price: parseFloat(v.price || basePrice || "0"),
           salePrice: v.compareAtPrice ? parseFloat(v.compareAtPrice) : null,
           quantity: Object.values(v.stock).reduce((sum, qty) => sum + qty, 0),
           stockStatus: "instock",
@@ -360,8 +352,6 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
         const variantsToUpdate = variants.filter(v => productToEdit.variants?.find((pv: any) => pv.id === v.id));
         const variantsToCreate = variants.filter(v => !productToEdit.variants?.find((pv: any) => pv.id === v.id));
         
-        // Instead of hard-deleting variants (which crashes Prisma due to FK constraints on Orders/Transactions),
-        // we "soft-delete" them by setting stock to 0 and marking them out of stock.
         const variantsToDelete = productToEdit.variants?.filter((pv: any) => !variants.find(v => v.id === pv.id)) || [];
 
         return {
@@ -394,6 +384,8 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
         sizeGuideEnabled,
         sizeGuideContent: sizeGuideEnabled ? sizeGuideContent : undefined,
         sizeGuideImageUrl: sizeGuideEnabled ? sizeGuideImageUrl : undefined,
+        manufactureDate: data.manufactureDate ? data.manufactureDate : null,
+        expiryDate: data.expiryDate ? data.expiryDate : null,
         allowedPaymentMethods: selectedPaymentMethods,
         variants: getVariantsPayload()
       };
@@ -407,9 +399,10 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
       onClose();
     } catch (error: any) {
       console.error("Failed to save product", error.response?.data || error);
-      toast.error(error.response?.data?.error || "Failed to save product. Please try again.");
+      toast.error(error.response?.data?.error || "Failed to save product. Please check all fields.");
     }
   };
+
   const onError = (errors: any) => {
     console.error("Form Validation Errors:", errors);
     const errorKeys = Object.keys(errors);
@@ -420,21 +413,19 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
     }
   };
 
-  if (!isOpen) return null;
-
   return (
     <div className="fixed inset-0 z-[200] flex">
       {/* Backdrop */}
       <div className="absolute inset-0 bg-background/60 backdrop-blur-sm" onClick={onClose} />
 
       {/* Full-height Panel */}
-      <div className="relative ml-auto w-full max-w-[920px] h-full bg-surface flex flex-col shadow-2xl overflow-hidden">
+      <div className="relative ml-auto w-full max-w-[940px] h-full bg-surface flex flex-col shadow-2xl overflow-hidden">
         
         {/* Header */}
         <div className="flex items-center justify-between px-8 py-5 border-b border-border bg-surface-elevated shrink-0">
           <div>
-            <h2 className="font-inter font-bold text-xl text-foreground">{productToEdit ? "Edit Product" : "Add New Product"}</h2>
-            <p className="font-inter text-sm text-muted mt-0.5">{productToEdit ? "Update product details and variations." : "Fill in all sections to publish a complete product listing."}</p>
+            <h2 className="font-inter font-bold text-xl text-foreground">{productToEdit ? "Edit Mushroom Product" : "Add New Mushroom Product"}</h2>
+            <p className="font-inter text-sm text-muted mt-0.5">{productToEdit ? "Update harvest details, custom variants, and shelf life." : "Publish a complete agricultural or value-added mushroom listing."}</p>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-border rounded-lg text-muted transition-colors">
             <X size={20} />
@@ -450,13 +441,13 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                 key={tab.id}
                 type="button"
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-5 py-3.5 text-sm font-medium font-inter whitespace-nowrap border-b-2 transition-all ${
+                className={`flex items-center gap-2 px-5 py-3.5 text-xs font-inter font-semibold border-b-2 transition-all whitespace-nowrap ${
                   activeTab === tab.id
-                    ? "border-foreground text-foreground"
-                    : "border-transparent text-muted/70 hover:text-foreground/80 hover:border-border"
+                    ? "border-foreground text-foreground bg-surface-elevated"
+                    : "border-transparent text-muted hover:text-foreground/80 hover:bg-surface-elevated/50"
                 }`}
               >
-                <Icon size={15} />
+                <Icon size={14} />
                 {tab.label}
               </button>
             );
@@ -464,18 +455,18 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
         </div>
 
         {/* Body Form */}
-        <form id="add-product-form" onSubmit={handleSubmit(onSubmit, onError)} className="flex flex-col flex-1 overflow-hidden">
-          <div className="flex-1 overflow-y-auto p-8">
-
-            {/* ────────── BASIC INFO ────────── */}
+        <form onSubmit={handleSubmit(onSubmit, onError)} className="flex-1 flex flex-col justify-between overflow-y-auto">
+          <div className="p-8">
+            
+            {/* ────────── BASIC INFO & SHELF LIFE ────────── */}
             {activeTab === "basic" && (
               <div className="flex flex-col gap-6 max-w-[700px]">
                 <div className="flex flex-col gap-2">
-                  <label className="label">Product Name <span className="text-red-500">*</span></label>
+                  <label className="label">Product Title</label>
                   <input
                     type="text"
                     {...register("name")}
-                    placeholder="e.g. Black Oversized T-Shirt"
+                    placeholder="e.g. Dehydrated Oyster Mushroom (වියළි බිම්මල්)"
                     className={`input ${errors.name ? 'border-red-500' : ''}`}
                   />
                   {errors.name && <span className="text-red-500 text-xs">{errors.name.message}</span>}
@@ -492,7 +483,60 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                     />
                   </div>
                   {errors.slug && <span className="text-red-500 text-xs">{errors.slug.message}</span>}
-                  <p className="text-xs text-muted/70 font-inter">Auto-generated from product name. Edit only if needed.</p>
+                  <p className="text-xs text-muted/70 font-inter">Auto-generated from title. URL identifier for storefront routing.</p>
+                </div>
+
+                {/* Production Dates & Shelf Life Alert Card */}
+                <div className="bg-[#FAF9F5] border border-[#DCDCCB] rounded-2xl p-5 flex flex-col gap-4">
+                  <div className="flex items-center gap-2">
+                    <Calendar size={18} className="text-[#203C2B]" />
+                    <h3 className="font-inter font-bold text-sm text-[#203C2B]">Production Batch & Shelf Life Dates</h3>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="flex flex-col gap-2">
+                      <label className="label flex items-center justify-between">
+                        <span>Manufacture Date</span>
+                        <span className="text-[11px] text-muted">Packaging / Batch Date</span>
+                      </label>
+                      <input
+                        type="date"
+                        {...register("manufactureDate")}
+                        className="input"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <label className="label flex items-center justify-between">
+                        <span>Expiry Date</span>
+                        <span className="text-[11px] text-muted">Best Before Date</span>
+                      </label>
+                      <input
+                        type="date"
+                        {...register("expiryDate")}
+                        className="input"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Real-time Shelf-Life & Expiry Alert Badge */}
+                  {watchExpiryDate && (
+                    <div className={`p-3.5 rounded-xl border flex items-center gap-2.5 text-xs font-inter transition-all ${
+                      new Date(watchExpiryDate).getTime() < Date.now()
+                        ? "bg-red-50 border-red-300 text-red-800"
+                        : new Date(watchExpiryDate).getTime() - Date.now() < 30 * 86400000
+                        ? "bg-amber-50 border-amber-300 text-amber-900"
+                        : "bg-emerald-50 border-emerald-300 text-emerald-900"
+                    }`}>
+                      <AlertCircle size={16} className="shrink-0" />
+                      <span>
+                        {new Date(watchExpiryDate).getTime() < Date.now()
+                          ? `CRITICAL ALERT: This batch has EXPIRED on ${new Date(watchExpiryDate).toLocaleDateString()}!`
+                          : new Date(watchExpiryDate).getTime() - Date.now() < 30 * 86400000
+                          ? `EXPIRY WARNING: Product will expire in ${Math.ceil((new Date(watchExpiryDate).getTime() - Date.now()) / 86400000)} days (${new Date(watchExpiryDate).toLocaleDateString()}). Consider clearance promotions.`
+                          : `SHELF LIFE ACTIVE: Best before ${new Date(watchExpiryDate).toLocaleDateString()} (${Math.ceil((new Date(watchExpiryDate).getTime() - Date.now()) / 86400000)} days remaining).`}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -500,49 +544,49 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                   <textarea
                     {...register("description")}
                     rows={5}
-                    placeholder="Describe the product — fabric, fit, key features..."
+                    placeholder="Describe the product — harvest source, dehydration process, culinary pairings, recipe recommendations, storage instructions..."
                     className="input resize-none"
                   />
                   {errors.description && <span className="text-red-500 text-xs">{errors.description.message}</span>}
                 </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-2">
-                      <label className="label">Category</label>
-                      <select {...register("category")} className={`input ${errors.category ? 'border-red-500' : ''}`}>
-                        <option value="">Select Category</option>
-                        {categories.map((c: any) => (
-                          <option key={c.id} value={c.id}>{c.name}</option>
-                        ))}
-                      </select>
-                      {errors.category && <span className="text-red-500 text-xs">{errors.category.message}</span>}
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <label className="label">Collection</label>
-                      <select {...register("collection")} className={`input ${errors.collection ? 'border-red-500' : ''}`}>
-                        <option value="">Select Collection</option>
-                        {collections.map((c: any) => (
-                          <option key={c.id} value={c.id}>{c.name}</option>
-                        ))}
-                      </select>
-                      {errors.collection && <span className="text-red-500 text-xs">{errors.collection.message}</span>}
-                    </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-2">
+                    <label className="label">Category</label>
+                    <select {...register("category")} className={`input ${errors.category ? 'border-red-500' : ''}`}>
+                      <option value="">Select Category</option>
+                      {categories.map((c: any) => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                      ))}
+                    </select>
+                    {errors.category && <span className="text-red-500 text-xs">{errors.category.message}</span>}
                   </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="label">Collection</label>
+                    <select {...register("collection")} className={`input ${errors.collection ? 'border-red-500' : ''}`}>
+                      <option value="">Select Collection</option>
+                      {collections.map((c: any) => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                      ))}
+                    </select>
+                    {errors.collection && <span className="text-red-500 text-xs">{errors.collection.message}</span>}
+                  </div>
+                </div>
 
                 <div className="flex flex-col gap-2">
                   <label className="label">Tags</label>
                   <input
                     type="text"
                     {...register("tags")}
-                    placeholder="oversized, cotton, unisex (comma-separated)"
+                    placeholder="oyster-mushroom, dehydrated, organic, ready-to-eat, export-grade"
                     className={`input ${errors.tags ? 'border-red-500' : ''}`}
                   />
                   {errors.tags && <span className="text-red-500 text-xs">{errors.tags.message}</span>}
                 </div>
 
-                <div className="flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-xl p-4">
-                  <Info size={16} className="text-blue-500 shrink-0" />
-                  <p className="text-sm font-inter text-blue-700">After saving Basic Info, proceed to <strong>Media</strong> to upload product images.</p>
+                <div className="flex items-center gap-3 bg-[#FEF6E4] border border-[#DCDCCB] rounded-xl p-4">
+                  <Info size={16} className="text-[#203C2B] shrink-0" />
+                  <p className="text-xs font-inter text-[#203C2B]">After configuring basic info, move to <strong>Custom Variants</strong> to define packaging weights (e.g. 100g, 250g, 500g).</p>
                 </div>
               </div>
             )}
@@ -564,6 +608,7 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                             <p className="font-inter text-white text-xs font-medium">Change Image</p>
                           </div>
                           <button 
+                            type="button"
                             onClick={(e) => { 
                               e.stopPropagation(); 
                               setImages(prev => { const n = [...prev]; n[i] = ""; return n; });
@@ -576,140 +621,97 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                       ) : (
                         <>
                           <ImagePlus size={i === 0 ? 32 : 20} className="text-border group-hover:text-accent transition-colors" />
-                          <span className="font-inter text-xs text-muted/70 group-hover:text-accent transition-colors">{i === 0 ? "Main Image" : "Image " + (i + 1)}</span>
+                          <span className="font-inter text-xs text-muted/70 group-hover:text-accent transition-colors">{i === 0 ? "Main Packaging Photo" : "Photo " + (i + 1)}</span>
                         </>
                       )}
                     </div>
                   ))}
                 </div>
-                <p className="text-xs text-muted/70 font-inter">Upload high-quality images. First image will be the primary product photo. Recommended: 800×1000px, JPG/PNG/WEBP.</p>
-
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-3">
-                  <AlertCircle size={16} className="text-amber-600 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-inter font-bold text-amber-800">File Size Recommendation</p>
-                    <p className="text-xs font-inter text-amber-700 mt-0.5">Keep images under 2MB for fast loading. Use WebP format where possible.</p>
-                  </div>
-                </div>
+                <p className="text-xs text-muted/70 font-inter">Upload high-resolution packaging and harvest photos. Recommended aspect ratio 4:5 or 1:1.</p>
               </div>
             )}
 
-            {/* ────────── VARIANTS ────────── */}
+            {/* ────────── CUSTOM VARIANTS ────────── */}
             {activeTab === "variants" && (
-              <div className="flex flex-col gap-8">
-                <div className="grid grid-cols-2 gap-8">
-                  <div className="flex flex-col gap-3">
-                    <label className="label">Available Sizes</label>
-                    <div className="flex flex-wrap gap-2">
-                      {[...SIZES, ...customSizes].map(size => (
-                        <button
-                          key={size}
-                          type="button"
-                          onClick={() => toggleSize(size)}
-                          className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-all ${
-                            selectedSizes.includes(size)
-                              ? "bg-foreground text-white border-foreground"
-                              : "bg-surface text-foreground/80 border-border hover:border-primary/60"
-                          }`}
-                        >
-                          {size}
-                        </button>
-                      ))}
-                      {!isAddingSize ? (
-                        <button type="button" onClick={() => setIsAddingSize(true)} className="px-3 py-1.5 rounded-lg text-sm font-medium border border-dashed border-border text-muted hover:text-foreground/80 hover:border-primary/60 flex items-center gap-1 transition-all">
-                          <Plus size={14} /> Add Size
-                        </button>
-                      ) : (
-                        <div className="flex items-center gap-2">
-                          <input type="text" value={newSize} onChange={e => setNewSize(e.target.value)} placeholder="e.g. 40" className="px-3 py-1.5 bg-surface rounded-lg text-sm border border-border outline-none w-20 focus:border-primary" autoFocus onKeyDown={e => e.key === 'Enter' && handleAddCustomSize()} />
-                          <button type="button" onClick={handleAddCustomSize} className="px-3 py-1.5 bg-foreground text-white rounded-lg text-xs font-medium hover:bg-foreground/90">Add</button>
-                          <button type="button" onClick={() => setIsAddingSize(false)} className="p-1.5 text-muted/70 hover:text-muted bg-surface-elevated rounded-lg"><X size={14} /></button>
-                        </div>
-                      )}
+              <div className="flex flex-col gap-6">
+                {/* Presets Card */}
+                <div className="bg-[#FAF9F5] border border-[#DCDCCB] rounded-2xl p-5 flex flex-col gap-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-inter font-bold text-sm text-[#203C2B]">Custom Variant Presets</h3>
+                      <p className="font-inter text-xs text-[#62695A] mt-0.5">Click any weight or package preset to immediately add it to your product catalog:</p>
                     </div>
                   </div>
 
-                  <div className="flex flex-col gap-3">
-                    <label className="label">Available Colors</label>
-                    <div className="flex flex-wrap gap-2 items-center">
-                      {[...COLORS, ...customColors.map(c => c.name)].map(color => {
-                        const isCustom = customColors.find(c => c.name === color);
-                        return (
-                          <button
-                            key={color}
-                            type="button"
-                            onClick={() => toggleColor(color)}
-                            className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-all flex items-center gap-2 ${
-                              selectedColors.includes(color)
-                                ? "bg-foreground text-white border-foreground"
-                                : "bg-surface text-foreground/80 border-border hover:border-primary/60"
-                            }`}
-                          >
-                            {isCustom && <span className="w-3 h-3 rounded-full border border-border" style={{ backgroundColor: isCustom.hex }} />}
-                            {color}
-                          </button>
-                        );
-                      })}
-                      
-                      {!isAddingColor ? (
-                        <button type="button" onClick={() => setIsAddingColor(true)} className="px-3 py-1.5 rounded-lg text-sm font-medium border border-dashed border-border text-muted hover:text-foreground/80 hover:border-primary/60 flex items-center gap-1 transition-all">
-                          <Plus size={14} /> Add Color
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {MUSHROOM_VARIANT_PRESETS.map((preset) => {
+                      const isAdded = variants.some(v => (v.name || v.size) === preset);
+                      return (
+                        <button
+                          key={preset}
+                          type="button"
+                          onClick={() => !isAdded && addVariantWithLabel(preset)}
+                          disabled={isAdded}
+                          className={`px-3.5 py-2 rounded-xl text-xs font-inter font-medium border transition-all flex items-center gap-1.5 ${
+                            isAdded
+                              ? "bg-[#203C2B] text-white border-[#203C2B] cursor-default opacity-90 shadow-2xs"
+                              : "bg-white text-[#203C2B] border-[#DCDCCB] hover:border-[#203C2B] hover:bg-[#FEF6E4] cursor-pointer"
+                          }`}
+                        >
+                          {isAdded ? "✓ " : "+ "}
+                          {preset}
                         </button>
-                      ) : (
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 bg-surface-elevated border border-border rounded-lg p-2 w-full sm:w-auto">
-                          <div className="flex items-center gap-2">
-                             <div className="relative w-7 h-7 rounded-md border border-border shrink-0 overflow-hidden">
-                               <input 
-                                 type="color" 
-                                 value={newColorHex.match(/^#([0-9a-fA-F]{6})$/i) ? newColorHex : '#000000'}
-                                 onChange={e => setNewColorHex(e.target.value.toUpperCase())}
-                                 className="absolute -top-2 -left-2 w-12 h-12 cursor-pointer"
-                               />
-                             </div>
-                             <input type="text" value={newColorHex} onChange={e => setNewColorHex(e.target.value)} placeholder="#HEX" className="px-2 py-1.5 bg-surface rounded-md text-sm border border-border outline-none w-24 focus:border-primary font-mono uppercase" />
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <input type="text" value={newColorName} onChange={e => setNewColorName(e.target.value)} placeholder="Color Name" className="px-2 py-1.5 bg-surface rounded-md text-sm border border-border outline-none w-32 focus:border-primary" onKeyDown={e => e.key === 'Enter' && handleAddCustomColor()} />
-                            <button type="button" onClick={handleAddCustomColor} className="px-3 py-1.5 bg-foreground text-white rounded-md text-xs font-medium hover:bg-foreground/90 transition-colors">Add</button>
-                            <button type="button" onClick={() => setIsAddingColor(false)} className="p-1.5 text-muted/70 hover:text-muted bg-surface-elevated rounded-md transition-colors"><X size={14} /></button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Custom Add Row */}
+                  <div className="flex items-center gap-2 pt-3 border-t border-[#DCDCCB]/60 mt-2">
+                    <input
+                      type="text"
+                      value={customVariantInput}
+                      onChange={e => setCustomVariantInput(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addVariantWithLabel(customVariantInput))}
+                      placeholder="Or enter custom variant (e.g. 350g Value Pack, 150ml Glass Bottle)"
+                      className="input text-xs flex-1"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => addVariantWithLabel(customVariantInput)}
+                      className="px-4 py-2.5 rounded-lg bg-[#203C2B] text-[#FFFCF4] font-inter text-xs font-semibold hover:bg-[#2d523c] transition-colors whitespace-nowrap cursor-pointer flex items-center gap-1.5"
+                    >
+                      <Plus size={14} /> Add Variant
+                    </button>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 flex-wrap">
-                  <button
-                    type="button"
-                    onClick={generateVariants}
-                    disabled={selectedSizes.length === 0 || selectedColors.length === 0}
-                    className="w-fit bg-foreground text-white px-6 py-3 rounded-lg font-inter font-medium text-sm hover:bg-foreground/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
-                  >
-                    <Plus size={16} />
-                    Generate {selectedSizes.length * selectedColors.length} Variant{selectedSizes.length * selectedColors.length !== 1 ? "s" : ""}
-                  </button>
-                  {variants.length > 0 && (
+                {/* Print Barcodes Button */}
+                {variants.length > 0 && (
+                  <div className="flex items-center justify-between">
+                    <span className="font-inter text-xs text-muted font-medium">
+                      {variants.length} Custom Variant{variants.length !== 1 ? "s" : ""} Configured
+                    </span>
                     <button
                       type="button"
                       onClick={() => setShowBulkBarcodePrint(true)}
-                      className="w-fit bg-surface-elevated text-foreground/80 border border-border px-6 py-3 rounded-lg font-inter font-medium text-sm hover:bg-border transition-colors flex items-center gap-2"
+                      className="bg-surface-elevated text-foreground border border-border px-4 py-2 rounded-lg font-inter text-xs font-medium hover:bg-border transition-colors flex items-center gap-1.5 cursor-pointer"
                     >
-                      <Printer size={16} />
-                      Print All Barcodes ({variants.length})
+                      <Printer size={14} /> Print All Barcodes ({variants.length})
                     </button>
-                  )}
-                </div>
+                  </div>
+                )}
 
-                {variants.length > 0 && (
-                  <div className="border border-border rounded-xl overflow-hidden">
-                    <table className="w-full text-left text-sm">
+                {/* Variants Table */}
+                {variants.length > 0 ? (
+                  <div className="border border-border rounded-xl overflow-x-auto shadow-2xs">
+                    <table className="w-full text-left text-sm min-w-[700px]">
                       <thead className="bg-surface-elevated border-b border-border">
                         <tr>
-                          <th className="px-4 py-3 font-semibold text-xs text-muted uppercase tracking-wide">Variant</th>
+                          <th className="px-4 py-3 font-semibold text-xs text-muted uppercase tracking-wide">Variant Option / Weight</th>
                           <th className="px-4 py-3 font-semibold text-xs text-muted uppercase tracking-wide">SKU</th>
                           <th className="px-4 py-3 font-semibold text-xs text-muted uppercase tracking-wide">Barcode</th>
                           <th className="px-4 py-3 font-semibold text-xs text-muted uppercase tracking-wide">Price (Rs.)</th>
+                          <th className="px-4 py-3 font-semibold text-xs text-muted uppercase tracking-wide">Sale Price</th>
                           {branchCodes.map((b: string) => (
                             <th key={b} className="px-4 py-3 font-semibold text-xs text-muted uppercase tracking-wide">{b}</th>
                           ))}
@@ -718,26 +720,32 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                       </thead>
                       <tbody>
                         {variants.map(v => (
-                          <tr key={v.id} className="border-b border-border/50 last:border-0 hover:bg-surface-elevated transition-colors">
-                            <td className="px-4 py-3 font-medium text-foreground">{v.size} / {v.color}</td>
+                          <tr key={v.id} className="border-b border-border/50 last:border-0 hover:bg-surface-elevated/40 transition-colors">
                             <td className="px-4 py-3">
                               <input
-                                className="font-mono text-xs border border-border rounded px-2 py-1 w-36 outline-none focus:border-primary"
+                                className="font-inter text-xs font-medium border border-border rounded px-2.5 py-1.5 w-36 outline-none focus:border-primary bg-surface"
+                                value={v.name || v.size}
+                                onChange={e => updateVariantField(v.id, "name", e.target.value)}
+                              />
+                            </td>
+                            <td className="px-4 py-3">
+                              <input
+                                className="font-mono text-xs border border-border rounded px-2 py-1.5 w-32 outline-none focus:border-primary bg-surface"
                                 value={v.sku}
                                 onChange={e => updateVariantField(v.id, "sku", e.target.value)}
                               />
                             </td>
                             <td className="px-4 py-3">
                               <div className="flex items-center gap-1.5">
-                                <span className="font-mono text-xs bg-surface-elevated border border-border rounded px-2 py-1 text-muted select-all cursor-text min-w-[7rem]">
+                                <span className="font-mono text-xs bg-surface-elevated border border-border rounded px-2 py-1 text-muted select-all cursor-text min-w-[6.5rem]">
                                   {v.barcode || '—'}
                                 </span>
                                 {v.barcode && (
                                   <button
                                     type="button"
                                     title="Print barcode"
-                                    onClick={() => setPrintingVariant({ barcode: v.barcode, label: `${productName} — ${v.size}/${v.color}` })}
-                                    className="p-1 text-muted/70 hover:text-foreground/90 hover:bg-surface-elevated rounded transition-colors"
+                                    onClick={() => setPrintingVariant({ barcode: v.barcode, label: `${productName || 'Product'} — ${v.name || v.size}` })}
+                                    className="p-1 text-muted/70 hover:text-foreground hover:bg-surface-elevated rounded transition-colors cursor-pointer"
                                   >
                                     <Printer size={13} />
                                   </button>
@@ -746,25 +754,36 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                             </td>
                             <td className="px-4 py-3">
                               <input
-                                className="text-sm border border-border rounded px-2 py-1 w-24 outline-none focus:border-primary"
+                                type="number"
+                                className="text-xs border border-border rounded px-2 py-1.5 w-24 outline-none focus:border-primary bg-surface font-mono"
                                 value={v.price}
+                                placeholder={basePrice || "0"}
                                 onChange={e => updateVariantField(v.id, "price", e.target.value)}
+                              />
+                            </td>
+                            <td className="px-4 py-3">
+                              <input
+                                type="number"
+                                className="text-xs border border-border rounded px-2 py-1.5 w-24 outline-none focus:border-primary bg-surface font-mono"
+                                value={v.compareAtPrice}
+                                placeholder="Sale Rs."
+                                onChange={e => updateVariantField(v.id, "compareAtPrice", e.target.value)}
                               />
                             </td>
                             {branchCodes.map((b: string) => (
                               <td key={b} className="px-4 py-3">
                                 <input
                                   type="number"
-                                  className="text-sm border border-border rounded px-2 py-1 w-16 outline-none focus:border-primary text-center"
-                                  value={v.stock[b]}
+                                  className="text-xs border border-border rounded px-2 py-1.5 w-16 outline-none focus:border-primary text-center bg-surface font-mono"
+                                  value={v.stock[b] ?? 0}
                                   min={0}
                                   onChange={e => updateVariantStock(v.id, b, parseInt(e.target.value) || 0)}
                                 />
                               </td>
                             ))}
                             <td className="px-4 py-3">
-                              <button type="button" onClick={() => removeVariant(v.id)} className="text-red-400 hover:text-red-600 transition-colors">
-                                <Trash2 size={14} />
+                              <button type="button" onClick={() => removeVariant(v.id)} className="text-red-400 hover:text-red-600 transition-colors p-1 cursor-pointer">
+                                <Trash2 size={15} />
                               </button>
                             </td>
                           </tr>
@@ -772,13 +791,11 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                       </tbody>
                     </table>
                   </div>
-                )}
-
-                {variants.length === 0 && (
-                  <div className="border-2 border-dashed border-border rounded-xl p-12 flex flex-col items-center gap-3 text-center">
-                    <Layers size={32} className="text-border" />
-                    <p className="font-inter text-muted font-medium">No variants generated yet</p>
-                    <p className="font-inter text-xs text-muted/70">Select sizes and colors above, then click Generate Variants</p>
+                ) : (
+                  <div className="border-2 border-dashed border-[#DCDCCB] rounded-2xl p-12 flex flex-col items-center gap-3 text-center bg-[#FAF9F5]/50">
+                    <Layers size={36} className="text-[#71865B]" />
+                    <p className="font-inter text-[#203C2B] font-semibold text-sm">No Custom Variants Added</p>
+                    <p className="font-inter text-xs text-[#62695A] max-w-sm">Click one of the packaging presets above (like 100g Pouch, 250g Pouch) or enter a custom variant to configure weights and prices.</p>
                   </div>
                 )}
               </div>
@@ -788,8 +805,8 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
             {activeTab === "pricing" && (
               <div className="flex flex-col gap-6 max-w-[500px]">
                 <div className="bg-surface-elevated border border-border rounded-xl p-5 flex flex-col gap-4">
-                  <h3 className="font-inter font-bold text-foreground">Base Pricing</h3>
-                  <p className="text-xs text-muted/70 font-inter">These prices apply to all variants by default. You can override per-variant pricing in the Variants tab.</p>
+                  <h3 className="font-inter font-bold text-foreground">Base Retail Pricing</h3>
+                  <p className="text-xs text-muted/70 font-inter">Default price applied to variants. You can override individual variant prices in the Custom Variants tab.</p>
 
                   <div className="flex flex-col gap-2">
                     <label className="label">Selling Price (Rs.)</label>
@@ -801,17 +818,16 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                   </div>
 
                   <div className="flex flex-col gap-2">
-                    <label className="label">Compare-At Price (Rs.) <span className="text-muted/70 font-normal">(Original / MRP)</span></label>
+                    <label className="label">Compare-At Price (Rs.) <span className="text-muted/70 font-normal">(MRP / Strikethrough)</span></label>
                     <div className={`flex items-center border ${errors.compareAtPrice ? 'border-red-500' : 'border-border'} rounded-lg overflow-hidden bg-surface`}>
                       <span className="px-3 py-2.5 text-muted text-sm border-r border-border">Rs.</span>
                       <input type="number" {...register("compareAtPrice")} placeholder="0.00" className="flex-1 px-3 py-2.5 text-sm outline-none" />
                     </div>
                     {errors.compareAtPrice && <span className="text-red-500 text-xs">{errors.compareAtPrice.message}</span>}
-                    <p className="text-xs text-muted/70 font-inter">Shown with strikethrough to indicate discount.</p>
                   </div>
 
                   <div className="flex flex-col gap-2">
-                    <label className="label">Cost Per Item (Rs.) <span className="text-muted/70 font-normal">(Not shown to customers)</span></label>
+                    <label className="label">Cost Per Item (Rs.) <span className="text-muted/70 font-normal">(Internal farm cost)</span></label>
                     <div className={`flex items-center border ${errors.costPrice ? 'border-red-500' : 'border-border'} rounded-lg overflow-hidden bg-surface`}>
                       <span className="px-3 py-2.5 text-muted text-sm border-r border-border">Rs.</span>
                       <input type="number" {...register("costPrice")} placeholder="0.00" className="flex-1 px-3 py-2.5 text-sm outline-none" />
@@ -821,7 +837,7 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
 
                   {basePrice && costPrice && !isNaN(Number(basePrice)) && !isNaN(Number(costPrice)) && (
                     <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
-                      <p className="font-inter text-sm font-bold text-emerald-800">Estimated Margin</p>
+                      <p className="font-inter text-sm font-bold text-emerald-800">Estimated Gross Margin</p>
                       <p className="font-inter text-2xl font-bold text-emerald-700 mt-1">
                         {Math.round(((parseFloat(basePrice) - parseFloat(costPrice)) / parseFloat(basePrice)) * 100)}%
                       </p>
@@ -834,16 +850,16 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
             {/* ────────── INVENTORY ────────── */}
             {activeTab === "inventory" && (
               <div className="flex flex-col gap-6 max-w-[700px]">
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex gap-3">
-                  <AlertCircle size={16} className="text-amber-600 shrink-0 mt-0.5" />
-                  <p className="text-sm font-inter text-amber-700">Per-variant stock is managed in the <strong>Variants tab</strong>. You can use this section to set an initial stock amount and apply it globally to all generated variants.</p>
+                <div className="bg-[#FAF9F5] border border-[#DCDCCB] rounded-xl p-4 flex gap-3">
+                  <AlertCircle size={16} className="text-[#203C2B] shrink-0 mt-0.5" />
+                  <p className="text-xs font-inter text-[#203C2B]">Individual branch stock is maintained directly inside the <strong>Custom Variants</strong> tab. Use this panel to batch-apply initial stock across all variants.</p>
                 </div>
 
                 <div className="flex flex-col gap-4 bg-surface border border-border rounded-xl p-5">
-                  <h3 className="font-inter font-bold text-foreground">Initial Stock Configuration</h3>
+                  <h3 className="font-inter font-bold text-foreground">Global Stock Distribution</h3>
                   <div className="flex items-end gap-4">
                     <div className="flex flex-col gap-2 flex-1">
-                      <label className="label">Initial Global Stock</label>
+                      <label className="label">Default Stock Per Variant</label>
                       <input 
                         type="number" 
                         value={initialGlobalStock} 
@@ -851,58 +867,20 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                         min={0}
                         className="input" 
                       />
-                      <p className="text-xs text-muted/70 font-inter">This amount will be applied to all new variants when generated.</p>
                     </div>
                     <button 
                       type="button" 
                       onClick={applyStockToAll}
-                      className="h-[42px] px-6 bg-foreground text-white rounded-lg text-sm font-medium hover:bg-foreground/90 transition-colors whitespace-nowrap mb-[22px]"
+                      className="h-[42px] px-6 bg-foreground text-white rounded-lg text-sm font-medium hover:bg-foreground/90 transition-colors whitespace-nowrap mb-[2px] cursor-pointer"
                     >
-                      Apply to all existing variants
+                      Apply to All Variants
                     </button>
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-4 bg-surface border border-border rounded-xl p-5">
-                  <h3 className="font-inter font-bold text-foreground">Stock Tracking</h3>
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <input type="checkbox" defaultChecked className="w-4 h-4 accent-stone-900" />
-                    <span className="font-inter text-sm text-foreground/80">Track inventory for this product</span>
-                  </label>
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <input type="checkbox" className="w-4 h-4 accent-stone-900" />
-                    <span className="font-inter text-sm text-foreground/80">Allow purchases when out of stock (backorder)</span>
-                  </label>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-2">
-                    <label className="label">Low Stock Threshold</label>
-                    <input type="number" defaultValue={5} className="input" />
-                    <p className="text-xs text-muted/70 font-inter">Get alerted when stock falls below this level.</p>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <label className="label">Reorder Quantity</label>
-                    <input type="number" defaultValue={50} className="input" />
-                    <p className="text-xs text-muted/70 font-inter">Suggested qty for stock transfer requests.</p>
-                  </div>
-                </div>
-
-                <div className="bg-surface border border-border rounded-xl p-5">
-                  <h3 className="font-inter font-bold text-foreground mb-4">Branch Availability</h3>
-                  <div className="flex flex-col gap-3">
-                    {branchCodes.map((branch: string) => (
-                      <label key={branch} className="flex items-center gap-3 cursor-pointer">
-                        <input type="checkbox" defaultChecked className="w-4 h-4 accent-stone-900" />
-                        <span className="font-inter text-sm text-foreground/80 font-medium">{branch}</span>
-                      </label>
-                    ))}
                   </div>
                 </div>
               </div>
             )}
 
-            {/* ────────── SIZE GUIDE ────────── */}
+            {/* ────────── SPECIFICATIONS / STORAGE ────────── */}
             {activeTab === "sizeguide" && (
               <div className="flex flex-col gap-6 max-w-[700px]">
                 <label className="flex items-center gap-3 cursor-pointer">
@@ -913,68 +891,22 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                     className="w-4 h-4 accent-stone-900"
                   />
                   <div>
-                    <span className="font-inter text-sm font-semibold text-foreground">Enable Size Guide for this product</span>
-                    <p className="font-inter text-xs text-muted/70">Shows a size guide button on the product page.</p>
+                    <span className="font-inter text-sm font-semibold text-foreground">Enable Product Specification & Storage Guide</span>
+                    <p className="font-inter text-xs text-muted/70">Displays yield guide and nutritional/storage instructions on product page.</p>
                   </div>
                 </label>
 
                 {sizeGuideEnabled && (
                   <div className="flex flex-col gap-6">
                     <div className="flex flex-col gap-2">
-                      <label className="label">Size Guide Image (Optional)</label>
-                      <div className="flex items-center gap-4">
-                        <div 
-                          onClick={() => { setActiveImageSlot(99); setIsMediaModalOpen(true); }}
-                          className="relative w-32 h-32 border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:bg-surface-elevated hover:border-accent transition-all group overflow-hidden shrink-0"
-                        >
-                          {sizeGuideImageUrl ? (
-                            <>
-                              <Image src={sizeGuideImageUrl} alt="Size Guide" fill className="object-cover" />
-                              <div className="absolute inset-0 bg-foreground/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                                <p className="font-inter text-white text-xs font-medium">Change</p>
-                              </div>
-                              <button 
-                                onClick={(e) => { 
-                                  e.stopPropagation(); 
-                                  setSizeGuideImageUrl("");
-                                }}
-                                className="absolute top-2 right-2 bg-surface/80 backdrop-blur-sm rounded-full p-1 text-foreground/80 hover:bg-surface transition-colors z-20"
-                              >
-                                <X size={14} />
-                              </button>
-                            </>
-                          ) : (
-                            <>
-                              <ImagePlus size={24} className="text-border group-hover:text-accent transition-colors" />
-                              <span className="font-inter text-xs text-muted/70 group-hover:text-accent text-center px-2">Upload visual guide</span>
-                            </>
-                          )}
-                        </div>
-                        <p className="text-xs text-muted/70 max-w-[250px] font-inter">Upload a visual guide showing the product packaging and specifications.</p>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <label className="label">Size Guide Content</label>
+                      <label className="label">Guide Content</label>
                       <textarea
                         value={sizeGuideContent}
                         onChange={e => setSizeGuideContent(e.target.value)}
-                        rows={8}
-                        className="input font-mono text-sm resize-none"
+                        rows={6}
+                        className="input font-mono text-xs resize-none"
                       />
-                      <p className="text-xs text-muted/70 font-inter">Each line becomes a row in the size guide. Format: Size — Measurement</p>
-                    </div>
-
-                    <div className="bg-surface border border-border rounded-xl p-5">
-                      <h3 className="font-inter font-bold text-foreground mb-3 text-sm">Preview</h3>
-                      <div className="flex flex-col gap-2">
-                        {sizeGuideContent.split("\n").filter(Boolean).map((line, i) => (
-                          <div key={i} className="flex justify-between py-2 border-b border-border/50 last:border-0">
-                            <span className="font-inter text-sm font-bold text-foreground">{line.split("—")[0]?.trim()}</span>
-                            <span className="font-inter text-sm text-muted">{line.split("—")[1]?.trim()}</span>
-                          </div>
-                        ))}
-                      </div>
+                      <p className="text-xs text-muted/70 font-inter">Format: Variant/Spec — Description (one per line)</p>
                     </div>
                   </div>
                 )}
@@ -986,7 +918,7 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
               <div className="flex flex-col gap-6 max-w-[500px]">
                 <div className="flex flex-col gap-2">
                   <h3 className="font-inter font-bold text-foreground">Allowed Payment Methods</h3>
-                  <p className="font-inter text-sm text-muted">Control which payment gateways are available at checkout for this product.</p>
+                  <p className="font-inter text-sm text-muted">Control available checkout gateways for this product.</p>
                 </div>
 
                 <div className="flex flex-col gap-3">
@@ -1004,17 +936,12 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                       <span className={`px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${
                         gw === "COD" ? "bg-surface-elevated text-muted" :
                         gw === "Koko" || gw === "Mintpay" ? "bg-violet-100 text-violet-700" :
-                        "bg-blue-100 text-blue-700"
+                        "bg-emerald-100 text-emerald-800"
                       }`}>
                         {gw === "Koko" || gw === "Mintpay" ? "Installments" : gw === "COD" ? "Cash on Delivery" : "Online"}
                       </span>
                     </label>
                   ))}
-                </div>
-
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex gap-3">
-                  <Info size={16} className="text-blue-500 shrink-0 mt-0.5" />
-                  <p className="text-sm font-inter text-blue-700">By default, all payment methods are enabled. Disable specific gateways for restricted or custom products only.</p>
                 </div>
               </div>
             )}
@@ -1023,8 +950,8 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
             {activeTab === "seo" && (
               <div className="flex flex-col gap-6 max-w-[700px]">
                 <div className="flex flex-col gap-2">
-                  <h3 className="font-inter font-bold text-foreground">SEO & Search Visibility</h3>
-                  <p className="font-inter text-sm text-muted">Optimise how this product appears in search engines.</p>
+                  <h3 className="font-inter font-bold text-foreground">SEO & Generative Engine Visibility</h3>
+                  <p className="font-inter text-sm text-muted">Optimize search engine snippet for this mushroom product.</p>
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -1037,7 +964,6 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                     maxLength={70}
                   />
                   {errors.metaTitle && <span className="text-red-500 text-xs">{errors.metaTitle.message}</span>}
-                  <p className="text-xs text-muted/70 font-inter">{(metaTitle || productName || "").length}/70 characters</p>
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -1045,31 +971,21 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                   <textarea
                     {...register("metaDesc")}
                     rows={3}
-                    placeholder="Brief product description for search snippets..."
+                    placeholder="Organic dehydrated mushroom harvest by Masky Products Sri Lanka..."
                     className={`input resize-none ${errors.metaDesc ? 'border-red-500' : ''}`}
                     maxLength={160}
                   />
                   {errors.metaDesc && <span className="text-red-500 text-xs">{errors.metaDesc.message}</span>}
-                  <p className="text-xs text-muted/70 font-inter">{(metaDesc || "").length}/160 characters</p>
                 </div>
 
-                <div className="bg-surface border border-border rounded-xl p-5 flex flex-col gap-1.5">
-                  <p className="text-[10px] text-muted/70 font-inter uppercase tracking-wider">Google Preview</p>
-                  <a href="#" className="font-medium text-blue-700 text-base hover:underline truncate">
-                    {metaTitle || productName || "Product Name"} — MASKY PRODUCT
+                <div className="bg-[#FAF9F5] border border-[#DCDCCB] rounded-xl p-4 flex flex-col gap-1.5">
+                  <p className="text-[10px] text-muted font-inter uppercase tracking-wider">Search Engine Preview</p>
+                  <a href="#" className="font-medium text-[#203C2B] text-sm hover:underline truncate">
+                    {metaTitle || productName || "Masky Mushroom Product"} — Masky Product Sri Lanka
                   </a>
-                  <p className="text-sm text-muted font-inter line-clamp-2">
-                    {metaDesc || "Product description will appear here in search results. Write a compelling summary to improve click-through rates."}
+                  <p className="text-xs text-[#62695A] font-inter line-clamp-2">
+                    {metaDesc || "Fresh and dehydrated mushroom harvests with certified laboratory purity and sustainable organic cultivation."}
                   </p>
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <label className="label">Product Visibility</label>
-                  <select className="input">
-                    <option>Published — Visible to all customers</option>
-                    <option>Draft — Not visible on storefront</option>
-                    <option>Unlisted — Only accessible via direct link</option>
-                  </select>
                 </div>
               </div>
             )}
@@ -1080,14 +996,14 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 bg-surface border border-border rounded-lg font-inter font-medium text-sm text-foreground/80 hover:bg-surface-elevated transition-colors shadow-sm"
+              className="px-5 py-2.5 bg-surface border border-border rounded-lg font-inter font-medium text-sm text-foreground/80 hover:bg-surface-elevated transition-colors shadow-sm cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={createProductMutation.isPending || updateProductMutation.isPending}
-              className="px-8 py-2.5 bg-foreground text-white rounded-lg font-inter font-medium text-sm hover:bg-foreground/90 transition-colors shadow-md shadow-foreground/10 disabled:opacity-50 flex items-center gap-2"
+              className="px-8 py-2.5 bg-[#203C2B] text-white rounded-lg font-inter font-medium text-sm hover:bg-[#2d523c] transition-colors shadow-md disabled:opacity-50 flex items-center gap-2 cursor-pointer"
             >
               {(createProductMutation.isPending || updateProductMutation.isPending) ? "Saving..." : "Save Product"}
             </button>
@@ -1114,8 +1030,8 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
           transition: border-color 0.15s;
         }
         .input:focus {
-          border-color: #a8a29e;
-          box-shadow: 0 0 0 2px rgba(168, 162, 158, 0.15);
+          border-color: #71865B;
+          box-shadow: 0 0 0 2px rgba(113, 134, 91, 0.2);
         }
       `}</style>
       
@@ -1148,7 +1064,7 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
         <BulkBarcodePrintModal
           variants={variants.filter(v => v.barcode).map(v => ({
             barcode: v.barcode,
-            label: `${productName} — ${v.size}/${v.color}`
+            label: `${productName || 'Product'} — ${v.name || v.size}`
           }))}
           onClose={() => setShowBulkBarcodePrint(false)}
         />
@@ -1184,7 +1100,7 @@ function VariantBarcodePrintModal({ barcode, label, onClose }: { barcode: string
         </div>
         <div className="p-4 border-t border-border bg-surface-elevated flex justify-end gap-3">
           <button onClick={onClose} className="px-4 py-2 bg-surface border border-border text-foreground/80 font-inter font-medium text-sm rounded-lg hover:bg-surface-elevated transition-colors">Cancel</button>
-          <button onClick={() => handlePrint()} className="px-5 py-2 bg-foreground text-white font-inter font-medium text-sm rounded-lg hover:bg-foreground/90 transition-colors flex items-center gap-2">
+          <button onClick={() => handlePrint()} className="px-5 py-2 bg-[#203C2B] text-white font-inter font-medium text-sm rounded-lg hover:bg-[#2d523c] transition-colors flex items-center gap-2">
             <Printer size={15} /> Print Label
           </button>
         </div>
@@ -1226,7 +1142,7 @@ function BulkBarcodePrintModal({ variants, onClose }: { variants: { barcode: str
         </div>
         <div className="p-4 border-t border-border bg-surface-elevated flex justify-end gap-3 shrink-0">
           <button onClick={onClose} className="px-4 py-2 bg-surface border border-border text-foreground/80 font-inter font-medium text-sm rounded-lg hover:bg-surface-elevated transition-colors">Cancel</button>
-          <button onClick={() => handlePrint()} className="px-5 py-2 bg-foreground text-white font-inter font-medium text-sm rounded-lg hover:bg-foreground/90 transition-colors flex items-center gap-2">
+          <button onClick={() => handlePrint()} className="px-5 py-2 bg-[#203C2B] text-white font-inter font-medium text-sm rounded-lg hover:bg-[#2d523c] transition-colors flex items-center gap-2">
             <Printer size={15} /> Print All {variants.length} Labels
           </button>
         </div>
@@ -1234,4 +1150,3 @@ function BulkBarcodePrintModal({ variants, onClose }: { variants: { barcode: str
     </div>
   );
 }
-

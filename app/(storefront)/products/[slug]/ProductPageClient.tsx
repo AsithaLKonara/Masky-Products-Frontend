@@ -26,6 +26,7 @@ import { useAddToWishlist } from "@/hooks/useWishlist";
 import { PaginatedResponse } from "@/types/api";
 import { useStockSocket } from "@/hooks/useStockSocket";
 import { PLACEHOLDER_IMAGE } from "@/lib/placeholder";
+import { ProductDetailSkeleton } from "@/components/ui/Skeleton";
 
 const COLOR_MAP: Record<string, string> = {
   black: '#000000', white: '#FFFFFF', red: '#EF4444', blue: '#3B82F6', green: '#22C55E',
@@ -122,14 +123,7 @@ export default function ProductPageClient({
   }, [product]);
 
   if (isLoading) {
-    return (
-      <main className="relative flex flex-col w-full min-h-screen bg-[#FEF6E4] pt-[120px] items-center justify-center">
-        <div className="animate-pulse flex flex-col items-center">
-          <div className="w-10 h-10 border-3 border-[#203C2B] border-t-transparent rounded-full animate-spin mb-4" />
-          <p className="text-[#203C2B] font-poppins text-xs tracking-widest uppercase">Loading creation...</p>
-        </div>
-      </main>
-    );
+    return <ProductDetailSkeleton />;
   }
 
   if (!product) {
