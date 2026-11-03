@@ -41,7 +41,7 @@ export default function Navbar() {
   ];
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 20);
     };
     
     handleScroll();
@@ -49,14 +49,14 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const isHeroState = isHome && !isScrolled;
+  const isHeroState = isHome && !isScrolled && !isMobileMenuOpen && !isSearchOpen;
 
-  // Styling: transparent on hero section, frosted cream glass blur when scrolled passing hero
+  // Styling: transparent on hero section, frosted glass little white when scrolled
   const navBgClass = isAuth
     ? "bg-black/20 backdrop-blur-md border-b border-white/5"
     : isHeroState
     ? "bg-transparent border-b border-transparent shadow-none"
-    : "bg-[#FEF6E4]/85 backdrop-blur-md border-b border-[#203C2B]/8 shadow-[0_4px_20px_rgba(32,60,43,0.04)]";
+    : "bg-white/70 backdrop-blur-md border-b border-white/40 shadow-[0_4px_20px_rgba(0,0,0,0.03)]";
 
   const textColorClass = isAuth
     ? "text-stone-50"
