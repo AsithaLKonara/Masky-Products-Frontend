@@ -5,17 +5,14 @@ import { useCategories } from "@/hooks/useCategories";
 
 import { PaginatedResponse } from "@/types/api";
 import { Category } from "@/types/category";
+import { PLACEHOLDER_IMAGE } from "@/lib/placeholder";
 
 export default function CollectionsSection({ initialData }: { initialData?: PaginatedResponse<Category> }) {
   const { data: response } = useCategories();
   const categories = response?.data || initialData?.data || [];
   
-  // Use a mix of aesthetic placeholder images for categories
-  const placeholderImages = [
-    "/hero-image/hero-1.jpeg",
-    "/hero-image/hero-2.jpeg",
-    "/hero-image/hero-3.jpeg",
-  ];
+  // Use blank white placeholder image for categories without custom cover
+  const placeholderImages = [PLACEHOLDER_IMAGE];
 
   return (
     <section 

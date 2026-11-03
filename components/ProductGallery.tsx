@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { PLACEHOLDER_IMAGE } from "@/lib/placeholder";
 
 interface ProductGalleryProps {
   images: string[];
@@ -10,11 +11,11 @@ interface ProductGalleryProps {
 }
 
 export default function ProductGallery({ images, productName = "Product", discountPercentage = 0 }: ProductGalleryProps) {
-  const [activeImage, setActiveImage] = useState(images[0] || "/products/default.jpg");
+  const [activeImage, setActiveImage] = useState(images[0] || PLACEHOLDER_IMAGE);
   const [zoomStyle, setZoomStyle] = useState({ display: 'none', backgroundPosition: '0% 0%' });
 
   useEffect(() => {
-    setActiveImage(images[0] || "/products/default.jpg");
+    setActiveImage(images[0] || PLACEHOLDER_IMAGE);
   }, [images]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {

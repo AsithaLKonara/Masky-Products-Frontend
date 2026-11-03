@@ -26,6 +26,7 @@ import { checkoutService } from "@/services/checkout.service";
 import { useStockSocket } from "@/hooks/useStockSocket";
 import slAddress from "sl-address";
 import { allFardarCities } from "@/lib/fardarCities";
+import { PLACEHOLDER_IMAGE } from "@/lib/placeholder";
 
 export default function CheckoutPage() {
   const {
@@ -767,7 +768,7 @@ export default function CheckoutPage() {
                         if (item.variant.gallery) allImages.push(...item.variant.gallery);
                       }
 
-                      const imgUrl = allImages[0] || "/products/default.jpg";
+                      const imgUrl = allImages[0] || PLACEHOLDER_IMAGE;
 
                       return (
                         <Image src={imgUrl} alt={item.variant.product.name} fill sizes="100px" className="object-cover object-top" />

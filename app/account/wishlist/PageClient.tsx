@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Heart, Search, Filter, SlidersHorizontal, ArrowRight, X } from "lucide-react";
 import Image from "next/image";
+import { PLACEHOLDER_IMAGE } from "@/lib/placeholder";
 import { useCartStore } from "@/store/useCartStore";
 import { useWishlist, useRemoveFromWishlist } from "@/hooks/useWishlist";
 import { useAddToCart } from "@/hooks/useCart";
@@ -81,7 +82,7 @@ export default function WishlistPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10">
             {wishlistItems.map((item) => {
               const product = item.product;
-              let imageUrl = "/products/default.jpg";
+              let imageUrl = PLACEHOLDER_IMAGE;
               const variant = product.variants?.[0];
 
               if (variant?.featuredImage) imageUrl = variant.featuredImage;

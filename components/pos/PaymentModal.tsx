@@ -12,8 +12,8 @@ export default function PaymentModal({ total, onClose, onSuccess }: { total: str
     { name: "Cash", icon: <Banknote size={24} /> },
     { name: "Card", icon: <CreditCard size={24} /> },
     { name: "Koko", icon: <span className="font-bold text-[10px] text-primary tracking-widest">KOKO</span> },
-    { name: "Mintpay", icon: <Image src="/payment-methods/mintpay-pill.png" alt="Mintpay" width={40} height={20} className="object-contain" /> },
-    { name: "Payzy", icon: <Image src="/payment-methods/payzy.png" alt="Payzy" width={24} height={24} className="object-contain" /> },
+    { name: "Mintpay", icon: <span className="font-bold text-[10px] text-emerald-600 tracking-wider">MINTPAY</span> },
+    { name: "Payzy", icon: <span className="font-bold text-[10px] text-blue-600 tracking-wider">PAYZY</span> },
     { name: "Bank Transfer", icon: <Landmark size={24} /> },
   ];
 

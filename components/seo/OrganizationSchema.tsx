@@ -6,7 +6,7 @@ export default function OrganizationSchema() {
     '@type': 'Organization',
     name: 'MASKY PRODUCT',
     url: baseUrl,
-    logo: `${baseUrl}/logo.png`, // Assuming a logo exists at the root
+    logo: `${baseUrl}/og-image.jpg`,
     sameAs: [
       'https://www.facebook.com/maskyproduct',
       'https://www.instagram.com/maskyproduct',

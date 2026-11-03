@@ -9,7 +9,7 @@ export default function LoginPage() {
       {/* Full Page Background Layer */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/auth/bg.jpeg?v=2"
+          src="/footer-bg.jpg"
           alt="MASKY PRODUCT Collection"
           fill
           sizes="100vw"
@@ -36,8 +36,10 @@ export default function LoginPage() {
               At MASKY PRODUCT, we believe fashion is more than just clothing—it's a form of self-expression. Discover pieces edited for absolute perfection.
             </p>
 
-            <div className="relative w-[180px] h-[34px]">
-              <Image src="/logo-white.png" alt="MASKY PRODUCT" fill sizes="200px" className="object-contain" />
+            <div className="flex flex-col">
+              <span className="font-signature font-bold text-2xl text-stone-100 tracking-[0.2em] uppercase">
+                MASKY <span className="font-light tracking-[0.25em] text-sm text-[#A8B995]">PRODUCT</span>
+              </span>
             </div>
 
             <div className="h-[1px] w-[120px] bg-stone-50/20 mt-4" />

@@ -192,7 +192,7 @@ export default function PosExchangeTicket({ isMobileCartOpen, setIsMobileCartOpe
         <div className="hidden print:block">
           <div ref={printRef} style={{ padding: '20px', fontFamily: 'monospace', fontSize: '14px', color: '#000', background: '#fff', width: '280px' }}>
             <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-              <img src="/logo.png" alt="LAURAL" style={{ height: '24px', objectFit: 'contain', filter: 'grayscale(100%) brightness(0)', margin: '0 auto 4px auto' }} />
+              <h1 style={{ fontSize: '16px', fontWeight: 'bold', letterSpacing: '2px', textTransform: 'uppercase', margin: '0 auto 4px auto' }}>MASKY PRODUCT</h1>
               <p style={{ fontSize: '12px', color: '#555' }}>EXCHANGE VOUCHER</p>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}><span>Date:</span><span>{new Date().toLocaleDateString()}</span></div>

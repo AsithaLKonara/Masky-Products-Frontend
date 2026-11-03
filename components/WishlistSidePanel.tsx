@@ -8,6 +8,7 @@ import { useCartStore } from "@/store/useCartStore";
 import { useWishlist, useRemoveFromWishlist } from "@/hooks/useWishlist";
 import { useAddToCart } from "@/hooks/useCart";
 import Link from "next/link";
+import { PLACEHOLDER_IMAGE } from "@/lib/placeholder";
 
 export default function WishlistSidePanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const sessionId = useCartStore((state) => state.sessionId);
@@ -69,7 +70,7 @@ export default function WishlistSidePanel({ isOpen, onClose }: { isOpen: boolean
             ) : wishlistItems.length > 0 ? (
               wishlistItems.map((item) => {
                 const product = item.product;
-                let imageUrl = "/products/default.jpg";
+                let imageUrl = PLACEHOLDER_IMAGE;
                 const variant = product.variants?.[0]; // Best effort mapping for simple wishlist
 
                 if (variant?.featuredImage) imageUrl = variant.featuredImage;

@@ -12,7 +12,7 @@ const config: Config = {
       fontFamily: {
         inter: ["var(--font-inter)", "Inter", "sans-serif"],
         poppins: ["var(--font-poppins)", "sans-serif"],
-        signature: ["var(--font-signature)", "sans-serif"],
+        signature: ["var(--font-signature)", "serif"],
         inria: ["var(--font-inria)", "serif"],
         urbanist: ["var(--font-urbanist)", "sans-serif"],
       },

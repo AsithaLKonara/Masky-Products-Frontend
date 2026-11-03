@@ -18,7 +18,7 @@ export default function ClientContent() {
           {/* Left Image Box */}
           <div className="flex-1 w-full aspect-[4/5] md:h-[600px] relative bg-stone-100 shadow-xl">
             <Image 
-              src="/about/image1.jpeg"
+              src="/about-mushroom.webp"
               alt="Editorial"
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
@@ -104,7 +104,7 @@ export default function ClientContent() {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/about/bg.jpeg"
+            src="/footer-bg.jpg"
             alt="Why Choose Us Background"
             fill
             sizes="100vw"

@@ -25,7 +25,7 @@ const ZReportSlip = forwardRef<HTMLDivElement, ZReportProps>((props, ref) => {
     <div ref={ref} className="print-receipt w-[300px] bg-white text-black p-4 font-mono text-sm leading-snug mx-auto shadow-md">
       {/* Header */}
       <div className="text-center flex flex-col items-center gap-1 mb-4">
-        <img src="/logo.png" alt="LAURAL" className="h-6 object-contain grayscale brightness-0" />
+        <span className="font-bold text-base tracking-[0.15em] uppercase">MASKY PRODUCT</span>
         <h2 className="font-bold text-xl tracking-widest mt-1">Z-REPORT</h2>
         <span className="text-xs">{session.branch.name}</span>
         <span className="text-[10px]">Session: {session.id}</span>

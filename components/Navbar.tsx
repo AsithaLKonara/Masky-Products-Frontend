@@ -66,10 +66,6 @@ export default function Navbar() {
     ? "hover:bg-white/10"
     : "hover:bg-[#203C2B]/10";
 
-  const logoImage = isAuth
-    ? "/logo-white.png"
-    : "/logo.png";
-
   const authText = mounted && isAuthenticated ? "DASHBOARD" : "LOGIN/REGISTER";
   const authHref = mounted && isAuthenticated ? (isAdmin() ? "/admin" : "/account") : "/login";
 
@@ -89,16 +85,9 @@ export default function Navbar() {
             </button>
           </div>
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="relative w-[150px] md:w-[180px] lg:w-[200px] h-[32px] md:h-[36px]">
-              <Image 
-                src={logoImage}
-                alt="MASKY PRODUCT"
-                fill
-                sizes="200px"
-                className="object-contain"
-                priority
-              />
-            </div>
+            <span className={`font-signature font-bold tracking-[0.18em] text-lg md:text-xl uppercase transition-colors ${textColorClass}`}>
+              MASKY <span className="font-light tracking-[0.22em] text-xs md:text-sm opacity-85">PRODUCT</span>
+            </span>
           </Link>
         </div>
 

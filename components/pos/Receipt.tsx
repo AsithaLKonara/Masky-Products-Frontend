@@ -58,7 +58,7 @@ const Receipt = forwardRef<HTMLDivElement, ReceiptProps>((props, ref) => {
     <div ref={ref} className="print-receipt" style={containerStyle}>
       {/* Store Header */}
       <div style={{ textAlign: "center", marginBottom: "4px" }}>
-        <img src="/logo.png" alt="LAURAL" style={{ height: "24px", margin: "0 auto 4px", filter: "grayscale(100%) brightness(0)", objectFit: "contain" }} />
+        <div style={{ fontSize: "14px", fontWeight: "bold", letterSpacing: "2px", textTransform: "uppercase", marginBottom: "4px" }}>MASKY PRODUCT</div>
         {branchName && <div style={{ fontSize: "12px", fontWeight: "bold" }}>{branchName}</div>}
         <div style={{ fontSize: "10px" }}>{branchAddress || "Point of Sale Receipt"}</div>
         <div style={{ fontSize: "10px", marginTop: "2px" }}>Tel: {branchPhone || "+94 77 123 4567"}</div>

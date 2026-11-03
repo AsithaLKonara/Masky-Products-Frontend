@@ -21,6 +21,7 @@ import { useAddToWishlist } from "@/hooks/useWishlist";
 
 import { PaginatedResponse } from "@/types/api";
 import { useStockSocket } from "@/hooks/useStockSocket";
+import { PLACEHOLDER_IMAGE } from "@/lib/placeholder";
 
 const COLOR_MAP: Record<string, string> = {
   black: '#000000', white: '#FFFFFF', red: '#EF4444', blue: '#3B82F6', green: '#22C55E',
@@ -219,7 +220,7 @@ export default function ProductPageClient({
   };
 
   variantImages = deduplicateImages(variantImages);
-  const images = variantImages.length > 0 ? variantImages : ["/products/default.jpg"];
+  const images = variantImages.length > 0 ? variantImages : [PLACEHOLDER_IMAGE];
 
   const getVariantStockStatus = (v: any) => {
     if (!v) return "outofstock";
@@ -283,14 +284,8 @@ export default function ProductPageClient({
             <div className="flex items-center gap-3 text-base text-[#79716B] font-poppins flex-wrap">
               <span>3 X Rs. {installment} with</span>
               <div className="flex items-center gap-2">
-                <div className="w-[45px] h-[15px] relative">
-                  <Image src="/payment-methods/koko.png" alt="koko" fill sizes="45px" className="object-contain" />
-                </div>
-                <div className="w-[45px] h-[15px] relative">
-                  <Image src="/payment-methods/mintpay-pill.png" alt="mintpay" fill sizes="45px" className="object-contain" />
-                </div>
-                <div className="w-[45px] h-[15px] relative">
-                  <Image src="/payment-methods/payzy.png" alt="payzy" fill sizes="45px" className="object-contain" />
+                <div className="w-[50px] h-[18px] relative">
+                  <Image src="/payment-methods/koko.png" alt="koko" fill sizes="50px" className="object-contain" />
                 </div>
               </div>
               <Info size={16} className="text-primary" fill="currentColor" color="white" />

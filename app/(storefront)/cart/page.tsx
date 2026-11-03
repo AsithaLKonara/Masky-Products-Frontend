@@ -20,6 +20,7 @@ import {
 import { useCartStore } from "@/store/useCartStore";
 import { getEffectivePrice } from "@/lib/pricing";
 import { useCart, useUpdateCartItem, useRemoveCartItem, useClearCart } from "@/hooks/useCart";
+import { PLACEHOLDER_IMAGE } from "@/lib/placeholder";
 
 const FREE_SHIPPING_THRESHOLD = 15000;
 
@@ -159,7 +160,7 @@ export default function CartPage() {
                     const unitPrice = getEffectivePrice(variant);
                     const itemTotal = unitPrice * item.quantity;
 
-                    let imgUrl = "/products/default.jpg";
+                    let imgUrl = PLACEHOLDER_IMAGE;
                     if (variant?.featuredImage) {
                       imgUrl = variant.featuredImage;
                     } else if (variant?.gallery && variant.gallery.length > 0) {

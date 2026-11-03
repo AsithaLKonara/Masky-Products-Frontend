@@ -20,7 +20,7 @@ export default function ShippingLabelTemplate({ order, index, total, storeName, 
       <div className="absolute top-3 right-3 font-bold text-lg tracking-widest z-10">FARDAR</div>
       
       <div className="border-b-2 border-black pb-2 mb-2 flex items-center h-[50px]">
-        <img src="/logo.png" alt="Masky Product Logo" width={180} height={36} className="object-contain" />
+        <span className="font-bold text-xl tracking-[0.15em] uppercase">MASKY PRODUCT</span>
       </div>
 
       {/* Addresses Section (Side by Side) */}

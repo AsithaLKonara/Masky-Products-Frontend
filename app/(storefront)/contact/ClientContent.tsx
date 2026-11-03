@@ -105,14 +105,10 @@ export default function ClientContent() {
 
           <div className="flex flex-col gap-6 mt-4">
             {/* Logo */}
-            <div className="w-[180px] h-[34px] relative">
-              <Image 
-                src="/logo.png" 
-                alt="MASKY PRODUCT" 
-                fill 
-                sizes="200px"
-                className="object-contain object-left" 
-              />
+            <div className="flex flex-col">
+              <span className="font-signature font-bold text-2xl text-primary tracking-[0.2em] uppercase">
+                MASKY <span className="font-light tracking-[0.25em] text-sm text-[#71865B]">PRODUCT</span>
+              </span>
             </div>
 
             {/* Description */}

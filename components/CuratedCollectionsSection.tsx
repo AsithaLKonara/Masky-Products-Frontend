@@ -2,6 +2,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useCollections } from "@/hooks/useCollections";
+import { PLACEHOLDER_IMAGE } from "@/lib/placeholder";
 
 export default function CuratedCollectionsSection() {
   const { data: response, isLoading } = useCollections();
@@ -12,8 +13,8 @@ export default function CuratedCollectionsSection() {
 
   // Fallback images if collection doesn't have an image field yet
   const fallbacks = [
-    "/hero-image/hero-3.jpeg",
-    "/hero-image/hero-2.jpeg",
+    PLACEHOLDER_IMAGE,
+    PLACEHOLDER_IMAGE,
   ];
 
   if (isLoading) {

@@ -7,6 +7,7 @@ import OrderDispatchButtons from "@/components/admin/OrderDispatchButtons";
 import { useOrderById, useUpdateOrderStatus, useRefundOrder } from "@/hooks/useOrders";
 import Image from "next/image";
 import Link from "next/link";
+import { PLACEHOLDER_IMAGE } from "@/lib/placeholder";
 
 interface OrderSidePanelProps {
   orderId: string | null;
@@ -175,7 +176,7 @@ export default function OrderSidePanel({ orderId, isOpen, onClose }: OrderSidePa
                       item.variant?.featuredImage || 
                       item.variant?.gallery?.[0] || 
                       item.variant?.product?.variants?.find((v: any) => v.featuredImage)?.featuredImage ||
-                      "/products/default.jpg"
+                      PLACEHOLDER_IMAGE
                     } 
                     alt="Product"
                     fill

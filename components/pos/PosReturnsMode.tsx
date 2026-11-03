@@ -155,7 +155,7 @@ export default function PosReturnsMode({ branchId }: { branchId?: string }) {
         {/* Hidden Printable Receipt */}
         <div className="print-receipt print-only bg-white text-black p-4 font-mono text-sm leading-snug mx-auto">
           <div className="text-center flex flex-col items-center gap-1 mb-4">
-            <img src="/logo.png" alt="LAURAL" className="h-6 object-contain grayscale brightness-0" />
+            <span className="font-bold text-base tracking-[0.15em] uppercase">MASKY PRODUCT</span>
             <span className="text-xs">RETURN RECEIPT</span>
           </div>
           <div className="flex justify-between mb-1">

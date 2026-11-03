@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { Product } from "@/types/product";
 import { useCartStore } from "@/store/useCartStore";
 import { useAddToCart } from "@/hooks/useCart";
+import { PLACEHOLDER_IMAGE } from "@/lib/placeholder";
 
 interface ProductCardProps {
   product?: Product;
@@ -15,7 +16,7 @@ interface ProductCardProps {
   priority?: boolean;
 }
 
-export default function ProductCard({ product, imageUrl = "/products/default.jpg", priority = false }: ProductCardProps) {
+export default function ProductCard({ product, imageUrl = PLACEHOLDER_IMAGE, priority = false }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [showVariantSelector, setShowVariantSelector] = useState(false);
   
@@ -302,15 +303,9 @@ export default function ProductCard({ product, imageUrl = "/products/default.jpg
             <span className="font-poppins font-light text-[10px] text-[#62695A] tracking-tight">
               3 X Rs. {installment} with
             </span>
-            <div className="flex items-center gap-1">
-              <div className="flex items-center justify-center w-[28px] h-[10px] relative">
-                <Image src="/payment-methods/koko.png" alt="koko" fill sizes="28px" className="object-contain" />
-              </div>
-              <div className="flex items-center justify-center w-[28px] h-[10px] relative">
-                <Image src="/payment-methods/mintpay-pill.png" alt="mintpay" fill sizes="28px" className="object-contain" />
-              </div>
-              <div className="flex items-center justify-center w-[28px] h-[10px] relative">
-                <Image src="/payment-methods/payzy.png" alt="payzy" fill sizes="28px" className="object-contain" />
+            <div className="flex items-center gap-1.5">
+              <div className="flex items-center justify-center w-[36px] h-[12px] relative">
+                <Image src="/payment-methods/koko.png" alt="koko" fill sizes="36px" className="object-contain" />
               </div>
             </div>
           </div>

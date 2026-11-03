@@ -7,6 +7,7 @@ import { useCart, useUpdateCartItem, useRemoveCartItem } from "@/hooks/useCart";
 import Link from "next/link";
 import Image from "next/image";
 import { getEffectivePrice } from "@/lib/pricing";
+import { PLACEHOLDER_IMAGE } from "@/lib/placeholder";
 
 export default function CartSidePanel() {
   const sessionId = useCartStore((state) => state.sessionId);
@@ -114,7 +115,7 @@ export default function CartSidePanel() {
                       if (item.variant.gallery) allImages.push(...item.variant.gallery);
                     }
                     
-                    const imgUrl = allImages[0] || "/products/default.jpg";
+                    const imgUrl = allImages[0] || PLACEHOLDER_IMAGE;
                     return <Image src={imgUrl} alt={item.variant.product.name} fill sizes="100px" className="object-cover" />;
                   })()}
                 </div>

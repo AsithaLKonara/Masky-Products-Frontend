@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins, Inria_Serif, Urbanist } from "next/font/google";
-import localFont from "next/font/local";
+import { Poppins, Inria_Serif, Urbanist, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -16,9 +15,11 @@ const inriaSerif = Inria_Serif({
   style: ["normal", "italic"],
 });
 
-const orangeAvenue = localFont({
-  src: "../public/fonts/orange-avenue-demo.regular.otf",
+const playfairDisplay = Playfair_Display({
   variable: "--font-signature",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
 });
 
 const urbanist = Urbanist({
@@ -74,7 +75,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${poppins.variable} ${orangeAvenue.variable} ${inriaSerif.variable} ${urbanist.variable} antialiased bg-background text-foreground transition-colors duration-200`}
+        className={`${poppins.variable} ${playfairDisplay.variable} ${inriaSerif.variable} ${urbanist.variable} antialiased bg-background text-foreground transition-colors duration-200`}
       >
         <Suspense fallback={null}>
           <MetaPixel />

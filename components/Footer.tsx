@@ -56,16 +56,13 @@ export default function Footer() {
           {/* Brand Col */}
           <div className="flex flex-col items-start gap-4 lg:col-span-4">
             {/* Logo */}
-            <div className="relative w-[220px] h-[48px]">
-               <Image 
-                 src="/logo-white.png" 
-                 alt="MASKY PRODUCT" 
-                 fill 
-                 sizes="220px" 
-                 className="object-contain object-left" 
-                 unoptimized={true}
-                 priority={true}
-               />
+            <div className="flex flex-col">
+              <span className="font-signature font-bold text-2xl text-[#FFFCF4] tracking-[0.2em] uppercase">
+                MASKY <span className="font-light tracking-[0.25em] text-sm text-[#A8B995]">PRODUCT</span>
+              </span>
+              <span className="font-poppins text-[10px] uppercase tracking-[0.28em] text-[#FFFCF4]/60 mt-0.5">
+                Botanical Delicacies
+              </span>
             </div>
 
             <p className="font-poppins font-light text-xs sm:text-sm text-[#FFFCF4]/75 leading-relaxed max-w-[340px] mt-1">
