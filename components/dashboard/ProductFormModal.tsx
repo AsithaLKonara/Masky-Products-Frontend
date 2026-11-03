@@ -950,7 +950,7 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                             </>
                           )}
                         </div>
-                        <p className="text-xs text-muted/70 max-w-[250px] font-inter">Upload a visual guide showing how to measure the garment.</p>
+                        <p className="text-xs text-muted/70 max-w-[250px] font-inter">Upload a visual guide showing the product packaging and specifications.</p>
                       </div>
                     </div>
 

@@ -6,7 +6,7 @@ import { PaginatedResponse } from "@/types/api";
 
 export const metadata = {
   title: "Shop - MASKY PRODUCT",
-  description: "Browse our latest collections of luxury clothing.",
+  description: "Browse our artisan collection of dehydrated, fresh, ready-to-eat and frozen gourmet mushrooms.",
 };
 
 // Server-render on demand — prevents Railway build hanging on API calls during SSG

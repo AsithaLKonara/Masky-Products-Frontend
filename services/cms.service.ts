@@ -1,5 +1,34 @@
 import api from './api';
 
+export interface HeroConfig {
+  mode: 'slider' | 'video' | 'photo';
+  videoConfig?: {
+    videoUrl?: string;
+    posterUrl?: string;
+    eyebrow?: string;
+    title?: string;
+    subtitle?: string;
+    description?: string;
+    ctaText?: string;
+    ctaLink?: string;
+    ctaSecondaryText?: string;
+    ctaSecondaryLink?: string;
+  };
+  photoConfig?: {
+    imageUrl?: string;
+    eyebrow?: string;
+    title?: string;
+    subtitle?: string;
+    description?: string;
+    badgeText?: string;
+    badgeSubtext?: string;
+    ctaText?: string;
+    ctaLink?: string;
+    ctaSecondaryText?: string;
+    ctaSecondaryLink?: string;
+  };
+}
+
 export interface HeroSlide {
   id: string;
   title: string;
@@ -51,6 +80,10 @@ export interface StaticPage {
 }
 
 export const cmsService = {
+  // Hero Configuration (Slider / Video / Photo)
+  getHeroConfig: () => api.get<HeroConfig>('/cms/hero/config'),
+  updateHeroConfig: (data: Partial<HeroConfig>) => api.put<HeroConfig>('/cms/hero/config', data),
+
   // Hero Slides
   getHeroSlides: () => api.get<HeroSlide[]>('/cms/hero'),
   createHeroSlide: (data: Partial<HeroSlide>) => api.post<HeroSlide>('/cms/hero', data),

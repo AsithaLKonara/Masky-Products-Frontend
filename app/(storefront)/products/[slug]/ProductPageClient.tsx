@@ -504,7 +504,7 @@ export default function ProductPageClient({
                   : 'bg-[#A2A69A] cursor-not-allowed opacity-80'
               }`}
             >
-              {addToCart.isPending ? 'Adding to Wardrobe...' : inStock ? 'Add to Cart' : 'Sold Out'}
+              {addToCart.isPending ? 'Adding to Basket...' : inStock ? 'Add to Cart' : 'Sold Out'}
             </button>
 
             {/* Wishlist Button */}
@@ -528,8 +528,8 @@ export default function ProductPageClient({
           <div className="grid grid-cols-3 gap-2.5 pt-4">
             <div className="p-3 rounded-2xl bg-[#FFFCF4]/70 border border-[#DCDCCB]/70 flex flex-col items-center text-center gap-1.5">
               <Sparkles size={16} className="text-[#71865B]" />
-              <span className="font-poppins text-[10px] font-semibold text-[#203C2B] uppercase tracking-wider">Artisan Cut</span>
-              <span className="font-poppins text-[9px] text-[#62695A] hidden sm:inline">Tactile botanical textile</span>
+              <span className="font-poppins text-[10px] font-semibold text-[#203C2B] uppercase tracking-wider">Artisan Harvest</span>
+              <span className="font-poppins text-[9px] text-[#62695A] hidden sm:inline">100% Pure Organic</span>
             </div>
 
             <div className="p-3 rounded-2xl bg-[#FFFCF4]/70 border border-[#DCDCCB]/70 flex flex-col items-center text-center gap-1.5">
@@ -540,8 +540,8 @@ export default function ProductPageClient({
 
             <div className="p-3 rounded-2xl bg-[#FFFCF4]/70 border border-[#DCDCCB]/70 flex flex-col items-center text-center gap-1.5">
               <RotateCcw size={16} className="text-[#71865B]" />
-              <span className="font-poppins text-[10px] font-semibold text-[#203C2B] uppercase tracking-wider">7-Day Exchange</span>
-              <span className="font-poppins text-[9px] text-[#62695A] hidden sm:inline">Hassle-free sizing</span>
+              <span className="font-poppins text-[10px] font-semibold text-[#203C2B] uppercase tracking-wider">Quality First</span>
+              <span className="font-poppins text-[9px] text-[#62695A] hidden sm:inline">Safe sealed packaging</span>
             </div>
           </div>
 
@@ -566,7 +566,7 @@ export default function ProductPageClient({
             Curated Complements
           </span>
           <h2 className="font-signature font-bold text-3xl sm:text-4xl text-[#203C2B]">
-            Complete the Wardrobe
+            Complete the Gourmet Harvest
           </h2>
         </div>
 

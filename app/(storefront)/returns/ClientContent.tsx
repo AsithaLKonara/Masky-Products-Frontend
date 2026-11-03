@@ -105,16 +105,16 @@ export default function ClientContent() {
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#71865B]/15 border border-[#71865B]/30 text-[#203C2B]">
             <RotateCcw size={12} className="text-[#71865B]" />
             <span className="font-poppins text-[10px] font-semibold tracking-[0.18em] uppercase">
-              7-Day Complimentary Exchange
+              Quality & Replacement Guarantee
             </span>
           </div>
 
           <h1 className="font-signature font-bold text-3xl sm:text-4xl md:text-5xl text-[#203C2B] tracking-tight">
-            Returns & Exchanges
+            Returns & Replacements
           </h1>
 
           <p className="font-poppins text-xs sm:text-sm text-[#62695A] leading-relaxed max-w-lg">
-            We are dedicated to ensuring your complete satisfaction. Request a size exchange or initiate an authorized return seamlessly below.
+            We are dedicated to your complete culinary satisfaction. If an item arrived damaged or compromised during transit, initiate an authorized replacement below.
           </p>
         </div>
       </section>

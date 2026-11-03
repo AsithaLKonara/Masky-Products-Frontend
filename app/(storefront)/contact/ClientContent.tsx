@@ -21,9 +21,9 @@ export default function ClientContent() {
   const { data: settingsData } = usePublicSettings();
 
   const mainBranch = branchesData?.data?.[0] || branchesData?.[0];
-  const supportEmail = settingsData?.find((s: any) => s.key === "support_email")?.value;
-  const storePhone = mainBranch?.phone || "+94 76 112 8979";
-  const storeAddress = mainBranch?.address || "Colombo Flagship Atelier, Sri Lanka";
+  const supportEmail = settingsData?.find((s: any) => s.key === "support_email")?.value || "maskyproduct@gmail.com";
+  const storePhone = "078 313 0967";
+  const storeAddress = mainBranch?.address || "Colombo, Sri Lanka";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -210,15 +210,15 @@ export default function ClientContent() {
                 </div>
               </div>
               <p className="font-poppins text-xs sm:text-sm text-[#5c5650] font-light leading-relaxed">
-                Connect directly with our styling advisors for live stock verification, bespoke size advice, or fast reservation of limited capsule pieces.
+                Connect directly with us for order inquiries, dehydrated mushroom culinary tips, wholesale packs, or instant stock checks.
               </p>
               <a
-                href="https://wa.me/94761128979"
+                href="https://wa.me/94783130967"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-3 px-5 rounded-full bg-[#203C2B] hover:bg-[#15271C] text-[#FFFCF4] font-poppins text-xs font-semibold uppercase tracking-wider text-center transition-all flex items-center justify-center gap-2 shadow-sm"
+                className="w-full py-3 px-5 rounded-full bg-[#25D366] hover:bg-[#1fa851] text-white font-poppins text-xs font-semibold uppercase tracking-wider text-center transition-all flex items-center justify-center gap-2 shadow-sm"
               >
-                Chat on WhatsApp <ArrowRight size={14} />
+                Chat on WhatsApp (078 313 0967) <ArrowRight size={14} />
               </a>
             </div>
 
@@ -265,17 +265,42 @@ export default function ClientContent() {
               </div>
             </div>
 
-            {/* Private Fitting Privilege Banner */}
+            {/* Direct Official Storefronts & Socials */}
+            <div className="bg-[#FFFCF4]/90 backdrop-blur-md border border-[#DCDCCB] rounded-3xl p-6 flex flex-col gap-3">
+              <h4 className="font-poppins text-xs font-semibold uppercase tracking-wider text-[#203C2B]">
+                Official Storefronts & Socials
+              </h4>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <a
+                  href="https://s.daraz.lk/s.Z7xIF"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 py-2.5 px-4 rounded-xl bg-[#F85606]/10 border border-[#F85606]/30 text-[#F85606] font-poppins text-xs font-semibold text-center hover:bg-[#F85606] hover:text-white transition-all flex items-center justify-center gap-1.5"
+                >
+                  Daraz Store <ArrowRight size={13} />
+                </a>
+                <a
+                  href="https://www.facebook.com/share/1CQDRvhudv/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 py-2.5 px-4 rounded-xl bg-[#1877F2]/10 border border-[#1877F2]/30 text-[#1877F2] font-poppins text-xs font-semibold text-center hover:bg-[#1877F2] hover:text-white transition-all flex items-center justify-center gap-1.5"
+                >
+                  Facebook Page <ArrowRight size={13} />
+                </a>
+              </div>
+            </div>
+
+            {/* Quality & Islandwide Delivery Banner */}
             <div className="bg-[#71865B]/10 border border-[#71865B]/25 rounded-3xl p-6 flex items-start gap-4">
               <div className="w-10 h-10 rounded-2xl bg-[#71865B]/20 text-[#203C2B] flex items-center justify-center shrink-0">
                 <ShieldCheck size={20} />
               </div>
               <div className="flex flex-col gap-1">
                 <h4 className="font-poppins text-xs font-semibold uppercase tracking-wider text-[#203C2B]">
-                  Complimentary Fitting Service
+                  Purity & Freshness Guaranteed
                 </h4>
                 <p className="font-poppins text-xs text-[#5c5650] font-light leading-relaxed">
-                  Every private consultation includes tactile fabric swatch exploration, precise silhouette fitting, and complimentary alterations for bespoke elegance.
+                  100% organic dehydrated and fresh gourmet mushrooms. Hygienically sealed with tamper-evident packaging and dispatched islandwide within 24-48 hours.
                 </p>
               </div>
             </div>

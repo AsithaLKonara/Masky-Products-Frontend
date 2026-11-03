@@ -66,7 +66,7 @@ export default function Footer() {
             </div>
 
             <p className="font-poppins font-light text-xs sm:text-sm text-[#FFFCF4]/75 leading-relaxed max-w-[340px] mt-1">
-              Curating earth-born botanical delicacies with quiet elegance, artisanal integrity, and unwavering purity.
+              Curating 100% organic, artisan-harvested dehydrated gourmet mushrooms and delicacies with quiet luxury, earthy integrity, and culinary purity.
             </p>
             
             {/* Glass Contact Cards */}
@@ -85,22 +85,26 @@ export default function Footer() {
                 <span className="font-poppins text-xs text-[#FFFCF4]/90 truncate">{mainBranch?.address || "Colombo, Sri Lanka"}</span>
               </div>
 
-              <div 
-                className="flex items-center gap-3 p-2.5 rounded-xl transition-all duration-300 hover:bg-white/10"
+              <Link 
+                href="https://wa.me/94783130967"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 p-2.5 rounded-xl transition-all duration-300 hover:bg-white/10 cursor-pointer"
                 style={{
                   background: "rgba(255, 252, 244, 0.06)",
                   backdropFilter: "blur(12px)",
                   border: "1px solid rgba(255, 255, 255, 0.12)",
                 }}
               >
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/10 text-[#A8B995] shrink-0">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[#25D366]/20 text-[#25D366] shrink-0">
                   <Phone size={15} />
                 </div>
-                <span className="font-poppins text-xs text-[#FFFCF4]/90">{mainBranch?.phone || "+94 76 112 8979"}</span>
-              </div>
+                <span className="font-poppins text-xs text-[#FFFCF4]/90">078 313 0967</span>
+              </Link>
 
-              <div 
-                className="flex items-center gap-3 p-2.5 rounded-xl transition-all duration-300 hover:bg-white/10"
+              <Link 
+                href="mailto:maskyproduct@gmail.com"
+                className="flex items-center gap-3 p-2.5 rounded-xl transition-all duration-300 hover:bg-white/10 cursor-pointer"
                 style={{
                   background: "rgba(255, 252, 244, 0.06)",
                   backdropFilter: "blur(12px)",
@@ -110,8 +114,8 @@ export default function Footer() {
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/10 text-[#A8B995] shrink-0">
                   <Mail size={15} />
                 </div>
-                <span className="font-poppins text-xs text-[#FFFCF4]/90">{supportEmail || "info@masky.space"}</span>
-              </div>
+                <span className="font-poppins text-xs text-[#FFFCF4]/90">maskyproduct@gmail.com</span>
+              </Link>
             </div>
           </div>
 
@@ -216,26 +220,25 @@ export default function Footer() {
           </div>
 
           <div className="flex items-center gap-3">
+            {/* WhatsApp */}
             <Link 
-              href="https://www.instagram.com/serama_aduwen" 
+              href="https://wa.me/94783130967" 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
-              style={{
-                background: "rgba(255, 252, 244, 0.08)",
-                border: "1px solid rgba(255, 255, 255, 0.15)",
-              }}
+              aria-label="WhatsApp Masky Product"
+              className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 bg-[#25D366]/20 border border-[#25D366]/40 text-[#25D366] hover:bg-[#25D366] hover:text-white"
             >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
-                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.59-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.882-4.434 9.885-9.885.002-2.641-1.026-5.124-2.893-6.993-1.868-1.869-4.35-2.898-6.992-2.899-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.75-.981z"/>
               </svg>
             </Link>
+
+            {/* Facebook */}
             <Link 
-              href="https://facebook.com" 
+              href="https://www.facebook.com/share/1CQDRvhudv/" 
               target="_blank" 
               rel="noopener noreferrer" 
+              aria-label="Facebook Page"
               className="w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
               style={{
                 background: "rgba(255, 252, 244, 0.08)",
@@ -245,6 +248,18 @@ export default function Footer() {
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
               </svg>
+            </Link>
+
+            {/* Daraz Store */}
+            <Link 
+              href="https://s.daraz.lk/s.Z7xIF" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              aria-label="Daraz Store Masky Product"
+              className="px-2.5 h-9 rounded-full flex items-center justify-center gap-1.5 transition-all duration-300 hover:scale-105 text-[11px] font-poppins font-semibold text-[#FFFCF4] bg-[#F85606]/20 border border-[#F85606]/40 hover:bg-[#F85606] hover:text-white"
+            >
+              <span>Daraz Store</span>
+              <ArrowRight size={11} />
             </Link>
           </div>
         </div>

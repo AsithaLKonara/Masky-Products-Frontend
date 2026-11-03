@@ -757,7 +757,7 @@ export default function CheckoutPage() {
         <div className="flex flex-col w-full lg:w-[420px] gap-6">
           <div className="bg-[#FFFCF4]/90 backdrop-blur-md border border-[#DCDCCB] rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col gap-6 sticky top-[100px]">
             <h2 className="font-signature font-bold text-2xl text-[#203C2B] border-b border-[#DCDCCB]/70 pb-4">
-              Wardrobe Review
+              Order Summary
             </h2>
 
             {/* Cart Items */}

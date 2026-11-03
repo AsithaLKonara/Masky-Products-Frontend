@@ -20,10 +20,10 @@ export default function TermsConditionsPage() {
     },
     {
       num: "02",
-      title: "Artisan Garment Authenticity & Colorways",
+      title: "Organic Harvest & Product Integrity",
       icon: CheckCircle2,
       content:
-        "Our pieces are crafted from natural textiles including pure linens and organic weaves. While we capture our photography in true natural lighting, subtle variations in botanical texture, yarn slub, and display monitor calibration are intrinsic to authentic artisan garments."
+        "Our gourmet mushrooms are 100% organically cultivated and dehydrated in Sri Lanka. As genuine agricultural products, subtle natural variations in cap size, earthy aroma depth, and dehydration coloration are natural hallmarks of authentic artisan harvests."
     },
     {
       num: "03",
@@ -41,10 +41,10 @@ export default function TermsConditionsPage() {
     },
     {
       num: "05",
-      title: "Exchange Privilege & Cancellations",
+      title: "Replacements & Order Cancellations",
       icon: RotateCcw,
       content:
-        "We offer a 7-day complimentary exchange privilege on unworn, unwashed items in original packaging with intact tags. Order cancellations may be requested before dispatch by connecting immediately with our WhatsApp concierge."
+        "Due to food hygiene standards, opened consumable food packages cannot be returned. If a parcel arrives damaged or unsealed during transit, please notify us within 48 hours via WhatsApp (078 313 0967) or email (maskyproduct@gmail.com) for an immediate replacement."
     }
   ];
 

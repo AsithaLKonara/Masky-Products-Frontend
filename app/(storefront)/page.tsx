@@ -51,25 +51,31 @@ export default async function Home() {
           {[...Array(2)].map((_, i) => (
             <div key={i} className="flex items-center gap-10 px-5">
               <span className="font-poppins text-xs md:text-sm text-white tracking-[0.2em] uppercase font-light">
-                Delivery Available Islandwide
+                100% Organic Gourmet Mushrooms
               </span>
               <span className="font-poppins text-xs md:text-sm text-white tracking-[0.2em] uppercase font-light">
                 •
               </span>
               <span className="font-poppins text-xs md:text-sm text-white tracking-[0.2em] uppercase font-light">
-                Secure Payments
+                Low-Temperature Dehydration
               </span>
               <span className="font-poppins text-xs md:text-sm text-white tracking-[0.2em] uppercase font-light">
                 •
               </span>
               <span className="font-poppins text-xs md:text-sm text-white tracking-[0.2em] uppercase font-light">
-                New Arrivals Every Week
+                12-Month Shelf Life • Locked Umami
               </span>
               <span className="font-poppins text-xs md:text-sm text-white tracking-[0.2em] uppercase font-light">
                 •
               </span>
               <span className="font-poppins text-xs md:text-sm text-white tracking-[0.2em] uppercase font-light">
-                Premium Quality
+                Islandwide Courier Dispatch
+              </span>
+              <span className="font-poppins text-xs md:text-sm text-white tracking-[0.2em] uppercase font-light">
+                •
+              </span>
+              <span className="font-poppins text-xs md:text-sm text-white tracking-[0.2em] uppercase font-light">
+                Order Direct, WhatsApp & Daraz
               </span>
               <span className="font-poppins text-xs md:text-sm text-white tracking-[0.2em] uppercase font-light">
                 •

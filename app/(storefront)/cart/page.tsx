@@ -75,10 +75,10 @@ export default function CartPage() {
                 </span>
               </div>
               <h1 className="font-signature font-bold text-3xl sm:text-4xl md:text-5xl text-[#203C2B] tracking-tight">
-                Your Wardrobe Bag
+                Your Gourmet Harvest Bag
               </h1>
               <p className="font-poppins text-xs sm:text-sm text-[#62695A] mt-1">
-                Review and refine the artisanal creations chosen for your personal collection.
+                Review and refine the artisanal mushroom creations chosen for your kitchen and table.
               </p>
             </div>
 
@@ -122,7 +122,7 @@ export default function CartPage() {
         {isPending ? (
           <div className="min-h-[400px] flex flex-col items-center justify-center gap-4 text-[#62695A]">
             <Loader2 size={32} className="animate-spin text-[#203C2B]" />
-            <p className="font-poppins text-xs uppercase tracking-wider">Accessing your wardrobe...</p>
+            <p className="font-poppins text-xs uppercase tracking-wider">Accessing your harvest bag...</p>
           </div>
         ) : items.length === 0 ? (
           /* Empty State */
@@ -134,7 +134,7 @@ export default function CartPage() {
               Your bag is currently empty
             </h2>
             <p className="font-poppins text-xs sm:text-sm text-[#62695A] max-w-md mb-8 leading-relaxed">
-              No garments have been selected yet. Browse our current season creations or timeless botanical silhouettes.
+              No mushroom products have been selected yet. Explore our dehydrated selections or fresh seasonal harvests.
             </p>
             <Link
               href="/shop"
@@ -154,7 +154,7 @@ export default function CartPage() {
                 
                 {/* Table Header */}
                 <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-4 bg-white/50 border-b border-[#DCDCCB]/70 text-xs font-poppins font-semibold uppercase tracking-wider text-[#62695A]">
-                  <div className="col-span-6">Creation</div>
+                  <div className="col-span-6">Harvest Product</div>
                   <div className="col-span-2 text-center">Price</div>
                   <div className="col-span-2 text-center">Quantity</div>
                   <div className="col-span-2 text-right">Total</div>

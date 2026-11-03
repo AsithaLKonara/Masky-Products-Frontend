@@ -4,10 +4,17 @@ import { usePathname } from "next/navigation";
 import { useCategories } from "@/hooks/useCategories";
 import { Category } from "@/types/category";
 
+const FALLBACK_CATEGORIES: Category[] = [
+  { id: "cat-fresh", name: "Fresh mushrooms product", slug: "fresh-mushrooms-product" } as Category,
+  { id: "cat-dehydrated", name: "Dehydrated product", slug: "dehydrated-product" } as Category,
+  { id: "cat-ready", name: "Redy to eat product", slug: "redy-to-eat-product" } as Category,
+  { id: "cat-frozen", name: "Frezon product", slug: "frezon-product" } as Category,
+];
+
 export default function CategoryBar() {
   const pathname = usePathname();
   const { data: response } = useCategories();
-  const categories = response?.data || [];
+  const categories = response?.data && response.data.length > 0 ? response.data : FALLBACK_CATEGORIES;
 
   return (
     <nav aria-label="Category Navigation" className="w-full bg-[#F8F5EB]/90 backdrop-blur-md border-b border-[#DCDCCB]/70 sticky top-[76px] z-30 transition-colors">
@@ -21,7 +28,7 @@ export default function CategoryBar() {
                 : "text-[#203C2B]/75 hover:text-[#203C2B] hover:bg-white/80 hover:shadow-xs"
             }`}
           >
-            All Pieces
+            All Products
           </Link>
           {categories.map((cat: Category) => {
             const isActive = pathname === `/categories/${cat.slug}`;

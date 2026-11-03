@@ -22,7 +22,7 @@ export default function NewArrivalsSection({ initialData }: { initialData?: Pagi
           New Arrivals
         </h2>
         <p className="font-inria italic font-light text-base md:text-xl text-[#71865B] mt-1.5">
-          Timeless silhouettes. Refined details. Effortless confidence.
+          Artisan harvest. Rich umami essence. Uncompromising freshness.
         </p>
       </div>
 

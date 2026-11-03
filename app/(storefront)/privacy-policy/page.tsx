@@ -16,14 +16,14 @@ export default function PrivacyPolicyPage() {
       title: "Information We Collect",
       icon: Eye,
       content:
-        "We collect information provided directly by you when curating an order, reserving an atelier fitting, subscribing to our private gazette, or speaking with our concierge. This includes your name, delivery address across Sri Lanka, telephone number, email, and encrypted transaction metadata."
+        "We collect information provided directly by you when placing an order, inquiring via WhatsApp, subscribing to harvest updates, or contacting our team. This includes your name, delivery address across Sri Lanka, telephone number, email, and encrypted transaction metadata."
     },
     {
       num: "02",
       title: "How We Use Your Data",
       icon: FileText,
       content:
-        "Your details are utilized strictly to orchestrate seamless deliveries, tailor private fitting appointments, dispatch dispatch courier updates, and provide personalized wardrobe recommendations. We honor digital privacy and never engage in commercial data distribution."
+        "Your details are utilized strictly to process gourmet mushroom orders, orchestrate islandwide courier dispatch, provide order tracking updates, and respond to culinary or wholesale inquiries. We honor digital privacy and never sell client data."
     },
     {
       num: "03",

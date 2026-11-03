@@ -1,8 +1,25 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { cmsService, HeroSlide, Banner, HomepageSection, StaticPage } from '../services/cms.service';
+import { cmsService, HeroConfig, HeroSlide, Banner, HomepageSection, StaticPage } from '../services/cms.service';
 
 export function useCms() {
   const queryClient = useQueryClient();
+
+  // Hero Configuration (Slider / Video / Photo)
+  const { data: heroConfig, isLoading: isLoadingHeroConfig } = useQuery<HeroConfig>({
+    queryKey: ['heroConfig'],
+    queryFn: async () => {
+      const res = await cmsService.getHeroConfig();
+      return res.data;
+    },
+    staleTime: 0,
+  });
+
+  const updateHeroConfig = useMutation({
+    mutationFn: (data: Partial<HeroConfig>) => cmsService.updateHeroConfig(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['heroConfig'] });
+    }
+  });
 
   // Hero Slides
   const { data: heroSlides = [], isLoading: isLoadingHero } = useQuery({
@@ -101,6 +118,7 @@ export function useCms() {
   });
 
   return {
+    heroConfig, isLoadingHeroConfig, updateHeroConfig,
     heroSlides, isLoadingHero, createHeroSlide, updateHeroSlide, deleteHeroSlide,
     banners, isLoadingBanners, createBanner, updateBanner, deleteBanner,
     sections, isLoadingSections, createHomepageSection, updateHomepageSection, deleteHomepageSection,

@@ -85,7 +85,13 @@ export default function FilterSidebar({ isOpen = true, onToggle }: FilterSidebar
   };
 
   const { data: response } = useCategories();
-  const categories = response?.data || [];
+  const rawCategories = response?.data || [];
+  const categories = rawCategories.length > 0 ? rawCategories : [
+    { id: "cat-fresh", name: "Fresh mushrooms product", slug: "fresh-mushrooms-product" },
+    { id: "cat-dehydrated", name: "Dehydrated product", slug: "dehydrated-product" },
+    { id: "cat-ready", name: "Redy to eat product", slug: "redy-to-eat-product" },
+    { id: "cat-frozen", name: "Frezon product", slug: "frezon-product" },
+  ];
   
   const { data: filters } = useProductFilters();
   

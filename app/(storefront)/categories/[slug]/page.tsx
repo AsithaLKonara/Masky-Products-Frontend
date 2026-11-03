@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     
   return {
     title: mockTitle,
-    description: `Shop our ${mockTitle} category at MASKY PRODUCT. Premium quality and sophisticated design for the modern wardrobe.`,
+    description: `Shop our ${mockTitle} category at MASKY PRODUCT. 100% organic gourmet dehydrated mushrooms and harvests.`,
     alternates: {
       canonical: `/categories/${slug}`,
     },

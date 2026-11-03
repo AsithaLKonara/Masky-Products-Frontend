@@ -59,7 +59,7 @@ export default function CollectionPageClient({ initialData }: { initialData?: Pa
           </h1>
 
           <p className="font-poppins text-xs sm:text-sm text-[#FFFCF4]/80 leading-relaxed max-w-lg mb-6">
-            A cohesive narrative of timeless silhouettes designed for effortless grace, tactile comfort, and everyday luxury.
+            Artisanal sun-dried and low-temperature dehydrated gourmet mushrooms, harvested for intense natural umami and wholesome nutrition.
           </p>
 
           <div className="px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md flex items-center gap-2">
@@ -133,16 +133,16 @@ export default function CollectionPageClient({ initialData }: { initialData?: Pa
                 <PackageSearch size={28} />
               </div>
               <h3 className="font-signature font-bold text-2xl text-[#203C2B] mb-2">
-                Capsule Archive Empty
+                Collection Empty
               </h3>
               <p className="font-poppins text-xs sm:text-sm text-[#62695A] max-w-sm mb-6">
-                No items are currently active in this capsule. Browse our standard wardrobe collection.
+                No items are currently active in this collection. Browse our complete gourmet mushroom catalog.
               </p>
               <Link 
                 href="/shop" 
                 className="px-6 py-2.5 rounded-full bg-[#203C2B] text-[#FFFCF4] font-poppins text-xs uppercase tracking-widest hover:bg-[#2d523c] transition-all shadow-sm"
               >
-                Browse All Creations
+                Browse All Harvests
               </Link>
             </div>
           ) : (

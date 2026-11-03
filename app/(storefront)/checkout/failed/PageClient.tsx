@@ -21,7 +21,7 @@ export default function CheckoutFailedClient() {
         <CategoryBar />
         <div className="flex flex-col items-center justify-center min-h-[50vh] text-center max-w-md mx-auto">
           <h1 className="font-signature font-bold text-2xl text-[#203C2B] mb-2">No Order Specified</h1>
-          <p className="font-poppins text-xs text-[#62695A] mb-6">Please check your link or return to the main wardrobe.</p>
+          <p className="font-poppins text-xs text-[#62695A] mb-6">Please check your link or return to our shop catalog.</p>
           <Link href="/shop" className="px-6 py-2.5 rounded-full bg-[#203C2B] text-[#FFFCF4] font-poppins text-xs uppercase tracking-widest">
             Return to Catalog
           </Link>

@@ -94,7 +94,7 @@ export default function ShopContent({ initialData }: { initialData?: PaginatedRe
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#71865B]/15 border border-[#71865B]/30 w-fit text-[#203C2B]">
               <Sparkles size={12} className="text-[#71865B]" />
               <span className="font-poppins text-[10px] font-semibold tracking-[0.18em] uppercase">
-                Curated Luxury Wardrobe
+                Gourmet Mushroom Collection
               </span>
             </div>
 
@@ -102,7 +102,7 @@ export default function ShopContent({ initialData }: { initialData?: PaginatedRe
               All Creations
             </h2>
             <p className="font-poppins text-xs sm:text-sm text-[#62695A] leading-relaxed max-w-xl">
-              Impeccably tailored silhouettes, tactile botanical textiles, and effortless everyday elegance designed to endure.
+              Artisan-harvested mushrooms, gently low-temperature dehydrated to lock in intense earthy umami, vital nutrients, and culinary perfection.
             </p>
           </div>
 
@@ -233,10 +233,10 @@ export default function ShopContent({ initialData }: { initialData?: PaginatedRe
                 <PackageSearch size={28} />
               </div>
               <h3 className="font-signature font-bold text-2xl text-[#203C2B] mb-2">
-                No matching pieces found
+                No matching harvests found
               </h3>
               <p className="font-poppins text-xs sm:text-sm text-[#62695A] max-w-md mb-6">
-                We couldn&apos;t find any garments matching your selected filters. Try broadening your criteria or reset filters to view our full collection.
+                We couldn&apos;t find any mushroom products matching your selected filters. Try broadening your criteria or reset filters to view our full collection.
               </p>
               <button
                 onClick={() => router.push(pathname)}

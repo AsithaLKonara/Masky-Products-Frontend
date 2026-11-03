@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { CartProvider } from "@/components/CartProvider";
 import PromoBanner from "@/components/PromoBanner";
+import FloatingWhatsAppButton from "@/components/FloatingWhatsAppButton";
 
 export const metadata: Metadata = {
   title: "MASKY PRODUCT",
@@ -39,6 +40,7 @@ export default function StorefrontLayout({
         <div className="relative z-10">
           <Footer />
         </div>
+        <FloatingWhatsAppButton />
       </CartProvider>
     </div>
   );

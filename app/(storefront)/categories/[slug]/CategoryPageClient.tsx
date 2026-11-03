@@ -57,7 +57,7 @@ export default function CategoryPageClient({ initialData }: { initialData?: Pagi
               {categoryName}
             </h1>
             <p className="font-poppins text-xs sm:text-sm text-[#62695A] leading-relaxed max-w-xl">
-              Impeccably tailored silhouettes, tactile botanical textiles, and signature pieces in {categoryName}.
+              Artisan sun-dried umami, farm-fresh harvest, and chef-grade delicacies in {categoryName}.
             </p>
           </div>
 
@@ -133,16 +133,16 @@ export default function CategoryPageClient({ initialData }: { initialData?: Pagi
                 <PackageSearch size={28} />
               </div>
               <h3 className="font-signature font-bold text-2xl text-[#203C2B] mb-2">
-                No Pieces Found
+                No Harvests Found
               </h3>
               <p className="font-poppins text-xs sm:text-sm text-[#62695A] max-w-sm mb-6">
-                There are currently no items available in this category. Explore our full catalog to find alternative silhouettes.
+                There are currently no items available in this category. Explore our full catalog to find other organic mushroom harvests.
               </p>
               <Link 
                 href="/shop" 
                 className="px-6 py-2.5 rounded-full bg-[#203C2B] text-[#FFFCF4] font-poppins text-xs uppercase tracking-widest hover:bg-[#2d523c] transition-all shadow-sm"
               >
-                Browse All Creations
+                Browse All Harvests
               </Link>
             </div>
           ) : (
@@ -161,7 +161,7 @@ export default function CategoryPageClient({ initialData }: { initialData?: Pagi
                 onClick={handleLoadMore} 
                 className="h-12 px-10 flex justify-center items-center bg-[#203C2B] hover:bg-[#2d523c] text-[#FFFCF4] transition-all rounded-full font-poppins font-semibold text-xs uppercase tracking-widest shadow-sm cursor-pointer"
               >
-                Load More Pieces
+                Load More Harvests
               </button>
             </div>
           )}

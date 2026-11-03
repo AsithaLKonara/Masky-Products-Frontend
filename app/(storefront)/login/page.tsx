@@ -33,7 +33,7 @@ export default function LoginPage() {
           <div className="hidden lg:flex lg:col-span-6 relative h-[680px] rounded-3xl overflow-hidden border border-[#DCDCCB] shadow-lg bg-[#EAE8DC]">
             <Image
               src="/van-asten-maarten-7TuJsSQ2NGY-unsplash.jpg"
-              alt="MASKY PRODUCT Client Wardrobe"
+              alt="MASKY PRODUCT Organic Harvest"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover object-center"
@@ -52,10 +52,10 @@ export default function LoginPage() {
               {/* Bottom Editorial Quote */}
               <div className="flex flex-col gap-4 max-w-md">
                 <h2 className="font-signature text-4xl sm:text-5xl text-[#FFFCF4] leading-[1.1]">
-                  Pieces edited for quiet elegance.
+                  Harvests nurtured for pure botanical wellness.
                 </h2>
                 <p className="font-poppins text-sm text-[#FFFCF4]/80 font-light leading-relaxed">
-                  Sign in to access your saved sizing profiles, doorstep courier tracking, private capsule reserve invitations, and concierge styling consultations.
+                  Sign in to access your saved harvest orders, real-time courier tracking, exclusive wholesale volume pricing, and culinary guides.
                 </p>
                 <div className="pt-2 flex items-center gap-2 text-xs font-poppins text-[#D9C99B] tracking-wider uppercase">
                   <ShieldCheck size={16} />

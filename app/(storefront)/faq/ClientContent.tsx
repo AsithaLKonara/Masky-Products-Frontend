@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { ChevronDown, HelpCircle, MessageCircle, Sparkles, Truck, RotateCcw, CreditCard, Shirt } from "lucide-react";
+import { ChevronDown, HelpCircle, MessageCircle, Sparkles, Truck, RotateCcw, CreditCard, Leaf } from "lucide-react";
 import CategoryBar from "@/components/CategoryBar";
 import Breadcrumbs from "@/components/Breadcrumbs";
 
@@ -14,44 +14,39 @@ interface FAQItem {
 
 const FAQS: FAQItem[] = [
   {
-    category: "shipping",
-    question: "How long does delivery take across Sri Lanka?",
-    answer: "We partner with trusted express couriers (including Fardar Express). Standard deliveries within Colombo 1–15 arrive within 1–2 working days. Greater Colombo suburbs and outstation islandwide locations typically arrive within 2–4 working days."
-  },
-  {
-    category: "shipping",
-    question: "Is islandwide delivery complimentary?",
-    answer: "Yes, all orders of Rs. 15,000 or above automatically qualify for complimentary islandwide delivery. For orders below this threshold, a flat delivery fee of Rs. 400 is calculated at checkout."
-  },
-  {
-    category: "returns",
-    question: "What is your return and exchange policy?",
-    answer: "We offer a 7-day hassle-free exchange privilege on all unworn, unwashed garments retaining their original luxury tags. You can initiate a return or size exchange directly through our online Returns Portal with your order number and email."
-  },
-  {
-    category: "returns",
-    question: "How do I request a size exchange?",
-    answer: "Simply visit /returns, enter your order reference and email, select the piece requiring a different size, and choose 'Size Too Small' or 'Size Too Large'. Our concierge team will arrange courier doorstep exchange."
+    category: "products",
+    question: "How do I rehydrate dehydrated mushrooms for cooking?",
+    answer: "Place the dried mushrooms in a bowl of lukewarm water or warm broth for 10–15 minutes until plump and tender. Tip: Never discard the soaking liquid! It is concentrated liquid umami—strain and use it as a rich stock for soups, gravies, noodles, or risottos."
   },
   {
     category: "products",
-    question: "What fabrics and materials are used in your creations?",
-    answer: "Our wardrobe is crafted from natural botanical textiles including pure linens, organic cotton blends, mulberry silk blends, and ethically sourced Italian full-grain leathers, prioritizing breathable tactile comfort and durability."
+    question: "What is the shelf life and proper storage for dehydrated products?",
+    answer: "Masky dehydrated mushrooms have a shelf life of up to 12 months when kept sealed in a cool, dry place away from moisture and direct sunlight. Once opened, zip the pouch tightly or store in an airtight glass jar at ambient room temperature."
   },
   {
     category: "products",
-    question: "How do I find my precise fit?",
-    answer: "Each product details page includes an interactive Size Guide with detailed bust, waist, hip, and length measurements in both inches and centimeters. When between sizes, we recommend sizing up for a relaxed draped fit."
+    question: "Are your mushroom products 100% organic and chemical-free?",
+    answer: "Yes, absolutely. Our gourmet mushrooms are cultivated in Sri Lanka under strict hygienic conditions without synthetic chemical pesticides, toxic sprays, or growth stimulants. They are dried at low temperatures to retain natural beta-glucans, vitamin D, and proteins."
+  },
+  {
+    category: "shipping",
+    question: "How long does islandwide delivery take across Sri Lanka?",
+    answer: "Orders are dispatched within 24–48 hours. Standard courier delivery takes 1–2 business days within Colombo and 2–4 business days for all other regions across the island. Tracking details are sent directly via SMS and email."
+  },
+  {
+    category: "shipping",
+    question: "Can I order directly through WhatsApp or Daraz?",
+    answer: "Yes! You can order directly through our web store, purchase through our verified Daraz store (https://s.daraz.lk/s.Z7xIF), or chat directly with our sales team on WhatsApp at 078 313 0967 for custom bulk or culinary orders."
+  },
+  {
+    category: "returns",
+    question: "What is your return and replacement policy?",
+    answer: "Because our products are consumable food items, we cannot accept returns once the tamper-evident packaging seal has been broken. However, if your package arrives damaged or compromised during transit, please contact us within 48 hours for an immediate complimentary replacement."
   },
   {
     category: "payments",
-    question: "Can I pay in interest-free installments?",
-    answer: "Yes, we proudly support Koko and Mintpay at checkout. These allow you to split your purchase total into 3 equal monthly installments with zero interest and zero hidden fees."
-  },
-  {
-    category: "payments",
-    question: "What other payment methods are accepted?",
-    answer: "In addition to installment plans (Koko, Mintpay), we accept Visa, Mastercard, and American Express via OnePay, as well as Cash on Delivery (COD) islandwide across Sri Lanka."
+    question: "What payment options do you support?",
+    answer: "We support Visa, Mastercard, and American Express via OnePay, interest-free 3-month installments with Koko and Mintpay, direct bank transfer, and Cash on Delivery (COD) islandwide across Sri Lanka."
   }
 ];
 
@@ -87,7 +82,7 @@ export default function ClientContent() {
           </h1>
 
           <p className="font-poppins text-xs sm:text-sm text-[#62695A] leading-relaxed max-w-lg">
-            Answers to common questions regarding delivery timescales, size exchanges, bespoke textiles, and payment options.
+            Answers to common questions regarding mushroom rehydration, 12-month shelf life, organic cultivation, courier dispatch, and payments.
           </p>
 
           {/* Category Filter Pills */}
@@ -132,8 +127,8 @@ export default function ClientContent() {
                   : "bg-white/80 border border-[#DCDCCB] text-[#203C2B] hover:bg-white"
               }`}
             >
-              <Shirt size={13} />
-              <span>Sizing & Textiles</span>
+              <Leaf size={13} />
+              <span>Mushrooms & Quality</span>
             </button>
             <button
               onClick={() => setSelectedCategory("payments")}

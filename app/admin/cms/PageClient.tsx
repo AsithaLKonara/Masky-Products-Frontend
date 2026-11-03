@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Layout, Image as ImageIcon, FileText, Megaphone, Plus, Trash2,
   GripVertical, Eye, EyeOff, Edit3, Check, X, ChevronDown, ChevronUp,
-  Globe, Save, ExternalLink
+  Globe, Save, ExternalLink, Video, Sliders, Columns2, Sparkles, Film
 } from "lucide-react";
 import PageHeader from "@/components/admin/PageHeader";
 import MediaPickerModal from "@/components/admin/MediaPickerModal";
@@ -12,35 +12,108 @@ import type { MediaFile } from "@/components/admin/MediaPickerModal";
 import Image from "next/image";
 
 import { useCms } from "@/hooks/useCms";
-import { HeroSlide, Banner, HomepageSection, StaticPage } from "@/services/cms.service";
+import { HeroSlide, Banner, HomepageSection, StaticPage, HeroConfig } from "@/services/cms.service";
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
 function HeroTab() {
-  const { heroSlides, isLoadingHero, createHeroSlide, updateHeroSlide, deleteHeroSlide } = useCms();
+  const {
+    heroConfig,
+    isLoadingHeroConfig,
+    updateHeroConfig,
+    heroSlides,
+    isLoadingHero,
+    createHeroSlide,
+    updateHeroSlide,
+    deleteHeroSlide,
+  } = useCms();
+
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<Partial<HeroSlide>>({});
-  const [saved, setSaved] = useState(false);
-  const [showPicker, setShowPicker] = useState(false);
+  const [slideSaved, setSlideSaved] = useState(false);
+  const [configSaved, setConfigSaved] = useState(false);
+  const [pickerTarget, setPickerTarget] = useState<"slide" | "video" | "videoPoster" | "photo" | null>(null);
+
+  const activeMode = heroConfig?.mode || "slider";
+
+  // Video and Photo Form States
+  const [videoData, setVideoData] = useState({
+    videoUrl: "",
+    posterUrl: "/hero-image/Product1.png",
+    eyebrow: "NATURE'S FINEST SELECTION",
+    title: "Gourmet Dehydrated Mushrooms",
+    subtitle: "Artisan Harvested • Peak Umami • 100% Organic",
+    description:
+      "Slowly dried at low temperatures to lock in intense aroma, exquisite flavor, and natural nutrients for gourmet cuisine.",
+    ctaText: "Shop Collection",
+    ctaLink: "/shop",
+    ctaSecondaryText: "Our Story",
+    ctaSecondaryLink: "/about",
+  });
+
+  const [photoData, setPhotoData] = useState({
+    imageUrl: "/hero-image/Product1.png",
+    eyebrow: "100% ORGANIC HIGHLAND HARVEST",
+    title: "Pure Artisanal Mushrooms",
+    subtitle: "Dehydrated & Fresh Gourmet Fungi",
+    description:
+      "Carefully selected and handcrafted in Sri Lanka. Bringing rich umami, wholesome nutrition, and earthy perfection to every dish.",
+    badgeText: "Sun-Kissed & Dehydrated",
+    badgeSubtext: "Sustainably grown in Sri Lanka",
+    ctaText: "Explore Products",
+    ctaLink: "/shop",
+    ctaSecondaryText: "Learn More",
+    ctaSecondaryLink: "/about",
+  });
+
+  useEffect(() => {
+    if (heroConfig?.videoConfig) {
+      setVideoData((prev) => ({ ...prev, ...heroConfig.videoConfig }));
+    }
+    if (heroConfig?.photoConfig) {
+      setPhotoData((prev) => ({ ...prev, ...heroConfig.photoConfig }));
+    }
+  }, [heroConfig]);
+
+  const handleModeChange = async (mode: "slider" | "video" | "photo") => {
+    await updateHeroConfig.mutateAsync({ mode });
+    setConfigSaved(true);
+    setTimeout(() => setConfigSaved(false), 2000);
+  };
+
+  const handleSaveVideoConfig = async () => {
+    await updateHeroConfig.mutateAsync({ videoConfig: videoData });
+    setConfigSaved(true);
+    setTimeout(() => setConfigSaved(false), 2000);
+  };
+
+  const handleSavePhotoConfig = async () => {
+    await updateHeroConfig.mutateAsync({ photoConfig: photoData });
+    setConfigSaved(true);
+    setTimeout(() => setConfigSaved(false), 2000);
+  };
 
   const startEdit = (slide: HeroSlide) => {
     setEditingId(slide.id);
     setEditData({ ...slide });
   };
 
-  const cancelEdit = () => { setEditingId(null); setEditData({}); };
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditData({});
+  };
 
   const saveEdit = async () => {
     const { id, createdAt, updatedAt, lastEdited, ...updateData } = editData as any;
-    if (editingId && !editingId.startsWith('new-')) {
+    if (editingId && !editingId.startsWith("new-")) {
       await updateHeroSlide.mutateAsync({ id: editingId, data: updateData });
     } else {
       await createHeroSlide.mutateAsync(updateData);
     }
     setEditingId(null);
     setEditData({});
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    setSlideSaved(true);
+    setTimeout(() => setSlideSaved(false), 2000);
   };
 
   const toggleActive = async (id: string) => {
@@ -53,14 +126,13 @@ function HeroTab() {
     const idx = sorted.findIndex((s: HeroSlide) => s.id === id);
     const swapIdx = dir === "up" ? idx - 1 : idx + 1;
     if (swapIdx < 0 || swapIdx >= sorted.length) return;
-    
+
     const current = sorted[idx];
     const swap = sorted[swapIdx];
-    
-    // Swap orders
+
     await Promise.all([
       updateHeroSlide.mutateAsync({ id: current.id, data: { order: swap.order } }),
-      updateHeroSlide.mutateAsync({ id: swap.id, data: { order: current.order } })
+      updateHeroSlide.mutateAsync({ id: swap.id, data: { order: current.order } }),
     ]);
   };
 
@@ -68,13 +140,11 @@ function HeroTab() {
     const newSlide: any = {
       id: `new-${Date.now()}`,
       title: "New Slide",
-      subtitle: "Premium Edition",
-      eyebrow: "THE SIGNATURE COLLECTION",
-      description: "Thoughtfully crafted details, warm natural tones, and timeless elegance.",
-      cta: "Shop Now",
+      subtitle: "Collection Edition",
+      description: "Description of the slide collection.",
+      eyebrow: "THE COLLECTION",
+      cta: "Explore Now",
       ctaLink: "/shop",
-      ctaSecondaryLabel: "",
-      ctaSecondaryLink: "",
       image: "/hero-image/Product1.png",
       accentColor: "#71865B",
       active: false,
@@ -83,245 +153,733 @@ function HeroTab() {
     startEdit(newSlide);
   };
 
-  if (isLoadingHero) return <div className="p-8 text-center text-muted font-inter">Loading slides...</div>;
+  if (isLoadingHero || isLoadingHeroConfig) {
+    return <div className="p-8 text-center text-muted font-inter">Loading hero settings...</div>;
+  }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex justify-between items-center">
-        <p className="font-inter text-sm text-muted">Manage the hero carousel slides shown at the top of the homepage.</p>
-        <div className="flex items-center gap-3">
-          {saved && <span className="text-emerald-600 font-inter text-sm font-medium flex items-center gap-1"><Check size={14}/>Saved</span>}
-          <button onClick={addSlide} className="flex items-center gap-2 bg-foreground text-white px-4 py-2 rounded-lg font-inter font-medium text-sm hover:bg-foreground/90 transition-colors shadow-sm">
-            <Plus size={16}/> Add Slide
-          </button>
+    <div className="flex flex-col gap-8">
+      {/* ─── Hero Section Mode Selector (Slider vs Video vs Photo) ─────────── */}
+      <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h3 className="font-inter font-bold text-base text-foreground flex items-center gap-2">
+              <Layout size={18} className="text-[#203C2B]" />
+              Hero Section Display Mode
+            </h3>
+            <p className="font-inter text-xs text-muted mt-1">
+              Select which layout format displays at the top of your public storefront homepage.
+            </p>
+          </div>
+          {configSaved && (
+            <span className="text-emerald-600 font-inter text-xs font-semibold flex items-center gap-1 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200">
+              <Check size={14} /> Mode Saved
+            </span>
+          )}
+        </div>
+
+        {/* 3 Radio Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Option 1: 3D Slider */}
+          <label
+            onClick={() => handleModeChange("slider")}
+            className={`relative flex flex-col p-5 rounded-xl border-2 cursor-pointer transition-all ${
+              activeMode === "slider"
+                ? "border-[#203C2B] bg-[#203C2B]/5 shadow-sm"
+                : "border-border/70 hover:border-border hover:bg-surface-elevated/50"
+            }`}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <div
+                className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                  activeMode === "slider" ? "bg-[#203C2B] text-white" : "bg-muted/15 text-muted"
+                }`}
+              >
+                <Sliders size={20} />
+              </div>
+              <input
+                type="radio"
+                name="heroMode"
+                value="slider"
+                checked={activeMode === "slider"}
+                onChange={() => handleModeChange("slider")}
+                className="w-4 h-4 text-[#203C2B] accent-[#203C2B] cursor-pointer"
+              />
+            </div>
+            <p className="font-inter font-bold text-sm text-foreground">Interactive 3D Slider</p>
+            <p className="font-inter text-xs text-muted mt-1 leading-relaxed">
+              Keep current interactive 3D luxury product carousel 100% same with full slide management.
+            </p>
+            {activeMode === "slider" && (
+              <span className="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold text-[#203C2B] uppercase tracking-wider font-inter">
+                <Check size={13} /> Active on storefront
+              </span>
+            )}
+          </label>
+
+          {/* Option 2: Cinematic Video */}
+          <label
+            onClick={() => handleModeChange("video")}
+            className={`relative flex flex-col p-5 rounded-xl border-2 cursor-pointer transition-all ${
+              activeMode === "video"
+                ? "border-[#203C2B] bg-[#203C2B]/5 shadow-sm"
+                : "border-border/70 hover:border-border hover:bg-surface-elevated/50"
+            }`}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <div
+                className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                  activeMode === "video" ? "bg-[#203C2B] text-white" : "bg-muted/15 text-muted"
+                }`}
+              >
+                <Video size={20} />
+              </div>
+              <input
+                type="radio"
+                name="heroMode"
+                value="video"
+                checked={activeMode === "video"}
+                onChange={() => handleModeChange("video")}
+                className="w-4 h-4 text-[#203C2B] accent-[#203C2B] cursor-pointer"
+              />
+            </div>
+            <p className="font-inter font-bold text-sm text-foreground">Cinematic Video</p>
+            <p className="font-inter text-xs text-muted mt-1 leading-relaxed">
+              Full-width video background with luxury overlay, typography, and call-to-action buttons.
+            </p>
+            {activeMode === "video" && (
+              <span className="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold text-[#203C2B] uppercase tracking-wider font-inter">
+                <Check size={13} /> Active on storefront
+              </span>
+            )}
+          </label>
+
+          {/* Option 3: Two-Column Photo Split */}
+          <label
+            onClick={() => handleModeChange("photo")}
+            className={`relative flex flex-col p-5 rounded-xl border-2 cursor-pointer transition-all ${
+              activeMode === "photo"
+                ? "border-[#203C2B] bg-[#203C2B]/5 shadow-sm"
+                : "border-border/70 hover:border-border hover:bg-surface-elevated/50"
+            }`}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <div
+                className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                  activeMode === "photo" ? "bg-[#203C2B] text-white" : "bg-muted/15 text-muted"
+                }`}
+              >
+                <Columns2 size={20} />
+              </div>
+              <input
+                type="radio"
+                name="heroMode"
+                value="photo"
+                checked={activeMode === "photo"}
+                onChange={() => handleModeChange("photo")}
+                className="w-4 h-4 text-[#203C2B] accent-[#203C2B] cursor-pointer"
+              />
+            </div>
+            <p className="font-inter font-bold text-sm text-foreground">Two-Column Photo Split</p>
+            <p className="font-inter text-xs text-muted mt-1 leading-relaxed">
+              Left side holds typography & CTAs; right side holds an editorial luxury showcase photo.
+            </p>
+            {activeMode === "photo" && (
+              <span className="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold text-[#203C2B] uppercase tracking-wider font-inter">
+                <Check size={13} /> Active on storefront
+              </span>
+            )}
+          </label>
         </div>
       </div>
 
-      <div className="flex flex-col gap-3">
-        {[...heroSlides].sort((a: HeroSlide, b: HeroSlide) => a.order - b.order).map((slide: HeroSlide) => (
-          <div key={slide.id} className={`bg-surface border rounded-xl shadow-sm overflow-hidden ${slide.active ? 'border-border' : 'border-border/50 opacity-70'}`}>
-            {editingId === slide.id ? (
-              <div className="p-5 flex flex-col gap-4">
-                <p className="font-inter text-xs text-muted font-semibold uppercase tracking-wider border-b border-border/40 pb-2">Content</p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Title (Headline)</label>
-                    <input value={editData.title || ""} onChange={e => setEditData(p => ({...p, title: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. Champagne"/>
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Subtitle (Italic line)</label>
-                    <input value={editData.subtitle || ""} onChange={e => setEditData(p => ({...p, subtitle: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. Cream Edition"/>
-                  </div>
-                  <div className="flex flex-col gap-1.5 md:col-span-2">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Eyebrow Text (small uppercase above product)</label>
-                    <input value={(editData as any).eyebrow || ""} onChange={e => setEditData(p => ({...p, eyebrow: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. THE SIGNATURE COLLECTION"/>
-                  </div>
-                  <div className="flex flex-col gap-1.5 md:col-span-2">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Description</label>
-                    <textarea value={(editData as any).description || ""} onChange={e => setEditData(p => ({...p, description: e.target.value}))} rows={2} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary resize-none" placeholder="Supporting description text shown below the headline"/>
-                  </div>
-                </div>
-
-                <p className="font-inter text-xs text-muted font-semibold uppercase tracking-wider border-b border-border/40 pb-2 mt-2">Calls to Action</p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Primary CTA Label</label>
-                    <input value={editData.cta || ""} onChange={e => setEditData(p => ({...p, cta: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. Explore Collection"/>
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Primary CTA Link</label>
-                    <input value={editData.ctaLink || ""} onChange={e => setEditData(p => ({...p, ctaLink: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="/shop"/>
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Secondary CTA Label <span className="normal-case text-muted/60">(optional)</span></label>
-                    <input value={(editData as any).ctaSecondaryLabel || ""} onChange={e => setEditData(p => ({...p, ctaSecondaryLabel: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. Watch Video"/>
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Secondary CTA Link <span className="normal-case text-muted/60">(optional)</span></label>
-                    <input value={(editData as any).ctaSecondaryLink || ""} onChange={e => setEditData(p => ({...p, ctaSecondaryLink: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="/about"/>
-                  </div>
-                </div>
-
-                <p className="font-inter text-xs text-muted font-semibold uppercase tracking-wider border-b border-border/40 pb-2 mt-2">Visual</p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-1.5 md:col-span-2">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Slide Image</label>
-                    <div className="flex gap-3 items-center">
-                      {editData.image && (
-                        <div className="relative w-20 h-16 bg-surface-elevated rounded-lg overflow-hidden shrink-0 border border-border">
-                          <Image src={editData.image} alt="preview" fill sizes="100px" className="object-contain" />
-                        </div>
-                      )}
-                      <div className="flex flex-col gap-2 flex-1">
-                        <input value={editData.image || ""} onChange={e => setEditData(p => ({...p, image: e.target.value}))} placeholder="/hero-image/Product1.png" className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary font-mono text-xs"/>
-                        <button type="button" onClick={() => setShowPicker(true)} className="flex items-center gap-2 px-3 py-2 bg-surface-elevated hover:bg-border text-foreground/80 border border-border rounded-lg font-inter font-semibold text-xs transition-colors w-fit">
-                          <ImageIcon size={13}/> Pick from Media Library
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Accent / Halo Color</label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="color"
-                        value={(editData as any).accentColor || "#71865B"}
-                        onChange={e => setEditData(p => ({...p, accentColor: e.target.value}))}
-                        className="w-9 h-9 rounded-lg border border-border cursor-pointer p-0.5 bg-surface"
-                        title="Pick the halo color shown behind the active slide"
-                      />
-                      <input
-                        type="text"
-                        value={(editData as any).accentColor || ""}
-                        onChange={e => setEditData(p => ({...p, accentColor: e.target.value}))}
-                        placeholder="#71865B"
-                        className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary font-mono text-xs flex-1"
-                      />
-                    </div>
-                    <p className="font-inter text-[10px] text-muted/60">This color forms the soft ambient halo behind the active product in the carousel.</p>
-                  </div>
-                </div>
-
-                <div className="flex gap-3 justify-end border-t border-border/50 pt-4">
-                  <button onClick={cancelEdit} className="px-4 py-2 border border-border text-foreground/80 rounded-lg font-inter text-sm hover:bg-surface-elevated transition-colors">Cancel</button>
-                  <button onClick={saveEdit} className="px-4 py-2 bg-foreground text-white rounded-lg font-inter text-sm hover:bg-foreground/90 transition-colors flex items-center gap-2">
-                    <Save size={14}/>Save Slide
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="flex items-center gap-4 p-4">
-                <div className="flex flex-col gap-1 text-muted">
-                  <button onClick={() => moveSlide(slide.id, "up")} className="p-0.5 hover:text-foreground"><ChevronUp size={14}/></button>
-                  <button onClick={() => moveSlide(slide.id, "down")} className="p-0.5 hover:text-foreground"><ChevronDown size={14}/></button>
-                </div>
-                <GripVertical size={16} className="text-border shrink-0"/>
-                <div className="w-16 h-10 bg-surface-elevated rounded-md overflow-hidden shrink-0 flex items-center justify-center relative">
-                  {slide.image ? <Image src={slide.image} alt="slide" fill sizes="100px" className="object-cover"/> : <ImageIcon size={16} className="text-border"/>}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-inter font-bold text-sm text-foreground truncate">{slide.title}</p>
-                  <p className="font-inter text-xs text-muted truncate">{slide.subtitle}</p>
-                </div>
-                <div className="flex items-center gap-1 shrink-0">
-                  <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded ${slide.active ? 'bg-emerald-100 text-emerald-700' : 'bg-surface-elevated text-muted'}`}>
-                    {slide.active ? "Live" : "Draft"}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <button onClick={() => toggleActive(slide.id)} className="p-2 text-muted/70 hover:text-foreground hover:bg-surface-elevated rounded-lg transition-colors" title={slide.active ? "Deactivate" : "Activate"}>
-                    {slide.active ? <Eye size={15}/> : <EyeOff size={15}/>}
-                  </button>
-                  <button onClick={() => startEdit(slide)} className="p-2 text-muted/70 hover:text-foreground hover:bg-surface-elevated rounded-lg transition-colors">
-                    <Edit3 size={15}/>
-                  </button>
-                  <button onClick={() => deleteHeroSlide.mutateAsync(slide.id)} className="p-2 text-muted/70 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                    <Trash2 size={15}/>
-                  </button>
-                </div>
-              </div>
-            )}
+      {/* ─── Mode 1: Interactive 3D Slider Slides Manager ─────────── */}
+      {activeMode === "slider" && (
+        <div className="flex flex-col gap-4">
+          <div className="flex justify-between items-center">
+            <div>
+              <h4 className="font-inter font-bold text-sm text-foreground">Carousel Slides</h4>
+              <p className="font-inter text-xs text-muted mt-0.5">
+                Manage the slides shown in the 3D rotating carousel.
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              {slideSaved && (
+                <span className="text-emerald-600 font-inter text-xs font-semibold flex items-center gap-1 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                  <Check size={14} /> Saved
+                </span>
+              )}
+              <button
+                onClick={addSlide}
+                className="flex items-center gap-2 bg-[#203C2B] text-white px-4 py-2 rounded-lg font-inter font-medium text-sm hover:bg-[#16291e] transition-colors shadow-sm"
+              >
+                <Plus size={16} /> Add Slide
+              </button>
+            </div>
           </div>
-        ))}
-        {editingId?.startsWith('new-') && (
-           <div className={`bg-surface border rounded-xl shadow-sm overflow-hidden border-border`}>
-              <div className="p-5 flex flex-col gap-4">
-                <p className="font-inter text-xs font-bold text-foreground">New Hero Slide</p>
-                <p className="font-inter text-xs text-muted font-semibold uppercase tracking-wider border-b border-border/40 pb-2">Content</p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Title (Headline)</label>
-                    <input value={editData.title || ""} onChange={e => setEditData(p => ({...p, title: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. Champagne"/>
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Subtitle (Italic line)</label>
-                    <input value={editData.subtitle || ""} onChange={e => setEditData(p => ({...p, subtitle: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. Cream Edition"/>
-                  </div>
-                  <div className="flex flex-col gap-1.5 md:col-span-2">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Eyebrow Text</label>
-                    <input value={(editData as any).eyebrow || ""} onChange={e => setEditData(p => ({...p, eyebrow: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="e.g. THE SIGNATURE COLLECTION"/>
-                  </div>
-                  <div className="flex flex-col gap-1.5 md:col-span-2">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Description</label>
-                    <textarea value={(editData as any).description || ""} onChange={e => setEditData(p => ({...p, description: e.target.value}))} rows={2} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary resize-none" placeholder="Supporting description text"/>
-                  </div>
-                </div>
-                <p className="font-inter text-xs text-muted font-semibold uppercase tracking-wider border-b border-border/40 pb-2 mt-2">Calls to Action</p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Primary CTA Label</label>
-                    <input value={editData.cta || ""} onChange={e => setEditData(p => ({...p, cta: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="Explore Collection"/>
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Primary CTA Link</label>
-                    <input value={editData.ctaLink || ""} onChange={e => setEditData(p => ({...p, ctaLink: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="/shop"/>
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Secondary CTA Label <span className="normal-case text-muted/60">(optional)</span></label>
-                    <input value={(editData as any).ctaSecondaryLabel || ""} onChange={e => setEditData(p => ({...p, ctaSecondaryLabel: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="Watch Video"/>
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Secondary CTA Link <span className="normal-case text-muted/60">(optional)</span></label>
-                    <input value={(editData as any).ctaSecondaryLink || ""} onChange={e => setEditData(p => ({...p, ctaSecondaryLink: e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary" placeholder="/about"/>
-                  </div>
-                </div>
-                <p className="font-inter text-xs text-muted font-semibold uppercase tracking-wider border-b border-border/40 pb-2 mt-2">Visual</p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-1.5 md:col-span-2">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Slide Image</label>
-                    <div className="flex gap-3 items-center">
-                      {editData.image && (
-                        <div className="relative w-20 h-16 bg-surface-elevated rounded-lg overflow-hidden shrink-0 border border-border">
-                          <Image src={editData.image} alt="preview" fill sizes="100px" className="object-contain" />
+
+          <div className="flex flex-col gap-3">
+            {[...heroSlides]
+              .sort((a: HeroSlide, b: HeroSlide) => a.order - b.order)
+              .map((slide: HeroSlide) => (
+                <div
+                  key={slide.id}
+                  className={`bg-surface border rounded-xl shadow-sm overflow-hidden ${
+                    slide.active ? "border-border" : "border-border/50 opacity-70"
+                  }`}
+                >
+                  {editingId === slide.id ? (
+                    <div className="p-5 flex flex-col gap-4">
+                      <p className="font-inter text-xs text-muted font-semibold uppercase tracking-wider border-b border-border/40 pb-2">
+                        Content
+                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex flex-col gap-1.5">
+                          <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                            Title (Headline)
+                          </label>
+                          <input
+                            value={editData.title || ""}
+                            onChange={(e) => setEditData((p) => ({ ...p, title: e.target.value }))}
+                            className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
+                            placeholder="e.g. Champagne"
+                          />
                         </div>
-                      )}
-                      <div className="flex flex-col gap-2 flex-1">
-                        <input value={editData.image || ""} onChange={e => setEditData(p => ({...p, image: e.target.value}))} placeholder="/hero-image/Product1.png" className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary font-mono text-xs"/>
-                        <button type="button" onClick={() => setShowPicker(true)} className="flex items-center gap-2 px-3 py-2 bg-surface-elevated hover:bg-border text-foreground/80 border border-border rounded-lg font-inter font-semibold text-xs transition-colors w-fit">
-                          <ImageIcon size={13}/> Pick from Media Library
+                        <div className="flex flex-col gap-1.5">
+                          <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                            Subtitle (Italic line)
+                          </label>
+                          <input
+                            value={editData.subtitle || ""}
+                            onChange={(e) => setEditData((p) => ({ ...p, subtitle: e.target.value }))}
+                            className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
+                            placeholder="e.g. Cream Edition"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1.5 md:col-span-2">
+                          <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                            Eyebrow Text
+                          </label>
+                          <input
+                            value={(editData as any).eyebrow || ""}
+                            onChange={(e) => setEditData((p) => ({ ...p, eyebrow: e.target.value }))}
+                            className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
+                            placeholder="e.g. THE SIGNATURE COLLECTION"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1.5 md:col-span-2">
+                          <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                            Description
+                          </label>
+                          <textarea
+                            value={editData.description || ""}
+                            onChange={(e) => setEditData((p) => ({ ...p, description: e.target.value }))}
+                            className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary h-20 resize-none"
+                            placeholder="Short narrative text shown below title..."
+                          />
+                        </div>
+                      </div>
+
+                      <p className="font-inter text-xs text-muted font-semibold uppercase tracking-wider border-b border-border/40 pb-2 mt-2">
+                        Buttons & Call-to-Action
+                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex flex-col gap-1.5">
+                          <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                            Primary CTA Text
+                          </label>
+                          <input
+                            value={editData.cta || ""}
+                            onChange={(e) => setEditData((p) => ({ ...p, cta: e.target.value }))}
+                            className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
+                            placeholder="e.g. Explore Collection"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                          <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                            Primary CTA Link
+                          </label>
+                          <input
+                            value={editData.ctaLink || ""}
+                            onChange={(e) => setEditData((p) => ({ ...p, ctaLink: e.target.value }))}
+                            className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
+                            placeholder="e.g. /shop"
+                          />
+                        </div>
+                      </div>
+
+                      <p className="font-inter text-xs text-muted font-semibold uppercase tracking-wider border-b border-border/40 pb-2 mt-2">
+                        Media
+                      </p>
+                      <div className="flex flex-col gap-2">
+                        <div className="flex gap-2">
+                          <input
+                            value={editData.image || ""}
+                            onChange={(e) => setEditData((p) => ({ ...p, image: e.target.value }))}
+                            placeholder="/hero-image/Product1.png"
+                            className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary flex-1 font-mono text-xs"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setPickerTarget("slide")}
+                            className="px-3 py-2 bg-surface-elevated border border-border rounded-lg text-xs font-inter font-medium hover:bg-border/30 transition-colors flex items-center gap-1.5"
+                          >
+                            <ImageIcon size={14} /> Browse Media
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-3 justify-end border-t border-border/50 pt-4">
+                        <button
+                          onClick={cancelEdit}
+                          className="px-4 py-2 border border-border text-foreground/80 rounded-lg font-inter text-sm hover:bg-surface-elevated transition-colors"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={saveEdit}
+                          className="px-4 py-2 bg-[#203C2B] text-white rounded-lg font-inter text-sm hover:bg-[#16291e] transition-colors flex items-center gap-2"
+                        >
+                          <Save size={14} /> Save Slide
                         </button>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Accent / Halo Color</label>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="color"
-                        value={(editData as any).accentColor || "#71865B"}
-                        onChange={e => setEditData(p => ({...p, accentColor: e.target.value}))}
-                        className="w-9 h-9 rounded-lg border border-border cursor-pointer p-0.5 bg-surface"
-                      />
-                      <input
-                        type="text"
-                        value={(editData as any).accentColor || ""}
-                        onChange={e => setEditData(p => ({...p, accentColor: e.target.value}))}
-                        placeholder="#71865B"
-                        className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary font-mono text-xs flex-1"
-                      />
-                    </div>
-                    <p className="font-inter text-[10px] text-muted/60">Soft ambient halo color shown behind the active product.</p>
-                  </div>
-                </div>
-                <div className="flex gap-3 justify-end border-t border-border/50 pt-4">
-                  <button onClick={cancelEdit} className="px-4 py-2 border border-border text-foreground/80 rounded-lg font-inter text-sm hover:bg-surface-elevated transition-colors">Cancel</button>
-                  <button onClick={saveEdit} className="px-4 py-2 bg-foreground text-white rounded-lg font-inter text-sm hover:bg-foreground/90 transition-colors flex items-center gap-2">
-                    <Save size={14}/>Save Slide
-                  </button>
-                </div>
-              </div>
-           </div>
-        )}
-      </div>
+                  ) : (
+                    <div className="p-4 flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex flex-col gap-1">
+                          <button
+                            onClick={() => moveSlide(slide.id, "up")}
+                            className="p-1 hover:bg-surface-elevated rounded text-muted hover:text-foreground"
+                          >
+                            <ChevronUp size={14} />
+                          </button>
+                          <button
+                            onClick={() => moveSlide(slide.id, "down")}
+                            className="p-1 hover:bg-surface-elevated rounded text-muted hover:text-foreground"
+                          >
+                            <ChevronDown size={14} />
+                          </button>
+                        </div>
+                        <div className="relative w-14 h-14 rounded-lg bg-[#EAE8DC] overflow-hidden border border-border/60 shrink-0">
+                          {slide.image && (
+                            <Image
+                              src={slide.image}
+                              alt={slide.title}
+                              fill
+                              className="object-contain p-1"
+                            />
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-inter font-semibold text-sm text-foreground">{slide.title}</p>
+                          <p className="font-inter text-xs text-muted">
+                            {slide.subtitle} • CTA: {slide.cta || "None"}
+                          </p>
+                        </div>
+                      </div>
 
-      {/* Media Picker */}
-      {showPicker && (
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => toggleActive(slide.id)}
+                          className={`p-2 rounded-lg transition-colors ${
+                            slide.active
+                              ? "text-emerald-700 bg-emerald-50 hover:bg-emerald-100"
+                              : "text-muted hover:bg-surface-elevated"
+                          }`}
+                        >
+                          {slide.active ? <Eye size={16} /> : <EyeOff size={16} />}
+                        </button>
+                        <button
+                          onClick={() => startEdit(slide)}
+                          className="p-2 text-muted hover:text-foreground hover:bg-surface-elevated rounded-lg transition-colors"
+                        >
+                          <Edit3 size={16} />
+                        </button>
+                        <button
+                          onClick={() => deleteHeroSlide.mutateAsync(slide.id)}
+                          className="p-2 text-muted/70 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
+
+      {/* ─── Mode 2: Cinematic Video Hero Settings ─────────── */}
+      {activeMode === "video" && (
+        <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm flex flex-col gap-6">
+          <div className="flex items-center justify-between border-b border-border/50 pb-4">
+            <div>
+              <h4 className="font-inter font-bold text-sm text-foreground flex items-center gap-2">
+                <Video size={16} className="text-[#203C2B]" />
+                Cinematic Video Hero Configuration
+              </h4>
+              <p className="font-inter text-xs text-muted mt-0.5">
+                Configure your video background, overlay narrative typography, and call-to-actions.
+              </p>
+            </div>
+            <button
+              onClick={handleSaveVideoConfig}
+              className="flex items-center gap-2 bg-[#203C2B] text-white px-5 py-2.5 rounded-lg font-inter font-medium text-sm hover:bg-[#16291e] transition-colors shadow-sm"
+            >
+              <Save size={15} /> Save Video Settings
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* Video URL */}
+            <div className="flex flex-col gap-1.5 md:col-span-2">
+              <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                Video URL (.mp4 / stream)
+              </label>
+              <div className="flex gap-2">
+                <input
+                  value={videoData.videoUrl}
+                  onChange={(e) => setVideoData((p) => ({ ...p, videoUrl: e.target.value }))}
+                  placeholder="/hero-video.mp4 or https://domain.com/video.mp4"
+                  className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary flex-1 font-mono text-xs"
+                />
+                <button
+                  type="button"
+                  onClick={() => setPickerTarget("video")}
+                  className="px-3 py-2 bg-surface-elevated border border-border rounded-lg text-xs font-inter font-medium hover:bg-border/30 transition-colors flex items-center gap-1.5"
+                >
+                  <Film size={14} /> Browse Media
+                </button>
+              </div>
+              <p className="font-inter text-[11px] text-muted">
+                Tip: Leave blank to use poster image as static luxury background hero.
+              </p>
+            </div>
+
+            {/* Poster Image URL */}
+            <div className="flex flex-col gap-1.5 md:col-span-2">
+              <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                Poster / Fallback Image URL
+              </label>
+              <div className="flex gap-2">
+                <input
+                  value={videoData.posterUrl}
+                  onChange={(e) => setVideoData((p) => ({ ...p, posterUrl: e.target.value }))}
+                  placeholder="/hero-image/Product1.png"
+                  className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary flex-1 font-mono text-xs"
+                />
+                <button
+                  type="button"
+                  onClick={() => setPickerTarget("videoPoster")}
+                  className="px-3 py-2 bg-surface-elevated border border-border rounded-lg text-xs font-inter font-medium hover:bg-border/30 transition-colors flex items-center gap-1.5"
+                >
+                  <ImageIcon size={14} /> Browse Media
+                </button>
+              </div>
+            </div>
+
+            {/* Eyebrow */}
+            <div className="flex flex-col gap-1.5">
+              <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                Eyebrow Badge Text
+              </label>
+              <input
+                value={videoData.eyebrow}
+                onChange={(e) => setVideoData((p) => ({ ...p, eyebrow: e.target.value }))}
+                placeholder="e.g. NATURE'S FINEST SELECTION"
+                className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+
+            {/* Title */}
+            <div className="flex flex-col gap-1.5">
+              <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                Headline (Title)
+              </label>
+              <input
+                value={videoData.title}
+                onChange={(e) => setVideoData((p) => ({ ...p, title: e.target.value }))}
+                placeholder="e.g. Gourmet Dehydrated Mushrooms"
+                className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+
+            {/* Subtitle */}
+            <div className="flex flex-col gap-1.5 md:col-span-2">
+              <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                Subtitle
+              </label>
+              <input
+                value={videoData.subtitle}
+                onChange={(e) => setVideoData((p) => ({ ...p, subtitle: e.target.value }))}
+                placeholder="e.g. Artisan Harvested • Peak Umami • 100% Organic"
+                className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+
+            {/* Description */}
+            <div className="flex flex-col gap-1.5 md:col-span-2">
+              <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                Narrative Description
+              </label>
+              <textarea
+                value={videoData.description}
+                onChange={(e) => setVideoData((p) => ({ ...p, description: e.target.value }))}
+                rows={3}
+                placeholder="Explain the product value and artisanal craft..."
+                className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary resize-none"
+              />
+            </div>
+
+            {/* Primary CTA */}
+            <div className="flex flex-col gap-1.5">
+              <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                Primary CTA Text
+              </label>
+              <input
+                value={videoData.ctaText}
+                onChange={(e) => setVideoData((p) => ({ ...p, ctaText: e.target.value }))}
+                placeholder="e.g. Shop Collection"
+                className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                Primary CTA Link
+              </label>
+              <input
+                value={videoData.ctaLink}
+                onChange={(e) => setVideoData((p) => ({ ...p, ctaLink: e.target.value }))}
+                placeholder="e.g. /shop"
+                className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+
+            {/* Secondary CTA */}
+            <div className="flex flex-col gap-1.5">
+              <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                Secondary CTA Text
+              </label>
+              <input
+                value={videoData.ctaSecondaryText}
+                onChange={(e) => setVideoData((p) => ({ ...p, ctaSecondaryText: e.target.value }))}
+                placeholder="e.g. Our Story"
+                className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                Secondary CTA Link
+              </label>
+              <input
+                value={videoData.ctaSecondaryLink}
+                onChange={(e) => setVideoData((p) => ({ ...p, ctaSecondaryLink: e.target.value }))}
+                placeholder="e.g. /about"
+                className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Mode 3: Two-Column Photo Split Settings ─────────── */}
+      {activeMode === "photo" && (
+        <div className="bg-surface border border-border rounded-2xl p-6 shadow-sm flex flex-col gap-6">
+          <div className="flex items-center justify-between border-b border-border/50 pb-4">
+            <div>
+              <h4 className="font-inter font-bold text-sm text-foreground flex items-center gap-2">
+                <Columns2 size={16} className="text-[#203C2B]" />
+                Two-Column Photo Split Configuration
+              </h4>
+              <p className="font-inter text-xs text-muted mt-0.5">
+                Configure the left-side editorial typography & CTAs, and right-side photography.
+              </p>
+            </div>
+            <button
+              onClick={handleSavePhotoConfig}
+              className="flex items-center gap-2 bg-[#203C2B] text-white px-5 py-2.5 rounded-lg font-inter font-medium text-sm hover:bg-[#16291e] transition-colors shadow-sm"
+            >
+              <Save size={15} /> Save Photo Settings
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* Photo URL */}
+            <div className="flex flex-col gap-1.5 md:col-span-2">
+              <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                Showcase Photo Image URL
+              </label>
+              <div className="flex gap-2">
+                <input
+                  value={photoData.imageUrl}
+                  onChange={(e) => setPhotoData((p) => ({ ...p, imageUrl: e.target.value }))}
+                  placeholder="/hero-image/Product1.png"
+                  className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary flex-1 font-mono text-xs"
+                />
+                <button
+                  type="button"
+                  onClick={() => setPickerTarget("photo")}
+                  className="px-3 py-2 bg-surface-elevated border border-border rounded-lg text-xs font-inter font-medium hover:bg-border/30 transition-colors flex items-center gap-1.5"
+                >
+                  <ImageIcon size={14} /> Browse Media
+                </button>
+              </div>
+            </div>
+
+            {/* Eyebrow */}
+            <div className="flex flex-col gap-1.5">
+              <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                Eyebrow Badge Text
+              </label>
+              <input
+                value={photoData.eyebrow}
+                onChange={(e) => setPhotoData((p) => ({ ...p, eyebrow: e.target.value }))}
+                placeholder="e.g. 100% ORGANIC HIGHLAND HARVEST"
+                className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+
+            {/* Title */}
+            <div className="flex flex-col gap-1.5">
+              <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                Headline (Title)
+              </label>
+              <input
+                value={photoData.title}
+                onChange={(e) => setPhotoData((p) => ({ ...p, title: e.target.value }))}
+                placeholder="e.g. Pure Artisanal Mushrooms"
+                className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+
+            {/* Subtitle */}
+            <div className="flex flex-col gap-1.5 md:col-span-2">
+              <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                Subtitle
+              </label>
+              <input
+                value={photoData.subtitle}
+                onChange={(e) => setPhotoData((p) => ({ ...p, subtitle: e.target.value }))}
+                placeholder="e.g. Dehydrated & Fresh Gourmet Fungi"
+                className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+
+            {/* Description */}
+            <div className="flex flex-col gap-1.5 md:col-span-2">
+              <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                Narrative Description
+              </label>
+              <textarea
+                value={photoData.description}
+                onChange={(e) => setPhotoData((p) => ({ ...p, description: e.target.value }))}
+                rows={3}
+                placeholder="Describe your harvest, dehydration method, and culinary excellence..."
+                className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary resize-none"
+              />
+            </div>
+
+            {/* Floating Badge */}
+            <div className="flex flex-col gap-1.5">
+              <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                Floating Badge Heading
+              </label>
+              <input
+                value={photoData.badgeText}
+                onChange={(e) => setPhotoData((p) => ({ ...p, badgeText: e.target.value }))}
+                placeholder="e.g. Sun-Kissed & Dehydrated"
+                className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                Floating Badge Subtext
+              </label>
+              <input
+                value={photoData.badgeSubtext}
+                onChange={(e) => setPhotoData((p) => ({ ...p, badgeSubtext: e.target.value }))}
+                placeholder="e.g. Sustainably grown in Sri Lanka"
+                className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+
+            {/* Primary CTA */}
+            <div className="flex flex-col gap-1.5">
+              <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                Primary CTA Text
+              </label>
+              <input
+                value={photoData.ctaText}
+                onChange={(e) => setPhotoData((p) => ({ ...p, ctaText: e.target.value }))}
+                placeholder="e.g. Explore Products"
+                className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                Primary CTA Link
+              </label>
+              <input
+                value={photoData.ctaLink}
+                onChange={(e) => setPhotoData((p) => ({ ...p, ctaLink: e.target.value }))}
+                placeholder="e.g. /shop"
+                className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+
+            {/* Secondary CTA */}
+            <div className="flex flex-col gap-1.5">
+              <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                Secondary CTA Text
+              </label>
+              <input
+                value={photoData.ctaSecondaryText}
+                onChange={(e) => setPhotoData((p) => ({ ...p, ctaSecondaryText: e.target.value }))}
+                placeholder="e.g. Learn More"
+                className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                Secondary CTA Link
+              </label>
+              <input
+                value={photoData.ctaSecondaryLink}
+                onChange={(e) => setPhotoData((p) => ({ ...p, ctaSecondaryLink: e.target.value }))}
+                placeholder="e.g. /about"
+                className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Media Picker Modal */}
+      {pickerTarget && (
         <MediaPickerModal
-          title="Select Hero Slide Image"
-          onClose={() => setShowPicker(false)}
+          title={
+            pickerTarget === "video"
+              ? "Select Video File"
+              : pickerTarget === "videoPoster"
+              ? "Select Video Poster Image"
+              : pickerTarget === "photo"
+              ? "Select Showcase Photo"
+              : "Select Hero Slide Image"
+          }
+          onClose={() => setPickerTarget(null)}
           onSelect={(url) => {
-            setEditData(p => ({ ...p, image: url }));
-            setShowPicker(false);
+            if (pickerTarget === "slide") {
+              setEditData((p) => ({ ...p, image: url }));
+            } else if (pickerTarget === "video") {
+              setVideoData((p) => ({ ...p, videoUrl: url }));
+            } else if (pickerTarget === "videoPoster") {
+              setVideoData((p) => ({ ...p, posterUrl: url }));
+            } else if (pickerTarget === "photo") {
+              setPhotoData((p) => ({ ...p, imageUrl: url }));
+            }
+            setPickerTarget(null);
           }}
         />
       )}

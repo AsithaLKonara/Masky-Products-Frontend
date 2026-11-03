@@ -68,7 +68,7 @@ export default function GlobalSearchModal({ isOpen, onClose }: GlobalSearchModal
             <div className="flex flex-col gap-4 mt-4">
               <span className="font-urbanist font-medium text-xs text-stone-500 uppercase tracking-widest">Popular Searches</span>
               <div className="flex flex-wrap gap-3">
-                {["Linen Shirts", "Summer Collection", "Maxi Dresses", "Accessories"].map((term) => (
+                {["Dehydrated Oyster", "Fresh Mushrooms", "Mushroom Powder", "Ready To Eat Crisps"].map((term) => (
                   <button 
                     key={term}
                     onClick={() => setSearchQuery(term)}

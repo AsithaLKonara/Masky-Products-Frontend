@@ -54,7 +54,7 @@ export default function ProductTabs({ description, excerpt, productId }: { descr
             ) : (
               <div className="text-center py-8">
                 <p className="font-poppins text-sm text-[#71865B]">
-                  No detailed description available for this piece.
+                  No detailed description available for this harvest selection.
                 </p>
               </div>
             )}
@@ -133,10 +133,10 @@ export default function ProductTabs({ description, excerpt, productId }: { descr
 
             <div className="bg-[#FFFCF4]/80 backdrop-blur-md rounded-2xl border border-[#DCDCCB]/80 p-5 shadow-xs">
               <h4 className="font-signature font-bold text-lg text-[#203C2B] mb-2 flex items-center gap-2">
-                <HelpCircle size={16} className="text-[#71865B]" /> What is your exchange & return policy?
+                <HelpCircle size={16} className="text-[#71865B]" /> What is your return & replacement policy?
               </h4>
               <p className="font-poppins text-xs sm:text-sm text-[#62695A] leading-relaxed pl-6">
-                We accept size and item exchanges within 7 calendar days of receipt. All items must be unwashed, unworn, and retain original luxury tags.
+                As our products are consumable organic foods, we cannot accept returns once packaging seals are broken. If an item arrives damaged or compromised during transit, contact us within 48 hours for an immediate complimentary replacement.
               </p>
             </div>
 

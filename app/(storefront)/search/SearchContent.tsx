@@ -11,7 +11,7 @@ import { useProducts } from "@/hooks/useProducts";
 import { Product } from "@/types/product";
 import Link from "next/link";
 
-const QUICK_SEARCH_TAGS = ["Silk", "Dresses", "Leather", "Belts", "Casual Shirts", "Trousers"];
+const QUICK_SEARCH_TAGS = ["Dehydrated", "Fresh Mushroom", "Oyster", "Mushroom Powder", "Ready To Eat", "Frozen"];
 
 function SearchResults() {
   const searchParams = useSearchParams();
@@ -71,7 +71,7 @@ function SearchResults() {
           </div>
 
           <h1 className="font-signature font-bold text-3xl sm:text-4xl md:text-5xl text-[#203C2B] tracking-tight">
-            Search The Wardrobe
+            Search Our Harvest
           </h1>
 
           {/* Luxury Search Input */}
@@ -82,7 +82,7 @@ function SearchResults() {
                 type="text"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Search by silhouette, textile, or cut..."
+                placeholder="Search by mushroom variety, culinary cut, or category..."
                 className="w-full h-13 pl-12 pr-12 rounded-full bg-white/90 border border-[#DCDCCB] text-[#203C2B] placeholder:text-[#8F9489] font-poppins text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[#203C2B] focus:border-transparent transition-all"
               />
               {searchInput && (
@@ -194,19 +194,19 @@ function SearchResults() {
                 <PackageSearch size={28} />
               </div>
               <h3 className="font-signature font-bold text-2xl text-[#203C2B] mb-2">
-                No Creations Found
+                No Harvests Found
               </h3>
               <p className="font-poppins text-xs sm:text-sm text-[#62695A] leading-relaxed mb-6">
                 {initialQuery 
-                  ? `We couldn't find any creations matching "${initialQuery}". Try adjusting your keywords or explore all wardrobe pieces.`
-                  : "Enter a search term above or choose from our suggestions to discover handcrafted garments."
+                  ? `We couldn't find any products matching "${initialQuery}". Try adjusting your keywords or explore all mushroom harvests.`
+                  : "Enter a search term above or choose from our suggestions to discover gourmet dehydrated mushrooms."
                 }
               </p>
               <Link 
                 href="/shop" 
                 className="px-6 py-2.5 rounded-full bg-[#203C2B] text-[#FFFCF4] font-poppins text-xs uppercase tracking-widest hover:bg-[#2d523c] transition-all shadow-sm"
               >
-                Browse All Creations
+                Browse All Harvests
               </Link>
             </div>
           ) : (
@@ -225,7 +225,7 @@ function SearchResults() {
                 onClick={handleLoadMore} 
                 className="h-12 px-10 flex justify-center items-center bg-[#203C2B] hover:bg-[#2d523c] text-[#FFFCF4] transition-all rounded-full font-poppins font-semibold text-xs uppercase tracking-widest shadow-sm cursor-pointer"
               >
-                Load More Pieces
+                Load More Harvests
               </button>
             </div>
           )}
