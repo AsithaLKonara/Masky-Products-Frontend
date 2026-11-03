@@ -35,6 +35,11 @@ export const metadata: Metadata = {
     default: 'MASKY PRODUCT',
   },
   description: 'Pieces edited for quiet luxury — cut clean, worn easy.',
+  icons: {
+    icon: '/icon.png',
+    shortcut: '/icon.png',
+    apple: '/icon.png',
+  },
   openGraph: {
     title: 'MASKY PRODUCT',
     description: 'Pieces edited for quiet luxury — cut clean, worn easy.',
