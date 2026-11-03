@@ -1,72 +1,131 @@
 import React from "react";
 import Link from "next/link";
+import { Scale, CheckCircle2, RotateCcw, CreditCard, Shield, ArrowRight } from "lucide-react";
+import CategoryBar from "@/components/CategoryBar";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 export const metadata = {
   title: "Terms & Conditions - MASKY PRODUCT",
-  description: "Terms & Conditions page for MASKY PRODUCT."
+  description: "Terms and conditions of service at MASKY PRODUCT."
 };
 
-
-
 export default function TermsConditionsPage() {
+  const terms = [
+    {
+      num: "01",
+      title: "Agreement & General Terms",
+      icon: Scale,
+      content:
+        "By accessing our platform and placing an order with MASKY PRODUCT, you confirm agreement with and acceptance of these Terms of Service. These conditions apply to all browsing, purchases, and communications across our digital storefront and physical atelier."
+    },
+    {
+      num: "02",
+      title: "Artisan Garment Authenticity & Colorways",
+      icon: CheckCircle2,
+      content:
+        "Our pieces are crafted from natural textiles including pure linens and organic weaves. While we capture our photography in true natural lighting, subtle variations in botanical texture, yarn slub, and display monitor calibration are intrinsic to authentic artisan garments."
+    },
+    {
+      num: "03",
+      title: "Pricing, Currency & Payment Methods",
+      icon: CreditCard,
+      content:
+        "All prices are quoted in Sri Lankan Rupees (LKR) inclusive of applicable taxes. We accept major credit/debit cards, Cash on Delivery (COD) islandwide, and interest-free installment payment through verified BNPL partners (Koko and Mintpay)."
+    },
+    {
+      num: "04",
+      title: "Order Fulfillment & Doorstep Delivery",
+      icon: Shield,
+      content:
+        "Orders are dispatched via trusted express couriers. Standard delivery times are 1–2 business days within Colombo and suburbs, and 2–4 business days across greater Sri Lanka. Orders exceeding Rs. 15,000 enjoy complimentary islandwide shipping."
+    },
+    {
+      num: "05",
+      title: "Exchange Privilege & Cancellations",
+      icon: RotateCcw,
+      content:
+        "We offer a 7-day complimentary exchange privilege on unworn, unwashed items in original packaging with intact tags. Order cancellations may be requested before dispatch by connecting immediately with our WhatsApp concierge."
+    }
+  ];
+
   return (
-    <main className="flex flex-col items-center w-full min-h-screen bg-background pt-[83px]">
-      
-      {/* Header Banner */}
-      <div className="w-full bg-primary py-16 px-4 flex flex-col items-center justify-center text-center">
-        <h1 className="font-poppins font-semibold text-4xl md:text-5xl text-background leading-tight mb-4">
-          Terms & Conditions
-        </h1>
-        <p className="font-poppins text-sm text-background/70 max-w-[600px]">
-          Please read these terms and conditions carefully before using our website.
-        </p>
-      </div>
+    <main className="flex flex-col w-full min-h-screen bg-[#FEF6E4]">
+      {/* Category Sub-Navigation */}
+      <CategoryBar />
 
-      {/* Content */}
-      <div className="w-full max-w-[900px] mx-auto px-6 md:px-12 py-16 md:py-24 flex flex-col gap-10">
-        
-        <section className="flex flex-col gap-4">
-          <h2 className="font-poppins font-medium text-2xl text-primary">1. General Conditions</h2>
-          <p className="font-poppins text-sm leading-[26px] text-stone-600">
-            By accessing and placing an order with MASKY PRODUCT, you confirm that you are in agreement with and bound by the terms of service contained in the Terms & Conditions outlined below. These terms apply to the entire website and any email or other type of communication between you and MASKY PRODUCT.
+      <div className="w-full max-w-[1000px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        {/* Breadcrumb Trail */}
+        <Breadcrumbs
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Terms & Conditions" }
+          ]}
+          className="mb-8"
+        />
+
+        {/* Hero Section */}
+        <div className="flex flex-col items-start gap-4 mb-10">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#71865B]/15 text-[#203C2B] border border-[#71865B]/30 text-xs font-poppins font-medium uppercase tracking-widest">
+            <Scale size={13} className="text-[#71865B]" />
+            Client Agreement & Terms of Service
+          </div>
+          <h1 className="font-signature text-4xl sm:text-5xl text-[#203C2B] leading-[1.15]">
+            Terms & Conditions
+          </h1>
+          <p className="font-poppins text-xs sm:text-sm text-[#5c5650] font-light">
+            Effective Date: August 2026 • Governing Sri Lankan Jurisdiction
           </p>
-        </section>
+        </div>
 
-        <section className="flex flex-col gap-4">
-          <h2 className="font-poppins font-medium text-2xl text-primary">2. Products and Services</h2>
-          <p className="font-poppins text-sm leading-[26px] text-stone-600">
-            Certain products or services may be available exclusively online through the website. These products or services may have limited quantities and are subject to return or exchange only according to our Return Policy. We have made every effort to display as accurately as possible the colors and images of our products that appear at the store. We cannot guarantee that your computer monitor's display of any color will be accurate.
-          </p>
-        </section>
+        {/* Reader Card */}
+        <div className="bg-[#FFFCF4]/90 backdrop-blur-md border border-[#DCDCCB] rounded-3xl p-6 sm:p-10 lg:p-12 shadow-sm flex flex-col gap-10">
+          {terms.map((term, idx) => {
+            const Icon = term.icon;
+            return (
+              <section
+                key={term.num}
+                className={`flex flex-col sm:flex-row items-start gap-5 ${
+                  idx !== terms.length - 1 ? "pb-8 border-b border-[#DCDCCB]/60" : ""
+                }`}
+              >
+                <div className="w-10 h-10 rounded-2xl bg-[#71865B]/15 text-[#203C2B] flex items-center justify-center shrink-0">
+                  <Icon size={18} />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="font-poppins text-xs font-semibold text-[#71865B] uppercase tracking-wider">
+                      Clause {term.num}
+                    </span>
+                  </div>
+                  <h2 className="font-poppins text-lg sm:text-xl font-semibold text-[#203C2B]">
+                    {term.title}
+                  </h2>
+                  <p className="font-poppins text-sm leading-relaxed text-[#5c5650] font-light">
+                    {term.content}
+                  </p>
+                </div>
+              </section>
+            );
+          })}
 
-        <section className="flex flex-col gap-4">
-          <h2 className="font-poppins font-medium text-2xl text-primary">3. Accuracy of Billing and Account Information</h2>
-          <p className="font-poppins text-sm leading-[26px] text-stone-600">
-            We reserve the right to refuse any order you place with us. We may, in our sole discretion, limit or cancel quantities purchased per person, per household, or per order. In the event that we make a change to or cancel an order, we may attempt to notify you by contacting the e-mail and/or billing address/phone number provided at the time the order was made.
-          </p>
-        </section>
-
-        <section className="flex flex-col gap-4">
-          <h2 className="font-poppins font-medium text-2xl text-primary">4. Pricing and Payment</h2>
-          <p className="font-poppins text-sm leading-[26px] text-stone-600">
-            Prices for our products are subject to change without notice. We reserve the right at any time to modify or discontinue the Service (or any part or content thereof) without notice at any time. We shall not be liable to you or to any third-party for any modification, price change, suspension, or discontinuance of the Service. Payment can be made through our secure checkout via Cash on Delivery, Credit/Debit cards, or integrated "Buy Now Pay Later" partners.
-          </p>
-        </section>
-
-        <section className="flex flex-col gap-4">
-          <h2 className="font-poppins font-medium text-2xl text-primary">5. Intellectual Property</h2>
-          <p className="font-poppins text-sm leading-[26px] text-stone-600">
-            The website and its original content, features, and functionality are owned by MASKY PRODUCT and are protected by international copyright, trademark, patent, trade secret, and other intellectual property or proprietary rights laws.
-          </p>
-        </section>
-
-        <section className="flex flex-col gap-4">
-          <h2 className="font-poppins font-medium text-2xl text-primary">6. Contact Information</h2>
-          <p className="font-poppins text-sm leading-[26px] text-stone-600">
-            Questions about the Terms of Service should be sent to us via our <Link href="/contact" className="text-accent hover:underline underline-offset-4">Contact Us</Link> page.
-          </p>
-        </section>
-
+          {/* Concierge Inquiry Box */}
+          <div className="mt-4 p-6 sm:p-8 rounded-2xl bg-[#71865B]/10 border border-[#71865B]/25 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="flex flex-col gap-1">
+              <h3 className="font-poppins text-sm font-semibold text-[#203C2B]">
+                Need Clarification on Our Terms?
+              </h3>
+              <p className="font-poppins text-xs text-[#5c5650] font-light leading-relaxed">
+                Connect with our concierge team anytime for personalized assistance regarding orders or terms.
+              </p>
+            </div>
+            <Link
+              href="/contact"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#203C2B] hover:bg-[#15271C] text-[#FFFCF4] font-poppins text-xs font-medium uppercase tracking-wider transition-all shrink-0"
+            >
+              Contact Concierge <ArrowRight size={14} />
+            </Link>
+          </div>
+        </div>
       </div>
     </main>
   );

@@ -2,23 +2,23 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Search, ChevronRight, Package, ArrowLeft, Loader2, AlertCircle } from "lucide-react";
+import { Search, ChevronRight, Package, ArrowLeft, Loader2, AlertCircle, RotateCcw, CheckCircle2, Sparkles, ShieldCheck } from "lucide-react";
 import Image from "next/image";
-import { useVerifyOrderForReturn, useCreateReturn } from "@/hooks/useReturns";
+import { useCreateReturn } from "@/hooks/useReturns";
 import { api } from "@/services/api";
+import CategoryBar from "@/components/CategoryBar";
+import Breadcrumbs from "@/components/Breadcrumbs";
+import { PLACEHOLDER_IMAGE } from "@/lib/placeholder";
 
 export default function ClientContent() {
   const [orderNumber, setOrderNumber] = useState("");
   const [email, setEmail] = useState("");
   const [step, setStep] = useState<"search" | "select" | "reason" | "success">("search");
-  
-  const [searchParams, setSearchParams] = useState({ orderNumber: "", email: "" });
   const [error, setError] = useState("");
   
   const [selectedItems, setSelectedItems] = useState<{ id: string, quantity: number }[]>([]);
   const [itemReasons, setItemReasons] = useState<Record<string, { reason: string, details: string }>>({});
 
-  // We manually fetch using api.get instead of hook for more control on click
   const [isLoading, setIsLoading] = useState(false);
   const [orderData, setOrderData] = useState<any>(null);
 
@@ -34,20 +34,20 @@ export default function ClientContent() {
         setOrderData(data);
         setStep("select");
       } catch (err: any) {
-        setError(err.response?.data?.error || "Failed to find order.");
+        setError(err.response?.data?.error || "We could not find an order matching that reference and email.");
       } finally {
         setIsLoading(false);
       }
     }
   };
 
-  const handleToggleItem = (itemId: string, maxQty: number) => {
+  const handleToggleItem = (itemId: string) => {
     setSelectedItems(prev => {
       const exists = prev.find(p => p.id === itemId);
       if (exists) {
         return prev.filter(p => p.id !== itemId);
       }
-      return [...prev, { id: itemId, quantity: 1 }]; // Default select 1
+      return [...prev, { id: itemId, quantity: 1 }];
     });
   };
 
@@ -68,10 +68,9 @@ export default function ClientContent() {
   const handleSubmitReturn = async () => {
     if (selectedItems.length === 0 || !orderData) return;
     
-    // Check if all selected items have a reason
     for (const item of selectedItems) {
       if (!itemReasons[item.id]?.reason) {
-        setError("Please provide a reason for all selected items.");
+        setError("Please select an exchange or return reason for all chosen items.");
         return;
       }
     }
@@ -91,232 +90,287 @@ export default function ClientContent() {
       await createReturnMutation.mutateAsync(payload);
       setStep("success");
     } catch (err: any) {
-      setError(err.response?.data?.error || "Failed to submit return request.");
+      setError(err.response?.data?.error || "Failed to submit return request. Please try again.");
     }
   };
 
   return (
-    <main className="flex flex-col items-center w-full min-h-screen bg-background pt-[83px]">
-      
-      {/* Header Banner */}
-      <div className="w-full bg-primary py-16 px-4 flex flex-col items-center justify-center text-center">
-        <h1 className="font-poppins font-semibold text-4xl md:text-5xl text-background leading-tight mb-4">
-          Returns & Exchanges
-        </h1>
-        <p className="font-poppins text-sm text-background/70 max-w-[600px]">
-          Not quite right? We're here to help. Start your return or exchange process below.
-        </p>
+    <main className="flex flex-col items-center w-full min-h-screen bg-[#FEF6E4] pt-[84px] text-[#203C2B]">
+      {/* Sub Navbar */}
+      <CategoryBar />
+
+      {/* Hero Header */}
+      <section className="w-full bg-gradient-to-b from-[#FFFDF7] via-[#FEF6E4] to-[#F5ECE0] border-b border-[#DCDCCB]/70 py-12 md:py-16 px-4 sm:px-6 lg:px-12 relative overflow-hidden">
+        <div className="max-w-4xl mx-auto flex flex-col items-center text-center gap-4 relative z-10">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#71865B]/15 border border-[#71865B]/30 text-[#203C2B]">
+            <RotateCcw size={12} className="text-[#71865B]" />
+            <span className="font-poppins text-[10px] font-semibold tracking-[0.18em] uppercase">
+              7-Day Complimentary Exchange
+            </span>
+          </div>
+
+          <h1 className="font-signature font-bold text-3xl sm:text-4xl md:text-5xl text-[#203C2B] tracking-tight">
+            Returns & Exchanges
+          </h1>
+
+          <p className="font-poppins text-xs sm:text-sm text-[#62695A] leading-relaxed max-w-lg">
+            We are dedicated to ensuring your complete satisfaction. Request a size exchange or initiate an authorized return seamlessly below.
+          </p>
+        </div>
+      </section>
+
+      {/* Tool Bar & Breadcrumbs */}
+      <div className="w-full bg-[#FFFCF4]/60 border-b border-[#DCDCCB]/60 backdrop-blur-xs">
+        <div className="flex flex-row justify-between items-center w-full max-w-7xl mx-auto h-12 px-4 sm:px-6 lg:px-12">
+          <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Returns & Exchanges" }]} />
+          <span className="font-poppins text-xs text-[#62695A] tracking-wider uppercase">Client Care Portal</span>
+        </div>
       </div>
 
-      <div className="w-full max-w-[700px] mx-auto px-6 py-16 flex flex-col items-center min-h-[500px]">
-        
-        {error && (
-          <div className="w-full mb-6 p-4 bg-red-50 text-red-600 rounded-xl flex items-center gap-3">
-            <AlertCircle size={20} />
-            <span className="font-poppins text-sm font-medium">{error}</span>
-          </div>
-        )}
-
+      {/* Content Form Container */}
+      <section className="flex flex-col items-center w-full max-w-2xl px-4 sm:px-6 lg:px-12 py-12 pb-24">
         {step === "search" && (
-          <div className="flex flex-col w-full animate-in fade-in duration-500">
-            <h2 className="font-poppins font-medium text-2xl text-primary mb-6">Find Your Order</h2>
-            <form onSubmit={handleSearch} className="flex flex-col gap-6">
-              
-              <div className="flex flex-col gap-2 w-full">
-                <label className="font-poppins font-medium text-xs uppercase tracking-wider text-stone-500">
-                  Order Number <span className="text-accent">*</span>
+          <div className="w-full bg-[#FFFCF4]/90 backdrop-blur-md border border-[#DCDCCB] rounded-3xl p-6 sm:p-10 shadow-xs">
+            <h2 className="font-signature font-bold text-2xl text-[#203C2B] mb-2 text-center">
+              Find Your Order
+            </h2>
+            <p className="font-poppins text-xs text-[#62695A] text-center mb-6">
+              Enter your order reference and the email address used during purchase.
+            </p>
+
+            {error && (
+              <div className="mb-6 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-600 font-poppins text-xs flex items-center gap-2">
+                <AlertCircle size={15} className="shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleSearch} className="flex flex-col gap-4">
+              <div className="flex flex-col gap-1.5">
+                <label className="font-poppins text-xs font-semibold uppercase tracking-wider text-[#62695A]">
+                  Order Number
                 </label>
-                <input 
+                <input
                   type="text"
-                  placeholder="e.g. LRL-12345"
+                  placeholder="e.g. ORD-10023"
                   value={orderNumber}
                   onChange={(e) => setOrderNumber(e.target.value)}
-                  className="w-full h-[54px] px-[20px] border border-stone-300 rounded-full bg-white font-poppins text-sm text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all placeholder:text-stone-400"
+                  className="w-full h-12 px-5 rounded-full bg-white/90 border border-[#DCDCCB] font-poppins text-xs text-[#203C2B] placeholder:text-[#8F9489] outline-none focus:border-[#203C2B] transition-all"
                   required
                 />
               </div>
 
-              <div className="flex flex-col gap-2 w-full">
-                <label className="font-poppins font-medium text-xs uppercase tracking-wider text-stone-500">
-                  Email Address <span className="text-accent">*</span>
+              <div className="flex flex-col gap-1.5">
+                <label className="font-poppins text-xs font-semibold uppercase tracking-wider text-[#62695A]">
+                  Account Email Address
                 </label>
-                <input 
+                <input
                   type="email"
-                  placeholder="Enter the email used for the order"
+                  placeholder="e.g. client@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full h-[54px] px-[20px] border border-stone-300 rounded-full bg-white font-poppins text-sm text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all placeholder:text-stone-400"
+                  className="w-full h-12 px-5 rounded-full bg-white/90 border border-[#DCDCCB] font-poppins text-xs text-[#203C2B] placeholder:text-[#8F9489] outline-none focus:border-[#203C2B] transition-all"
                   required
                 />
               </div>
 
-              <button 
+              <button
                 type="submit"
-                disabled={!orderNumber || !email || isLoading}
-                className="w-full h-[54px] flex justify-center items-center gap-2 bg-primary hover:bg-stone-800 disabled:bg-stone-400 transition-colors rounded-full font-poppins font-semibold text-sm text-white uppercase tracking-widest mt-4"
+                disabled={isLoading}
+                className="w-full h-12 mt-3 bg-[#203C2B] hover:bg-[#2d523c] text-[#FFFCF4] font-poppins font-semibold text-xs uppercase tracking-widest rounded-full transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               >
-                {isLoading ? <Loader2 size={18} className="animate-spin" /> : <Search size={18} />}
-                {isLoading ? "Searching..." : "Find Order"}
+                {isLoading ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  <>
+                    <Search size={14} />
+                    <span>Locate Order</span>
+                  </>
+                )}
               </button>
             </form>
           </div>
         )}
 
         {step === "select" && orderData && (
-          <div className="flex flex-col w-full animate-in slide-in-from-right-8 fade-in duration-500">
-            <button onClick={() => setStep("search")} className="flex items-center gap-2 text-stone-500 hover:text-primary mb-6 self-start transition-colors">
-              <ArrowLeft size={16} />
-              <span className="font-poppins text-sm">Back</span>
-            </button>
-            
-            <h2 className="font-poppins font-medium text-2xl text-primary mb-2">Select Items to Return</h2>
-            <p className="font-poppins text-sm text-stone-500 mb-6">Order #{orderData.orderNumber} • Ordered on {new Date(orderData.date).toLocaleDateString()}</p>
-            
-            <div className="flex flex-col gap-4 mb-8">
-              {orderData.items.map((item: any) => {
-                const isSelected = selectedItems.find(p => p.id === item.id);
+          <div className="w-full bg-[#FFFCF4]/90 backdrop-blur-md border border-[#DCDCCB] rounded-3xl p-6 sm:p-10 shadow-xs">
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#DCDCCB]/60">
+              <button
+                onClick={() => setStep("search")}
+                className="inline-flex items-center gap-1.5 font-poppins text-xs text-[#62695A] hover:text-[#203C2B] cursor-pointer"
+              >
+                <ArrowLeft size={14} />
+                <span>Back</span>
+              </button>
+              <span className="font-poppins text-xs text-[#203C2B] font-semibold">
+                Order #{orderNumber}
+              </span>
+            </div>
+
+            <h2 className="font-signature font-bold text-2xl text-[#203C2B] mb-2">
+              Select Pieces to Exchange or Return
+            </h2>
+            <p className="font-poppins text-xs text-[#62695A] mb-6">
+              Mark the items you wish to return. Eligible items are within 7 calendar days of delivery.
+            </p>
+
+            <div className="space-y-3 mb-6">
+              {orderData.items?.map((item: any) => {
+                const isSelected = selectedItems.some(p => p.id === item.id);
+                const selectedItem = selectedItems.find(p => p.id === item.id);
+
                 return (
-                  <div key={item.id} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 border border-stone-200 rounded-2xl bg-white transition-colors">
-                    <div className="flex items-center gap-4 w-full">
-                      <input 
-                        type="checkbox" 
-                        checked={!!isSelected}
-                        onChange={() => handleToggleItem(item.id, item.quantity)}
-                        className="w-5 h-5 accent-[#1C1917] cursor-pointer shrink-0" 
-                      />
-                      <div className="relative w-16 h-20 bg-stone-100 rounded overflow-hidden shrink-0">
-                        {item.variant.featuredImage ? (
-                           <Image src={item.variant.featuredImage} alt={item.variant.product.name} fill sizes="100px" className="object-cover" />
-                        ) : (
-                           <div className="w-full h-full flex justify-center items-center bg-stone-100"><Package className="text-stone-300"/></div>
-                        )}
+                  <div
+                    key={item.id}
+                    className={`p-4 rounded-2xl border transition-all flex items-center justify-between gap-4 cursor-pointer ${
+                      isSelected 
+                        ? 'border-[#203C2B] bg-white shadow-2xs' 
+                        : 'border-[#DCDCCB] bg-white/70 hover:bg-white'
+                    }`}
+                    onClick={() => handleToggleItem(item.id)}
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 border-2 ${
+                        isSelected ? 'border-[#203C2B] bg-[#203C2B]' : 'border-[#DCDCCB] bg-white'
+                      }`}>
+                        {isSelected && <div className="w-2 h-2 rounded-full bg-white" />}
                       </div>
-                      <div className="flex flex-col flex-1">
-                        <span className="font-poppins font-medium text-sm text-primary">{item.variant.product.name}</span>
-                        <span className="font-poppins text-xs text-stone-500">{item.variant.name}</span>
-                        <span className="font-poppins text-sm text-primary mt-1">Rs. {item.priceAtPurchase.toLocaleString()}</span>
+                      <div className="flex flex-col min-w-0">
+                        <span className="font-signature font-bold text-sm text-[#203C2B] truncate">
+                          {item.productName || item.variant?.name || "Creations"}
+                        </span>
+                        <span className="font-poppins text-[11px] text-[#62695A]">
+                          Qty purchased: {item.quantity} · Price: Rs. {item.price?.toLocaleString()}
+                        </span>
                       </div>
-                      {isSelected && (
-                        <div className="flex flex-col items-center ml-auto border border-stone-200 rounded-lg overflow-hidden shrink-0">
-                          <label className="text-[10px] uppercase font-poppins bg-stone-100 w-full text-center py-1 text-stone-500 border-b border-stone-200">Qty</label>
-                          <select 
-                            value={isSelected.quantity}
-                            onChange={(e) => handleChangeQty(item.id, parseInt(e.target.value))}
-                            className="bg-white px-3 py-1 font-poppins text-sm outline-none"
-                          >
-                            {Array.from({ length: item.quantity }).map((_, i) => (
-                              <option key={i+1} value={i+1}>{i+1}</option>
-                            ))}
-                          </select>
-                        </div>
-                      )}
                     </div>
+
+                    {isSelected && item.quantity > 1 && (
+                      <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                        <span className="font-poppins text-[11px] text-[#62695A]">Qty:</span>
+                        <select
+                          value={selectedItem?.quantity || 1}
+                          onChange={(e) => handleChangeQty(item.id, parseInt(e.target.value))}
+                          className="px-2 py-1 rounded-lg border border-[#DCDCCB] text-xs font-poppins"
+                        >
+                          {Array.from({ length: item.quantity }, (_, i) => i + 1).map(num => (
+                            <option key={num} value={num}>{num}</option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
                   </div>
                 );
               })}
             </div>
 
-            <button 
-              onClick={() => setStep("reason")}
+            <button
               disabled={selectedItems.length === 0}
-              className="w-full h-[54px] flex justify-center items-center gap-2 bg-primary hover:bg-stone-800 disabled:bg-stone-300 transition-colors rounded-full font-poppins font-semibold text-sm text-white uppercase tracking-widest"
+              onClick={() => setStep("reason")}
+              className="w-full h-12 bg-[#203C2B] hover:bg-[#2d523c] text-[#FFFCF4] font-poppins font-semibold text-xs uppercase tracking-widest rounded-full transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
-              Continue
-              <ChevronRight size={18} />
+              <span>Continue to Reason</span>
+              <ChevronRight size={14} />
             </button>
           </div>
         )}
 
-        {step === "reason" && orderData && (
-          <div className="flex flex-col w-full animate-in slide-in-from-right-8 fade-in duration-500">
-            <button onClick={() => setStep("select")} className="flex items-center gap-2 text-stone-500 hover:text-primary mb-6 self-start transition-colors">
-              <ArrowLeft size={16} />
-              <span className="font-poppins text-sm">Back</span>
-            </button>
-            
-            <h2 className="font-poppins font-medium text-2xl text-primary mb-6">Reason for Return</h2>
-            
-            <div className="flex flex-col gap-8 w-full mb-8">
-              {selectedItems.map(selected => {
-                const itemDetails = orderData.items.find((i:any) => i.id === selected.id);
+        {step === "reason" && (
+          <div className="w-full bg-[#FFFCF4]/90 backdrop-blur-md border border-[#DCDCCB] rounded-3xl p-6 sm:p-10 shadow-xs">
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#DCDCCB]/60">
+              <button
+                onClick={() => setStep("select")}
+                className="inline-flex items-center gap-1.5 font-poppins text-xs text-[#62695A] hover:text-[#203C2B] cursor-pointer"
+              >
+                <ArrowLeft size={14} />
+                <span>Back</span>
+              </button>
+              <span className="font-poppins text-xs text-[#203C2B] font-semibold">
+                Reason Specification
+              </span>
+            </div>
+
+            <h2 className="font-signature font-bold text-2xl text-[#203C2B] mb-2">
+              Reason for Return / Exchange
+            </h2>
+            <p className="font-poppins text-xs text-[#62695A] mb-6">
+              Please share the context for each piece so our atelier can process replacements smoothly.
+            </p>
+
+            {error && (
+              <div className="mb-6 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-600 font-poppins text-xs flex items-center gap-2">
+                <AlertCircle size={15} className="shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <div className="space-y-5 mb-8">
+              {selectedItems.map((selItem) => {
+                const itemMeta = orderData.items?.find((p: any) => p.id === selItem.id);
+
                 return (
-                  <div key={selected.id} className="flex flex-col gap-4 p-5 border border-stone-200 rounded-2xl bg-stone-50">
-                    <div className="flex items-center gap-3 border-b border-stone-200 pb-4">
-                      <div className="relative w-12 h-16 bg-white rounded overflow-hidden shrink-0 border border-stone-100">
-                         {itemDetails?.variant.featuredImage && <Image src={itemDetails.variant.featuredImage} alt="Img" fill sizes="100px" className="object-cover" />}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="font-poppins font-medium text-sm text-primary">{itemDetails?.variant.product.name}</span>
-                        <span className="font-poppins text-xs text-stone-500">Returning {selected.quantity} item(s)</span>
-                      </div>
-                    </div>
+                  <div key={selItem.id} className="p-4 bg-white/80 rounded-2xl border border-[#DCDCCB] space-y-3">
+                    <span className="font-signature font-bold text-sm text-[#203C2B] block">
+                      {itemMeta?.productName || "Selected Item"} ({selItem.quantity} unit)
+                    </span>
 
-                    <div className="flex flex-col gap-2 w-full">
-                      <label className="font-poppins font-medium text-xs uppercase tracking-wider text-stone-500">
-                        Why are you returning this? <span className="text-accent">*</span>
-                      </label>
-                      <select 
-                        value={itemReasons[selected.id]?.reason || ""}
-                        onChange={(e) => handleReasonChange(selected.id, 'reason', e.target.value)}
-                        className="w-full h-[54px] px-[20px] border border-stone-300 rounded-xl bg-white font-poppins text-sm text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all appearance-none cursor-pointer"
-                      >
-                        <option value="">Select a reason</option>
-                        <option value="size_too_small">Size is too small</option>
-                        <option value="size_too_large">Size is too large</option>
-                        <option value="quality">Quality issue</option>
-                        <option value="changed_mind">Changed my mind</option>
-                        <option value="wrong_item">Received wrong item</option>
-                        <option value="damaged">Item was damaged</option>
-                      </select>
-                    </div>
+                    <select
+                      value={itemReasons[selItem.id]?.reason || ""}
+                      onChange={(e) => handleReasonChange(selItem.id, 'reason', e.target.value)}
+                      className="w-full h-11 px-4 rounded-xl border border-[#DCDCCB] bg-white font-poppins text-xs text-[#203C2B] outline-none focus:border-[#203C2B]"
+                    >
+                      <option value="">-- Choose reason --</option>
+                      <option value="SIZE_TOO_SMALL">Size Too Small (Request Size Exchange)</option>
+                      <option value="SIZE_TOO_LARGE">Size Too Large (Request Size Exchange)</option>
+                      <option value="ITEM_DEFECTIVE">Material Flaw / Defect</option>
+                      <option value="NOT_AS_EXPECTED">Silhouette Not as Envisioned</option>
+                      <option value="OTHER">Other Reason</option>
+                    </select>
 
-                    <div className="flex flex-col gap-2 w-full">
-                      <label className="font-poppins font-medium text-xs uppercase tracking-wider text-stone-500">
-                        Additional Details
-                      </label>
-                      <textarea 
-                        rows={3}
-                        value={itemReasons[selected.id]?.details || ""}
-                        onChange={(e) => handleReasonChange(selected.id, 'details', e.target.value)}
-                        placeholder="Please provide any additional information to help us process your return faster."
-                        className="w-full p-4 border border-stone-300 rounded-xl bg-white font-poppins text-sm text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all resize-none placeholder:text-stone-400"
-                      />
-                    </div>
+                    <textarea
+                      rows={2}
+                      placeholder="Additional details or requested replacement size..."
+                      value={itemReasons[selItem.id]?.details || ""}
+                      onChange={(e) => handleReasonChange(selItem.id, 'details', e.target.value)}
+                      className="w-full p-3 rounded-xl border border-[#DCDCCB] bg-white font-poppins text-xs text-[#203C2B] placeholder:text-[#8F9489] outline-none focus:border-[#203C2B]"
+                    />
                   </div>
                 );
               })}
             </div>
 
-            <button 
+            <button
               onClick={handleSubmitReturn}
               disabled={createReturnMutation.isPending}
-              className="w-full h-[54px] flex justify-center items-center gap-2 bg-primary hover:bg-stone-800 disabled:bg-stone-400 transition-colors rounded-full font-poppins font-semibold text-sm text-white uppercase tracking-widest"
+              className="w-full h-12 bg-[#203C2B] hover:bg-[#2d523c] text-[#FFFCF4] font-poppins font-semibold text-xs uppercase tracking-widest rounded-full transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
-              {createReturnMutation.isPending ? <Loader2 size={18} className="animate-spin" /> : null}
-              {createReturnMutation.isPending ? "Submitting..." : "Submit Return Request"}
+              {createReturnMutation.isPending ? "Transmitting..." : "Submit Return Authorization"}
             </button>
           </div>
         )}
 
         {step === "success" && (
-          <div className="flex flex-col items-center text-center w-full animate-in zoom-in-95 fade-in duration-500 pt-8">
-            <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 mb-6">
-              <Package size={40} />
+          <div className="w-full bg-[#FFFCF4]/90 backdrop-blur-md border border-[#DCDCCB] rounded-3xl p-8 sm:p-12 shadow-xs text-center animate-in zoom-in-95 duration-300">
+            <div className="w-18 h-18 bg-[#71865B]/15 border border-[#71865B]/30 rounded-full flex items-center justify-center text-[#203C2B] mx-auto mb-6">
+              <CheckCircle2 size={36} />
             </div>
-            <h2 className="font-poppins font-semibold text-3xl text-primary mb-2">Request Submitted!</h2>
-            <p className="font-poppins text-sm text-stone-500 max-w-[400px] mb-8">
-              Your return request has been successfully submitted. Our team will review it and send instructions to your email within 24 hours.
+
+            <h2 className="font-signature font-bold text-3xl text-[#203C2B] mb-2">
+              Return Request Received
+            </h2>
+            <p className="font-poppins text-xs sm:text-sm text-[#62695A] mb-8 leading-relaxed max-w-md mx-auto">
+              Our concierge team will review your authorization details and dispatch courier pickup instructions to your email within 24 hours.
             </p>
-            <Link 
+
+            <Link
               href="/shop"
-              className="w-full max-w-[300px] h-[54px] flex justify-center items-center bg-primary hover:bg-stone-800 transition-colors rounded-full font-poppins font-semibold text-sm text-white uppercase tracking-widest"
+              className="inline-flex px-8 py-3.5 bg-[#203C2B] hover:bg-[#2d523c] text-[#FFFCF4] font-poppins font-semibold text-xs uppercase tracking-widest rounded-full transition-all shadow-md"
             >
-              Return to Shop
+              Return to Catalog
             </Link>
           </div>
         )}
-
-      </div>
+      </section>
     </main>
   );
 }

@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { TicketPercent, CreditCard, Banknote, ShieldCheck, Award, ChevronDown, AlertTriangle, AlertCircle } from "lucide-react";
+import { TicketPercent, CreditCard, Banknote, ShieldCheck, Award, ChevronDown, AlertTriangle, AlertCircle, Sparkles, Lock } from "lucide-react";
+import CategoryBar from "@/components/CategoryBar";
 
 import LoyaltyPointsModal from "@/components/LoyaltyPointsModal";
 import OtpVerificationModal from "@/components/OtpVerificationModal";
@@ -91,7 +92,7 @@ export default function CheckoutPage() {
 
   const cartItems = cart?.items || (cart as any)?.data?.items || [];
   const subtotal = cartItems.reduce((sum: number, item: any) => sum + (item.quantity * getEffectivePrice(item.variant)), 0);
-  const shippingFee = 400; // Flat fee for now
+  const shippingFee: number = 400; // Flat fee for now
   const total = subtotal + shippingFee - appliedLoyaltyPoints;
 
   // Real-Time Stock Synchronization & 0-Stock Lockout
@@ -327,18 +328,31 @@ export default function CheckoutPage() {
   };
 
   return (
-    <main className="flex flex-col items-center w-full min-h-screen bg-background pt-[83px]">
-      <div className="flex flex-col-reverse lg:flex-row w-full max-w-[1280px] mx-auto py-[60px] px-4 md:px-[80px] lg:px-[120px] gap-12 lg:gap-[60px]">
+    <main className="flex flex-col items-center w-full min-h-screen bg-[#FEF6E4] pt-[84px] text-[#203C2B]">
+      {/* Sub Navbar */}
+      <CategoryBar />
+
+      <div className="flex flex-col-reverse lg:flex-row w-full max-w-7xl mx-auto py-8 sm:py-12 px-4 sm:px-6 lg:px-12 gap-10 lg:gap-14">
 
         {/* Left Column: Forms */}
-        <div className="flex flex-col flex-1 w-full lg:pr-[60px] lg:border-r lg:border-stone-200 gap-10">
-          <div className="flex items-center justify-between flex-wrap gap-3">
-            <h1 className="font-poppins font-medium text-4xl md:text-5xl text-primary leading-tight">
-              Checkout
-            </h1>
-            <div id="realtime-sync-indicator" className="inline-flex items-center gap-1.5 px-3 py-1 bg-stone-100 dark:bg-stone-800 rounded-full text-xs text-stone-600 dark:text-stone-300 font-poppins border border-stone-200 dark:border-stone-700">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Real-Time Sync Active</span>
+        <div className="flex flex-col flex-1 w-full gap-8">
+          <div className="flex flex-col gap-2">
+            <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs font-poppins text-[#62695A] uppercase tracking-wider">
+              <Link href="/" className="hover:text-[#203C2B] transition-colors">Home</Link>
+              <span className="text-[#A2A69A]">/</span>
+              <Link href="/cart" className="hover:text-[#203C2B] transition-colors">Cart</Link>
+              <span className="text-[#A2A69A]">/</span>
+              <span className="text-[#203C2B] font-semibold">Checkout</span>
+            </nav>
+
+            <div className="flex items-center justify-between flex-wrap gap-3 mt-2">
+              <h1 className="font-signature font-bold text-3xl sm:text-4xl md:text-5xl text-[#203C2B] leading-tight tracking-tight">
+                Secure Checkout
+              </h1>
+              <div id="realtime-sync-indicator" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/80 rounded-full text-xs text-[#203C2B] font-poppins border border-[#DCDCCB] shadow-2xs">
+                <span className="w-2 h-2 rounded-full bg-[#71865B] animate-pulse" />
+                <span className="font-medium">Real-Time Sync Active</span>
+              </div>
             </div>
           </div>
 
@@ -374,9 +388,9 @@ export default function CheckoutPage() {
             )}
 
             {/* Shipping Information */}
-            <div className="flex flex-col gap-6 w-full">
-              <h2 className="font-poppins font-medium text-xl text-primary flex items-center justify-between">
-                Shipping Information
+            <div className="bg-[#FFFCF4]/80 backdrop-blur-md border border-[#DCDCCB] rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col gap-6 w-full">
+              <h2 className="font-signature font-bold text-2xl text-[#203C2B] flex items-center justify-between">
+                Shipping Details
               </h2>
 
               {addresses && addresses.length > 0 && (
@@ -677,40 +691,40 @@ export default function CheckoutPage() {
               </div>
             )}
             {/* Payment Methods */}
-            <div className="flex flex-col gap-3 w-full pt-4">
-              <h3 className="font-poppins font-medium text-xl text-primary">
-                Payment Method <span className="text-accent">*</span>
+            <div className="bg-[#FFFCF4]/80 backdrop-blur-md border border-[#DCDCCB] rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col gap-5 w-full">
+              <h3 className="font-signature font-bold text-2xl text-[#203C2B]">
+                Payment Option <span className="text-[#71865B]">*</span>
               </h3>
 
-              <div className="flex flex-col border border-stone-200 rounded-[24px] overflow-hidden bg-white shadow-sm">
+              <div className="flex flex-col border border-[#DCDCCB] rounded-2xl overflow-hidden bg-white/90 shadow-2xs">
 
                 {filteredPaymentMethods.length === 0 ? (
-                  <div className="p-8 text-center text-stone-500">No payment methods available for the selected items.</div>
+                  <div className="p-8 text-center text-[#62695A] font-poppins text-xs">No payment methods available for the selected items.</div>
                 ) : (
                   filteredPaymentMethods.map((method, index) => (
-                    <label key={method.id} className={`flex flex-col p-4 cursor-pointer hover:bg-stone-50 transition-colors ${index !== filteredPaymentMethods.length - 1 ? 'border-b border-stone-200' : ''} ${paymentMethod === method.id ? 'bg-stone-50/50' : ''}`}>
+                    <label key={method.id} className={`flex flex-col p-4 cursor-pointer hover:bg-[#FEF6E4]/50 transition-colors ${index !== filteredPaymentMethods.length - 1 ? 'border-b border-[#DCDCCB]' : ''} ${paymentMethod === method.id ? 'bg-[#FEF6E4]/40' : ''}`}>
                       <div className="flex items-center justify-between w-full">
                         <div className="flex items-center gap-4">
-                          <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 border-2 transition-colors ${paymentMethod === method.id ? 'border-primary bg-primary' : 'border-stone-300 bg-white'}`}>
+                          <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 border-2 transition-colors ${paymentMethod === method.id ? 'border-[#203C2B] bg-[#203C2B]' : 'border-[#DCDCCB] bg-white'}`}>
                             {paymentMethod === method.id && <div className="w-2 h-2 rounded-full bg-white" />}
                           </div>
                           <input type="radio" value={method.id} {...register("paymentMethod")} className="hidden" />
                           <div className="flex items-center gap-2">
-                            {method.id === 'cod' && <Banknote size={18} className="text-stone-500" />}
-                            {method.id === 'onepay' && <CreditCard size={18} className="text-stone-500" />}
-                            <span className="font-poppins text-sm text-primary font-medium">{method.name}</span>
+                            {method.id === 'cod' && <Banknote size={18} className="text-[#71865B]" />}
+                            {method.id === 'onepay' && <CreditCard size={18} className="text-[#71865B]" />}
+                            <span className="font-poppins text-sm text-[#203C2B] font-medium">{method.name}</span>
                           </div>
                         </div>
                         {method.badge && (
-                          <span className="font-poppins text-[11px] font-semibold tracking-wider uppercase text-emerald-600 bg-emerald-50 px-2 py-1 rounded-sm">{method.badge}</span>
+                          <span className="font-poppins text-[10px] font-semibold tracking-wider uppercase text-[#203C2B] bg-[#71865B]/20 px-2.5 py-0.5 rounded-full">{method.badge}</span>
                         )}
                       </div>
 
                       {method.id === 'onepay' && paymentMethod === 'onepay' && (
                         <div className="ml-9 mt-4 flex flex-col gap-3 animate-in slide-in-from-top-2 duration-300">
-                          <div className="flex items-center gap-2 text-stone-500 bg-white p-3 rounded-lg border border-stone-200 shadow-sm text-sm font-poppins">
-                            <ShieldCheck size={18} className="text-emerald-600" />
-                            Secure checkout powered by OnePay
+                          <div className="flex items-center gap-2 text-[#62695A] bg-white p-3 rounded-xl border border-[#DCDCCB] shadow-2xs text-xs font-poppins">
+                            <ShieldCheck size={16} className="text-[#71865B]" />
+                            Secure direct gateway processing powered by OnePay
                           </div>
                         </div>
                       )}
@@ -720,18 +734,18 @@ export default function CheckoutPage() {
               </div>
 
               {/* Place Order Button */}
-              <div className="flex w-full pt-6">
+              <div className="flex w-full pt-4">
                 <button
                   type="submit"
                   id="place-order-submit-btn"
                   disabled={initiateCheckout.isPending || cartItems.length === 0 || hasOutOfStockItem}
-                  className="w-full h-[54px] flex justify-center items-center bg-primary hover:bg-stone-800 transition-colors rounded-full font-poppins font-semibold text-sm text-white uppercase tracking-widest shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full h-14 flex justify-center items-center bg-[#203C2B] hover:bg-[#2d523c] transition-all rounded-full font-poppins font-semibold text-xs text-[#FFFCF4] uppercase tracking-widest shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {initiateCheckout.isPending
-                    ? "Processing..."
+                    ? "Securing Order..."
                     : hasOutOfStockItem
                       ? "Item Out of Stock — Checkout Blocked"
-                      : "Place Order"}
+                      : "Complete Order"}
                 </button>
               </div>
             </div>
@@ -740,109 +754,110 @@ export default function CheckoutPage() {
         </div>
 
         {/* Right Column: Order Summary & Payment */}
-        <div className="flex flex-col w-full lg:w-[420px] gap-8">
+        <div className="flex flex-col w-full lg:w-[420px] gap-6">
+          <div className="bg-[#FFFCF4]/90 backdrop-blur-md border border-[#DCDCCB] rounded-3xl p-6 sm:p-8 shadow-xs flex flex-col gap-6 sticky top-[100px]">
+            <h2 className="font-signature font-bold text-2xl text-[#203C2B] border-b border-[#DCDCCB]/70 pb-4">
+              Wardrobe Review
+            </h2>
 
-          <h2 className="font-poppins font-medium text-xl text-primary">
-            Review your cart
-          </h2>
-
-          {/* Cart Items */}
-          <div className="flex flex-col w-full gap-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-            {isCartPending ? (
-              <p className="text-stone-500 font-poppins text-sm">Loading cart...</p>
-            ) : cartItems.length === 0 ? (
-              <p className="text-stone-500 font-poppins text-sm">Your cart is empty.</p>
-            ) : (
-              cartItems.map((item: any) => (
-                <div key={item.id} className="flex flex-row items-center w-full p-3 bg-white border border-stone-200 rounded-xl shadow-sm gap-4">
-                  <div className="w-[70px] h-[70px] relative bg-stone-100 rounded-lg overflow-hidden shrink-0">
-                    {(() => {
-                      let allImages: string[] = [];
-                      if (item.variant.product?.variants) {
-                        for (const v of item.variant.product.variants) {
-                          if (v.featuredImage) allImages.push(v.featuredImage);
-                          if (v.gallery) allImages.push(...v.gallery);
+            {/* Cart Items */}
+            <div className="flex flex-col w-full gap-3 max-h-[300px] overflow-y-auto pr-1 custom-scrollbar">
+              {isCartPending ? (
+                <p className="text-[#62695A] font-poppins text-xs">Loading bag...</p>
+              ) : cartItems.length === 0 ? (
+                <p className="text-[#62695A] font-poppins text-xs">Your bag is empty.</p>
+              ) : (
+                cartItems.map((item: any) => (
+                  <div key={item.id} className="flex flex-row items-center w-full p-3 bg-white/80 border border-[#DCDCCB] rounded-2xl shadow-2xs gap-3.5">
+                    <div className="w-16 h-18 relative bg-white rounded-xl overflow-hidden shrink-0 border border-[#DCDCCB]">
+                      {(() => {
+                        let allImages: string[] = [];
+                        if (item.variant.product?.variants) {
+                          for (const v of item.variant.product.variants) {
+                            if (v.featuredImage) allImages.push(v.featuredImage);
+                            if (v.gallery) allImages.push(...v.gallery);
+                          }
+                        } else {
+                          if (item.variant.featuredImage) allImages.push(item.variant.featuredImage);
+                          if (item.variant.gallery) allImages.push(...item.variant.gallery);
                         }
-                      } else {
-                        if (item.variant.featuredImage) allImages.push(item.variant.featuredImage);
-                        if (item.variant.gallery) allImages.push(...item.variant.gallery);
-                      }
 
-                      const imgUrl = allImages[0] || PLACEHOLDER_IMAGE;
+                        const imgUrl = allImages[0] || PLACEHOLDER_IMAGE;
 
-                      return (
-                        <Image src={imgUrl} alt={item.variant.product.name} fill sizes="100px" className="object-cover object-top" />
-                      );
-                    })()}
-                  </div>
-                  <div className="flex flex-col flex-1 justify-center gap-1">
-                    <h4 className="font-poppins font-medium text-xs text-primary leading-tight">
-                      {item.variant.product.name}
-                    </h4>
-                    <div className="flex items-center justify-between mt-1">
-                      <span className="font-poppins text-xs text-stone-500">{item.variant.name}</span>
-                      <span className="font-poppins font-medium text-xs text-primary">{item.quantity} × Rs: {getEffectivePrice(item.variant).toLocaleString()}</span>
+                        return (
+                          <Image src={imgUrl} alt={item.variant.product.name} fill sizes="80px" className="object-cover object-top" />
+                        );
+                      })()}
                     </div>
-                    {(depletedVariants[item.variantId || item.variant?.id] || (item.variant && item.variant.quantity === 0)) && (
-                      <div className="mt-1.5 flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[10px] font-bold bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/20">
-                        <AlertCircle size={11} className="shrink-0" />
-                        <span>Out of Stock (Depleted on another channel)</span>
+                    <div className="flex flex-col flex-1 justify-center gap-1 min-w-0">
+                      <h4 className="font-signature font-bold text-sm text-[#203C2B] leading-tight truncate">
+                        {item.variant.product.name}
+                      </h4>
+                      <div className="flex items-center justify-between text-xs font-poppins">
+                        <span className="text-[#62695A] truncate">{item.variant.name}</span>
+                        <span className="font-semibold text-[#203C2B] shrink-0 ml-2">{item.quantity} × Rs. {getEffectivePrice(item.variant).toLocaleString()}</span>
                       </div>
-                    )}
+                      {(depletedVariants[item.variantId || item.variant?.id] || (item.variant && item.variant.quantity === 0)) && (
+                        <div className="mt-1 flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-red-500/15 text-red-600 border border-red-500/20">
+                          <AlertCircle size={10} className="shrink-0" />
+                          <span>Out of Stock</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))
-            )}
-          </div>
-
-          {/* Discount Code */}
-          <div className="flex items-center w-full p-1 bg-white border border-stone-200 rounded-full shadow-sm">
-            <div className="pl-4 text-stone-400">
-              <TicketPercent size={20} />
+                ))
+              )}
             </div>
-            <input
-              type="text"
-              placeholder="Discount code"
-              value={discountCode}
-              onChange={(e) => setDiscountCode(e.target.value)}
-              className="flex-1 h-[44px] bg-transparent border-none outline-none px-3 font-poppins text-sm text-primary placeholder:text-stone-400"
-            />
-            <button className="h-[44px] px-6 bg-stone-100 hover:bg-stone-200 transition-colors rounded-full font-poppins font-medium text-xs text-primary">
-              Apply
-            </button>
-          </div>
 
-          {/* Loyalty Points Button */}
-          <button
-            onClick={() => setIsLoyaltyModalOpen(true)}
-            className="flex items-center justify-center gap-2 w-full h-[54px] bg-background border border-stone-300 hover:bg-stone-100 transition-colors rounded-full font-poppins font-medium text-sm text-primary"
-          >
-            <Award size={18} className="text-accent" />
-            Check Loyalty Points
-          </button>
-
-          {/* Order Totals */}
-          <div className="flex flex-col w-full gap-3 py-6 border-y border-stone-200">
-            <div className="flex justify-between items-center w-full">
-              <span className="font-poppins text-sm text-stone-500">Subtotal</span>
-              <span className="font-poppins font-medium text-sm text-primary">Rs. {subtotal.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between items-center w-full">
-              <span className="font-poppins text-sm text-stone-500">Shipping</span>
-              <span className="font-poppins font-medium text-sm text-primary">Rs. {shippingFee.toLocaleString()}</span>
-            </div>
-            {appliedLoyaltyPoints > 0 && (
-              <div className="flex justify-between items-center w-full">
-                <span className="font-poppins text-sm text-stone-500">Loyalty Points ({appliedLoyaltyPoints})</span>
-                <span className="font-poppins font-medium text-sm text-emerald-600">-Rs. {appliedLoyaltyPoints.toLocaleString()}</span>
+            {/* Discount Code */}
+            <div className="flex items-center w-full p-1 bg-white/90 border border-[#DCDCCB] rounded-full shadow-2xs">
+              <div className="pl-3.5 text-[#71865B]">
+                <TicketPercent size={18} />
               </div>
-            )}
-            <div className="flex justify-between items-center w-full mt-2 pt-4 border-t border-stone-100">
-              <span className="font-poppins font-semibold text-base text-primary">Total</span>
-              <span className="font-poppins font-bold text-xl text-primary">Rs. {total.toLocaleString()}</span>
+              <input
+                type="text"
+                placeholder="Privilege or promo code"
+                value={discountCode}
+                onChange={(e) => setDiscountCode(e.target.value)}
+                className="flex-1 h-10 bg-transparent border-none outline-none px-3 font-poppins text-xs text-[#203C2B] placeholder:text-[#8F9489]"
+              />
+              <button className="h-9 px-5 bg-[#203C2B] hover:bg-[#2d523c] text-[#FFFCF4] transition-all rounded-full font-poppins font-semibold text-[11px] uppercase tracking-wider cursor-pointer">
+                Apply
+              </button>
             </div>
-          </div>
 
+            {/* Loyalty Points Button */}
+            <button
+              onClick={() => setIsLoyaltyModalOpen(true)}
+              className="flex items-center justify-center gap-2 w-full h-11 bg-white/80 border border-[#DCDCCB] hover:bg-white transition-all rounded-full font-poppins font-medium text-xs text-[#203C2B] shadow-2xs cursor-pointer"
+            >
+              <Award size={16} className="text-[#71865B]" />
+              <span>Redeem Maison Points</span>
+            </button>
+
+            {/* Order Totals */}
+            <div className="flex flex-col w-full gap-2.5 py-4 border-y border-[#DCDCCB]/70">
+              <div className="flex justify-between items-center w-full font-poppins text-xs text-[#62695A]">
+                <span>Subtotal</span>
+                <span className="font-semibold text-[#203C2B]">Rs. {subtotal.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between items-center w-full font-poppins text-xs text-[#62695A]">
+                <span>Shipping</span>
+                <span className="font-semibold text-[#203C2B]">{shippingFee === 0 ? 'FREE' : `Rs. ${shippingFee.toLocaleString()}`}</span>
+              </div>
+              {appliedLoyaltyPoints > 0 && (
+                <div className="flex justify-between items-center w-full font-poppins text-xs text-[#71865B]">
+                  <span>Loyalty Privilege ({appliedLoyaltyPoints} pts)</span>
+                  <span className="font-semibold">-Rs. {appliedLoyaltyPoints.toLocaleString()}</span>
+                </div>
+              )}
+              <div className="flex justify-between items-baseline w-full mt-2 pt-3 border-t border-[#DCDCCB]/50">
+                <span className="font-signature font-bold text-base text-[#203C2B]">Total Due</span>
+                <span className="font-signature font-bold text-2xl text-[#203C2B]">Rs. {total.toLocaleString()}</span>
+              </div>
+            </div>
+
+          </div>
         </div>
 
       </div>

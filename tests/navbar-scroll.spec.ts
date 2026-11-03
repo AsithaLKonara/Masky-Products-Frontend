@@ -35,7 +35,7 @@ test('navbar transparent on hero section and glass white when scrolled past hero
   await page.waitForTimeout(800);
   navClass = await nav.getAttribute('class');
   computedBg = await nav.evaluate((el) => window.getComputedStyle(el).backgroundColor);
-  const backdropFilter = await nav.evaluate((el) => window.getComputedStyle(el).backdropFilter || window.getComputedStyle(el).webkitBackdropFilter);
+  const backdropFilter = await nav.evaluate((el) => window.getComputedStyle(el).backdropFilter || (window.getComputedStyle(el) as any).webkitBackdropFilter);
   console.log('Class at 950px:', navClass);
   console.log('Computed Background at 950px:', computedBg);
   console.log('Computed BackdropFilter at 950px:', backdropFilter);

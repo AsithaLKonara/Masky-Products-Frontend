@@ -10,9 +10,10 @@ interface BreadcrumbItem {
 
 interface BreadcrumbsProps {
   items: BreadcrumbItem[];
+  className?: string;
 }
 
-export default function Breadcrumbs({ items }: BreadcrumbsProps) {
+export default function Breadcrumbs({ items, className = "" }: BreadcrumbsProps) {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://masky.space';
   
   const schemaItems = items.map((item) => ({
@@ -21,7 +22,7 @@ export default function Breadcrumbs({ items }: BreadcrumbsProps) {
   }));
 
   return (
-    <nav className="flex items-center gap-2 overflow-x-auto no-scrollbar whitespace-nowrap py-4">
+    <nav aria-label="Breadcrumb" className={`flex items-center gap-2 overflow-x-auto no-scrollbar whitespace-nowrap py-4 ${className}`}>
       <BreadcrumbSchema items={schemaItems} />
       {items.map((item, index) => {
         const isLast = index === items.length - 1;

@@ -33,16 +33,18 @@ export default function ProductGallery({ images, productName = "Product", discou
   };
 
   return (
-    <div className="flex flex-col-reverse md:flex-row gap-[16px] w-full max-w-[650px]">
+    <div className="flex flex-col-reverse md:flex-row gap-4 sm:gap-6 w-full max-w-[660px]">
       
       {/* Thumbnails (Vertical on Desktop, Horizontal on Mobile) */}
-      <div className="flex flex-row md:flex-col gap-[10px] overflow-x-auto md:overflow-visible">
+      <div className="flex flex-row md:flex-col gap-3 overflow-x-auto md:overflow-visible no-scrollbar py-1">
         {images.map((img, idx) => (
           <button 
             key={idx}
             onClick={() => setActiveImage(img)}
-            className={`relative flex-shrink-0 w-[78px] h-[104px] bg-stone-100 overflow-hidden transition-all duration-300 ${
-              activeImage === img ? "ring-1 ring-stone-900 opacity-100" : "opacity-60 hover:opacity-100"
+            className={`relative flex-shrink-0 w-16 h-20 sm:w-20 sm:h-24 rounded-xl bg-white/70 overflow-hidden transition-all duration-300 border ${
+              activeImage === img 
+                ? "ring-2 ring-[#203C2B] ring-offset-2 ring-offset-[#FEF6E4] border-transparent opacity-100 shadow-xs" 
+                : "border-[#DCDCCB]/80 opacity-70 hover:opacity-100 hover:border-[#71865B]"
             }`}
           >
             <Image 
@@ -58,7 +60,7 @@ export default function ProductGallery({ images, productName = "Product", discou
 
       {/* Main Image */}
       <div 
-        className="relative w-full aspect-[375/451] md:w-[500px] md:h-[600px] bg-stone-100 overflow-hidden cursor-crosshair group"
+        className="relative w-full aspect-[4/5] sm:w-[500px] sm:h-[620px] bg-white/60 backdrop-blur-sm rounded-3xl border border-[#DCDCCB]/80 overflow-hidden cursor-crosshair group shadow-[0_8px_32px_rgba(32,60,43,0.04)]"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
@@ -66,26 +68,26 @@ export default function ProductGallery({ images, productName = "Product", discou
           src={activeImage}
           alt={`${productName} - Main Image`}
           fill
-          sizes="(max-width: 768px) 100vw, 50vw"
+          sizes="(max-width: 768px) 100vw, 550px"
           className="object-cover transition-opacity duration-300 group-hover:opacity-0"
           priority
         />
         
         {/* Zoomed Image Background */}
         <div 
-          className="absolute inset-0 bg-no-repeat z-10 pointer-events-none"
+          className="absolute inset-0 bg-no-repeat z-10 pointer-events-none transition-opacity duration-200"
           style={{
             backgroundImage: `url(${activeImage})`,
-            backgroundSize: '250%',
+            backgroundSize: '240%',
             ...zoomStyle
           }}
         />
         
-        {/* Optional Badge */}
+        {/* Editorial Discount Tag */}
         {discountPercentage > 0 && (
-          <div className="absolute top-4 right-4 bg-red-500/10 backdrop-blur-sm px-[14px] py-[6px] rounded-full z-20">
-            <span className="font-poppins font-medium text-base text-red-500">
-              -{discountPercentage}%
+          <div className="absolute top-4 right-4 bg-[#203C2B] text-[#FFFCF4] px-3.5 py-1.5 rounded-full z-20 shadow-md">
+            <span className="font-poppins font-medium text-xs tracking-wider uppercase">
+              Save {discountPercentage}%
             </span>
           </div>
         )}

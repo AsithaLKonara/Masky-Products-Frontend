@@ -1,159 +1,286 @@
-
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
-import { MapPin, Phone, Mail } from "lucide-react";
-
+import Link from "next/link";
+import { MapPin, Phone, Mail, MessageSquare, Clock, ShieldCheck, Sparkles, Send, CheckCircle2, ArrowRight } from "lucide-react";
+import CategoryBar from "@/components/CategoryBar";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { useBranches } from "@/hooks/useInventory";
 import { usePublicSettings } from "@/hooks/useSettings";
 
 export default function ClientContent() {
-  const [phoneNumber, setPhoneNumber] = useState<string | undefined>();
+  const [topic, setTopic] = useState<string>("fitting");
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
+  const [submitted, setSubmitted] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
   const { data: branchesData } = useBranches();
   const { data: settingsData } = usePublicSettings();
-  
+
   const mainBranch = branchesData?.data?.[0] || branchesData?.[0];
   const supportEmail = settingsData?.find((s: any) => s.key === "support_email")?.value;
+  const storePhone = mainBranch?.phone || "+94 76 112 8979";
+  const storeAddress = mainBranch?.address || "Colombo Flagship Atelier, Sri Lanka";
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setSubmitted(true);
+    }, 100);
+  };
 
   return (
-    <main className="flex flex-col items-center w-full min-h-screen bg-background pt-[83px]">
-      
-      {/* Container */}
-      <div className="flex flex-col lg:flex-row w-full max-w-[1280px] min-h-[796px] mx-auto py-[80px] px-4 md:px-[120px] gap-16 lg:gap-0">
-        
-        {/* Left Column: Form */}
-        <div className="flex flex-col flex-1 w-full lg:pr-[80px] lg:border-r lg:border-stone-200 gap-[40px]">
-          <h1 className="font-poppins font-normal text-[36px] md:text-5xl text-primary leading-tight">
-            Contact Us
+    <main className="flex flex-col w-full min-h-screen bg-[#FEF6E4]">
+      {/* Category Sub-Navigation */}
+      <CategoryBar />
+
+      <div className="w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        {/* Breadcrumb Trail */}
+        <Breadcrumbs
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Client Concierge" }
+          ]}
+          className="mb-8"
+        />
+
+        {/* Hero Title Section */}
+        <div className="max-w-2xl mb-12">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#71865B]/15 text-[#203C2B] border border-[#71865B]/30 text-xs font-poppins font-medium uppercase tracking-widest mb-4">
+            <Sparkles size={13} className="text-[#71865B]" />
+            Client Concierge & Atelier Visits
+          </div>
+          <h1 className="font-signature text-4xl sm:text-5xl text-[#203C2B] leading-[1.15] mb-4">
+            Connect with Our Concierge
           </h1>
-
-          <form className="flex flex-col gap-8 w-full">
-            {/* Full Name */}
-            <div className="flex flex-col gap-3 w-full">
-              <label className="font-poppins font-medium text-xs uppercase tracking-wider text-stone-500">
-                Full name <span className="text-accent">*</span>
-              </label>
-              <input 
-                type="text" 
-                placeholder="Enter full name"
-                className="w-full h-[52px] px-[20px] border border-stone-200 rounded-full bg-white font-poppins text-sm text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all placeholder:text-stone-400"
-              />
-            </div>
-
-            {/* Email Address */}
-            <div className="flex flex-col gap-3 w-full">
-              <label className="font-poppins font-medium text-xs uppercase tracking-wider text-stone-500">
-                Email address <span className="text-accent">*</span>
-              </label>
-              <input 
-                type="email" 
-                placeholder="Enter email address"
-                className="w-full h-[52px] px-[20px] border border-stone-200 rounded-full bg-white font-poppins text-sm text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all placeholder:text-stone-400"
-              />
-            </div>
-
-            {/* Phone Number */}
-            <div className="flex flex-col gap-3 w-full">
-              <label className="font-poppins font-medium text-xs uppercase tracking-wider text-stone-500">
-                Phone number <span className="text-accent">*</span>
-              </label>
-              
-              <input 
-                type="tel"
-                placeholder="Enter phone number (e.g., 0712345678)"
-                value={phoneNumber || ''}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                className="w-full h-[52px] px-[20px] border border-stone-200 rounded-full bg-white font-poppins text-sm text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all placeholder:text-stone-400"
-              />
-            </div>
-
-            {/* Message */}
-            <div className="flex flex-col gap-3 w-full">
-              <label className="font-poppins font-medium text-xs uppercase tracking-wider text-stone-500">
-                Message <span className="text-accent">*</span>
-              </label>
-              <textarea 
-                placeholder="How can we help you?"
-                className="w-full h-[180px] p-[20px] border border-stone-200 rounded-[24px] bg-white font-poppins text-sm text-primary outline-none focus:border-accent focus:ring-1 focus:ring-accent resize-none transition-all placeholder:text-stone-400"
-              />
-            </div>
-
-            {/* Submit Button */}
-            <button 
-              type="button"
-              className="w-full h-[54px] flex justify-center items-center bg-primary hover:bg-stone-800 transition-colors rounded-full font-poppins font-semibold text-sm text-white uppercase tracking-widest mt-2"
-            >
-              Send Message
-            </button>
-          </form>
+          <p className="font-poppins text-sm sm:text-base text-[#5c5650] font-light leading-relaxed">
+            Whether inquiring about a piece in our collection, tracking an artisan order, or reserving a private fitting at our Colombo studio, our client care advisors are dedicated to your comfort.
+          </p>
         </div>
 
-        {/* Right Column: Brand Details */}
-        <div className="flex flex-col w-full lg:w-[460px] lg:pl-[80px] gap-[30px] pt-[10px]">
-          
-          {/* Map Image Placeholder */}
-          <div className="w-full aspect-[4/3] bg-stone-100 rounded-lg overflow-hidden relative shadow-sm border border-stone-200">
-            {/* If there was a real map image, it would go here. For now, a styled placeholder */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-stone-400 gap-3 bg-[url('https://www.transparenttextures.com/patterns/cartographer.png')] bg-stone-50">
-              <div className="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center text-accent">
-                <MapPin size={24} />
+        {/* Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+          {/* Left Column: Inquiry Form */}
+          <div className="lg:col-span-7 bg-[#FFFCF4]/90 backdrop-blur-md border border-[#DCDCCB] rounded-3xl p-6 sm:p-10 shadow-sm">
+            {submitted ? (
+              <div className="py-12 flex flex-col items-center text-center gap-4">
+                <div className="w-16 h-16 rounded-full bg-[#71865B]/15 text-[#203C2B] flex items-center justify-center mb-2">
+                  <CheckCircle2 size={32} className="text-[#71865B]" />
+                </div>
+                <h3 className="font-signature text-2xl sm:text-3xl text-[#203C2B]">
+                  Inquiry Received with Pleasure
+                </h3>
+                <p className="font-poppins text-sm text-[#5c5650] font-light max-w-md leading-relaxed">
+                  Thank you for connecting with us, {name}. A dedicated client advisor will attend to your request and reach out within 4 business hours.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSubmitted(false);
+                    setName("");
+                    setEmail("");
+                    setPhone("");
+                    setMessage("");
+                  }}
+                  className="mt-4 px-6 py-3 rounded-full bg-[#203C2B] text-[#FFFCF4] font-poppins text-xs font-medium uppercase tracking-widest hover:bg-[#15271C] transition-all"
+                >
+                  Send Another Inquiry
+                </button>
               </div>
-              <span className="font-poppins text-xs uppercase tracking-widest font-medium text-stone-400">Map View</span>
-            </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                <div>
+                  <label className="block font-poppins text-xs font-semibold uppercase tracking-wider text-[#203C2B] mb-2.5">
+                    How Can We Assist You?
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    {[
+                      { id: "fitting", label: "Studio Fitting" },
+                      { id: "order", label: "Order Status" },
+                      { id: "sizing", label: "Custom Sizing" },
+                      { id: "general", label: "General Care" }
+                    ].map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => setTopic(item.id)}
+                        className={`py-2.5 px-3 rounded-full text-xs font-poppins font-medium transition-all text-center ${
+                          topic === item.id
+                            ? "bg-[#203C2B] text-[#FFFCF4] shadow-sm"
+                            : "bg-[#FFFDF7] border border-[#DCDCCB] text-[#5c5650] hover:border-[#71865B]/50"
+                        }`}
+                      >
+                        {item.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block font-poppins text-xs font-semibold uppercase tracking-wider text-[#203C2B] mb-2">
+                      Full Name <span className="text-[#71865B]">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Elena Perera"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full h-12 px-4 rounded-full bg-[#FFFDF7] border border-[#DCDCCB] font-poppins text-sm text-[#203C2B] placeholder:text-[#9A968D] outline-none focus:border-[#203C2B] focus:ring-1 focus:ring-[#203C2B] transition-all"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-poppins text-xs font-semibold uppercase tracking-wider text-[#203C2B] mb-2">
+                      Email Address <span className="text-[#71865B]">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="elena@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full h-12 px-4 rounded-full bg-[#FFFDF7] border border-[#DCDCCB] font-poppins text-sm text-[#203C2B] placeholder:text-[#9A968D] outline-none focus:border-[#203C2B] focus:ring-1 focus:ring-[#203C2B] transition-all"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block font-poppins text-xs font-semibold uppercase tracking-wider text-[#203C2B] mb-2">
+                    Phone / WhatsApp Number
+                  </label>
+                  <input
+                    type="tel"
+                    placeholder="e.g. +94 77 123 4567"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full h-12 px-4 rounded-full bg-[#FFFDF7] border border-[#DCDCCB] font-poppins text-sm text-[#203C2B] placeholder:text-[#9A968D] outline-none focus:border-[#203C2B] focus:ring-1 focus:ring-[#203C2B] transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="message" className="block font-poppins text-xs font-semibold uppercase tracking-wider text-[#203C2B] mb-2">
+                    Your Message <span className="text-[#71865B]">*</span>
+                  </label>
+                  <textarea
+                    id="message"
+                    required
+                    rows={4}
+                    placeholder="How may our concierge assist you?"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    className="w-full p-4 rounded-2xl bg-[#FFFDF7] border border-[#DCDCCB] font-poppins text-sm text-[#203C2B] placeholder:text-[#9A968D] outline-none focus:border-[#203C2B] focus:ring-1 focus:ring-[#203C2B] transition-all resize-none"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full h-13 py-3.5 rounded-full bg-[#203C2B] hover:bg-[#15271C] text-[#FFFCF4] font-poppins font-medium text-sm tracking-wide shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                >
+                  {isSubmitting ? (
+                    "Dispatching Message..."
+                  ) : (
+                    <>
+                      <Send size={16} /> Send Concierge Inquiry
+                    </>
+                  )}
+                </button>
+              </form>
+            )}
           </div>
 
-          <div className="flex flex-col gap-6 mt-4">
-            {/* Logo */}
-            <div className="flex flex-col">
-              <span className="font-signature font-bold text-2xl text-primary tracking-[0.2em] uppercase">
-                MASKY <span className="font-light tracking-[0.25em] text-sm text-[#71865B]">PRODUCT</span>
-              </span>
+          {/* Right Column: Atelier Details & WhatsApp Concierge */}
+          <div className="lg:col-span-5 flex flex-col gap-6">
+            {/* Direct WhatsApp Concierge Card */}
+            <div className="bg-[#FFFCF4]/90 backdrop-blur-md border border-[#DCDCCB] rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#25D366]/15 text-[#128C7E] flex items-center justify-center">
+                  <MessageSquare size={20} />
+                </div>
+                <div>
+                  <h3 className="font-poppins text-sm font-semibold text-[#203C2B]">Instant WhatsApp Concierge</h3>
+                  <p className="font-poppins text-xs text-[#5c5650] font-light">Typically replies in minutes</p>
+                </div>
+              </div>
+              <p className="font-poppins text-xs sm:text-sm text-[#5c5650] font-light leading-relaxed">
+                Connect directly with our styling advisors for live stock verification, bespoke size advice, or fast reservation of limited capsule pieces.
+              </p>
+              <a
+                href="https://wa.me/94761128979"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-3 px-5 rounded-full bg-[#203C2B] hover:bg-[#15271C] text-[#FFFCF4] font-poppins text-xs font-semibold uppercase tracking-wider text-center transition-all flex items-center justify-center gap-2 shadow-sm"
+              >
+                Chat on WhatsApp <ArrowRight size={14} />
+              </a>
             </div>
 
-            {/* Description */}
-            <p className="font-poppins font-light text-sm leading-[1.8] text-stone-500 max-w-[340px]">
-              We'd love to hear from you. Please fill out the form or reach out to us using the details below for any private fitting appointments or general inquiries.
-            </p>
+            {/* Atelier Studio Details Card */}
+            <div className="bg-[#FFFCF4]/90 backdrop-blur-md border border-[#DCDCCB] rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col gap-5">
+              <span className="font-signature text-xl text-[#203C2B]">Colombo Atelier Studio</span>
 
-            {/* Contact Details List */}
-            <div className="flex flex-col gap-[20px] w-full mt-4">
-              
-              {/* Location */}
-              <div className="flex items-center gap-[16px] w-full group cursor-pointer">
-                <div className="w-[40px] h-[40px] flex items-center justify-center border border-stone-200 bg-white group-hover:bg-primary group-hover:border-primary transition-colors rounded-full shrink-0 shadow-sm">
-                  <MapPin size={16} strokeWidth={1.5} className="text-primary group-hover:text-white transition-colors" />
+              <div className="flex flex-col gap-4 text-xs sm:text-sm font-poppins">
+                <div className="flex items-start gap-3 text-[#5c5650]">
+                  <MapPin size={18} className="text-[#71865B] shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-medium text-[#203C2B]">{storeAddress}</p>
+                    <p className="text-xs text-[#5c5650] font-light mt-0.5">Private fitting suites & bespoke tailors</p>
+                  </div>
                 </div>
-                <span className="font-poppins font-light text-sm text-primary">
-                  {mainBranch?.address || "Colombo Flagship Studio, Sri Lanka"}
-                </span>
-              </div>
 
-              {/* Phone */}
-              <div className="flex items-center gap-[16px] w-full group cursor-pointer">
-                <div className="w-[40px] h-[40px] flex items-center justify-center border border-stone-200 bg-white group-hover:bg-primary group-hover:border-primary transition-colors rounded-full shrink-0 shadow-sm">
-                  <Phone size={16} strokeWidth={1.5} className="text-primary group-hover:text-white transition-colors" />
+                <div className="flex items-start gap-3 text-[#5c5650]">
+                  <Clock size={18} className="text-[#71865B] shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-medium text-[#203C2B]">Monday – Saturday: 10:00 AM – 7:00 PM</p>
+                    <p className="text-xs text-[#5c5650] font-light mt-0.5">Sunday & Public Holidays by appointment</p>
+                  </div>
                 </div>
-                <span className="font-poppins font-light text-sm text-primary">
-                  {mainBranch?.phone || "+94 76 112 8979"}
-                </span>
-              </div>
 
-              {/* Email */}
-              <div className="flex items-center gap-[16px] w-full group cursor-pointer">
-                <div className="w-[40px] h-[40px] flex items-center justify-center border border-stone-200 bg-white group-hover:bg-primary group-hover:border-primary transition-colors rounded-full shrink-0 shadow-sm">
-                  <Mail size={16} strokeWidth={1.5} className="text-primary group-hover:text-white transition-colors" />
+                <div className="flex items-start gap-3 text-[#5c5650]">
+                  <Phone size={18} className="text-[#71865B] shrink-0 mt-0.5" />
+                  <div>
+                    <a href={`tel:${storePhone}`} className="font-medium text-[#203C2B] hover:underline">
+                      {storePhone}
+                    </a>
+                    <p className="text-xs text-[#5c5650] font-light mt-0.5">Concierge telephone hotline</p>
+                  </div>
                 </div>
-                <span className="font-poppins font-light text-sm text-primary">
-                  {supportEmail || "info@maskyproductclothing.com"}
-                </span>
-              </div>
 
+                <div className="flex items-start gap-3 text-[#5c5650]">
+                  <Mail size={18} className="text-[#71865B] shrink-0 mt-0.5" />
+                  <div>
+                    <a href={`mailto:${supportEmail || "concierge@maskyproduct.com"}`} className="font-medium text-[#203C2B] hover:underline">
+                      {supportEmail || "concierge@maskyproduct.com"}
+                    </a>
+                    <p className="text-xs text-[#5c5650] font-light mt-0.5">Direct client advisory inbox</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Private Fitting Privilege Banner */}
+            <div className="bg-[#71865B]/10 border border-[#71865B]/25 rounded-3xl p-6 flex items-start gap-4">
+              <div className="w-10 h-10 rounded-2xl bg-[#71865B]/20 text-[#203C2B] flex items-center justify-center shrink-0">
+                <ShieldCheck size={20} />
+              </div>
+              <div className="flex flex-col gap-1">
+                <h4 className="font-poppins text-xs font-semibold uppercase tracking-wider text-[#203C2B]">
+                  Complimentary Fitting Service
+                </h4>
+                <p className="font-poppins text-xs text-[#5c5650] font-light leading-relaxed">
+                  Every private consultation includes tactile fabric swatch exploration, precise silhouette fitting, and complimentary alterations for bespoke elegance.
+                </p>
+              </div>
             </div>
           </div>
-
         </div>
-
       </div>
     </main>
   );

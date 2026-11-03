@@ -3,6 +3,9 @@ import { notFound } from "next/navigation";
 import { marked } from "marked";
 import DOMPurify from "isomorphic-dompurify";
 import type { Metadata } from "next";
+import { Sparkles } from "lucide-react";
+import CategoryBar from "@/components/CategoryBar";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 // Force dynamic since we're fetching from a backend API
 export const dynamic = "force-dynamic";
@@ -59,28 +62,48 @@ export default async function StaticPage({ params }: { params: Promise<{ slug: s
   const safeHtml = DOMPurify.sanitize(rawHtml);
 
   return (
-    <main className="flex flex-col items-center w-full min-h-screen bg-background pt-[83px]">
-      <div className="w-full bg-stone-50 border-b border-stone-200 py-16 px-4 flex flex-col items-center justify-center text-center">
-        <h1 className="font-poppins font-semibold text-4xl md:text-5xl text-stone-900 leading-tight mb-4">
-          {page.title}
-        </h1>
-        {page.metaDescription && (
-          <p className="font-poppins text-sm text-stone-500 max-w-[600px]">
-            {page.metaDescription}
-          </p>
-        )}
-      </div>
+    <main className="flex flex-col w-full min-h-screen bg-[#FEF6E4]">
+      {/* Category Sub-Navigation */}
+      <CategoryBar />
 
-      <div className="w-full max-w-[900px] mx-auto px-6 md:px-12 py-16 md:py-24">
-        {/* Render sanitized markdown content */}
-        <div 
-          className="prose prose-stone max-w-none font-inter text-stone-700 leading-relaxed 
-                     prose-h1:font-poppins prose-h2:font-poppins prose-h3:font-poppins
-                     prose-h1:text-primary prose-h2:text-primary 
-                     prose-a:text-accent hover:prose-a:text-accent-dark
-                     prose-img:rounded-xl prose-img:shadow-sm"
-          dangerouslySetInnerHTML={{ __html: safeHtml }} 
+      <div className="w-full max-w-[1000px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        {/* Breadcrumb Trail */}
+        <Breadcrumbs
+          items={[
+            { label: "Home", href: "/" },
+            { label: page.title || "Archive" }
+          ]}
+          className="mb-8"
         />
+
+        {/* Hero Header */}
+        <div className="flex flex-col items-start gap-4 mb-10">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#71865B]/15 text-[#203C2B] border border-[#71865B]/30 text-xs font-poppins font-medium uppercase tracking-widest">
+            <Sparkles size={13} className="text-[#71865B]" />
+            Editorial Publication
+          </div>
+          <h1 className="font-signature text-4xl sm:text-5xl text-[#203C2B] leading-[1.15]">
+            {page.title}
+          </h1>
+          {page.metaDescription && (
+            <p className="font-poppins text-sm text-[#5c5650] font-light max-w-xl">
+              {page.metaDescription}
+            </p>
+          )}
+        </div>
+
+        {/* Reader Card */}
+        <div className="bg-[#FFFCF4]/90 backdrop-blur-md border border-[#DCDCCB] rounded-3xl p-6 sm:p-10 lg:p-14 shadow-sm">
+          <div 
+            className="prose prose-stone max-w-none font-poppins text-[#5c5650] leading-relaxed 
+                       prose-headings:font-signature prose-headings:text-[#203C2B]
+                       prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
+                       prose-a:text-[#71865B] hover:prose-a:text-[#203C2B]
+                       prose-strong:text-[#203C2B]
+                       prose-img:rounded-2xl prose-img:border prose-img:border-[#DCDCCB]"
+            dangerouslySetInnerHTML={{ __html: safeHtml }} 
+          />
+        </div>
       </div>
     </main>
   );

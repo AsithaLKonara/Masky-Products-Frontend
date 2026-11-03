@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCategories } from "@/hooks/useCategories";
-
 import { Category } from "@/types/category";
 
 export default function CategoryBar() {
@@ -11,18 +10,18 @@ export default function CategoryBar() {
   const categories = response?.data || [];
 
   return (
-    <div className="w-full bg-stone-500 hidden md:block">
-      <div className="max-w-[1440px] mx-auto px-6 lg:px-8">
-        <div className="flex items-center justify-center gap-8 overflow-x-auto custom-scrollbar py-3">
+    <nav aria-label="Category Navigation" className="w-full bg-[#F8F5EB]/90 backdrop-blur-md border-b border-[#DCDCCB]/70 sticky top-[76px] z-30 transition-colors">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12">
+        <div className="flex items-center justify-start md:justify-center gap-2 overflow-x-auto no-scrollbar py-2.5">
           <Link 
             href="/shop" 
-            className={`text-sm transition-colors whitespace-nowrap ${
+            className={`px-4 py-1.5 rounded-full text-[11px] font-poppins tracking-[0.14em] uppercase transition-all duration-300 whitespace-nowrap cursor-pointer ${
               pathname === "/shop" 
-                ? "text-stone-50 font-bold underline underline-offset-4" 
-                : "font-medium text-stone-200 hover:text-stone-50"
+                ? "bg-[#203C2B] text-[#FFFCF4] shadow-sm font-semibold" 
+                : "text-[#203C2B]/75 hover:text-[#203C2B] hover:bg-white/80 hover:shadow-xs"
             }`}
           >
-            All
+            All Pieces
           </Link>
           {categories.map((cat: Category) => {
             const isActive = pathname === `/categories/${cat.slug}`;
@@ -30,10 +29,10 @@ export default function CategoryBar() {
               <Link 
                 key={cat.id} 
                 href={`/categories/${cat.slug}`} 
-                className={`text-sm transition-colors whitespace-nowrap ${
+                className={`px-4 py-1.5 rounded-full text-[11px] font-poppins tracking-[0.14em] uppercase transition-all duration-300 whitespace-nowrap cursor-pointer ${
                   isActive 
-                    ? "text-stone-50 font-bold underline underline-offset-4" 
-                    : "font-medium text-stone-200 hover:text-stone-50"
+                    ? "bg-[#203C2B] text-[#FFFCF4] shadow-sm font-semibold" 
+                    : "text-[#203C2B]/75 hover:text-[#203C2B] hover:bg-white/80 hover:shadow-xs"
                 }`}
               >
                 {cat.name}
@@ -42,6 +41,6 @@ export default function CategoryBar() {
           })}
         </div>
       </div>
-    </div>
+    </nav>
   );
 }
