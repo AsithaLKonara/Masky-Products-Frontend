@@ -23,12 +23,12 @@ export default function PageHeader({ title, subtitle, actionLabel, actionHref, o
       </div>
       {actionLabel && (
         actionHref ? (
-          <Link href={actionHref} className="bg-foreground text-white px-5 py-2.5 rounded-lg font-inter text-sm font-medium hover:bg-foreground/90 transition-all shadow-sm flex items-center gap-2">
+          <Link href={actionHref} className="bg-primary text-primary-foreground px-5 py-2.5 rounded-lg font-inter text-sm font-medium hover:opacity-90 transition-all shadow-sm flex items-center gap-2">
             <Plus size={18} />
             {actionLabel}
           </Link>
         ) : (
-          <button onClick={onAction} className="bg-foreground text-white px-5 py-2.5 rounded-lg font-inter text-sm font-medium hover:bg-foreground/90 transition-all shadow-sm flex items-center gap-2">
+          <button onClick={onAction} className="bg-primary text-primary-foreground px-5 py-2.5 rounded-lg font-inter text-sm font-medium hover:opacity-90 transition-all shadow-sm flex items-center gap-2">
             <Plus size={18} />
             {actionLabel}
           </button>

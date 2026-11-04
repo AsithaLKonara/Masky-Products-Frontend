@@ -383,15 +383,15 @@ export default function QuickDispatchPage() {
             <div className="mb-6">
               <label className="font-inter text-xs font-semibold text-muted uppercase mb-2 block">Payment Method</label>
               <div className="grid grid-cols-3 gap-2">
-                <button type="button" onClick={() => setPaymentMethod('COD')} className={`flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl border transition-all ${paymentMethod === 'COD' ? 'bg-foreground border-foreground text-white' : 'bg-surface border-border text-muted hover:bg-surface-elevated'}`}>
+                <button type="button" onClick={() => setPaymentMethod('COD')} className={`flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl border transition-all ${paymentMethod === 'COD' ? 'bg-primary border-primary text-primary-foreground' : 'bg-surface border-border text-muted hover:bg-surface-elevated'}`}>
                   <Truck size={18}/>
                   <span className="font-inter text-[10px] font-bold">COD</span>
                 </button>
-                <button type="button" onClick={() => setPaymentMethod('BANK_TRANSFER')} className={`flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl border transition-all ${paymentMethod === 'BANK_TRANSFER' ? 'bg-foreground border-foreground text-white' : 'bg-surface border-border text-muted hover:bg-surface-elevated'}`}>
+                <button type="button" onClick={() => setPaymentMethod('BANK_TRANSFER')} className={`flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl border transition-all ${paymentMethod === 'BANK_TRANSFER' ? 'bg-primary border-primary text-primary-foreground' : 'bg-surface border-border text-muted hover:bg-surface-elevated'}`}>
                   <Banknote size={18}/>
                   <span className="font-inter text-[10px] font-bold">TRANSFER</span>
                 </button>
-                <button type="button" onClick={() => setPaymentMethod('CARD_MANUAL')} className={`flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl border transition-all ${paymentMethod === 'CARD_MANUAL' ? 'bg-foreground border-foreground text-white' : 'bg-surface border-border text-muted hover:bg-surface-elevated'}`}>
+                <button type="button" onClick={() => setPaymentMethod('CARD_MANUAL')} className={`flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl border transition-all ${paymentMethod === 'CARD_MANUAL' ? 'bg-primary border-primary text-primary-foreground' : 'bg-surface border-border text-muted hover:bg-surface-elevated'}`}>
                   <CreditCard size={18}/>
                   <span className="font-inter text-[10px] font-bold">CARD (POS)</span>
                 </button>

@@ -180,7 +180,7 @@ export default function MediaPickerModal({ onSelect, onClose, title = "Pick from
                   key={f}
                   onClick={() => { setFolder(f); setPage(1); }}
                   className={`px-3 py-1.5 text-xs font-inter font-semibold rounded-lg transition-colors whitespace-nowrap ${
-                    folder === f ? "bg-foreground text-white" : "bg-surface-elevated text-muted hover:bg-border"
+                    folder === f ? "bg-primary text-primary-foreground" : "bg-surface-elevated text-muted hover:bg-border"
                   }`}
                 >
                   {f}

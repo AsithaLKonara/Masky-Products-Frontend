@@ -99,7 +99,7 @@ export default function FardarDispatchModal({ orderIds, onClose, onSuccess }: Fa
           <button onClick={onClose} disabled={isProcessing} className="px-5 py-2.5 bg-surface border border-border text-foreground/80 font-inter font-medium text-sm rounded-lg hover:bg-surface-elevated transition-colors shadow-sm disabled:opacity-50">
             Cancel
           </button>
-          <button onClick={handleProcess} disabled={isProcessing} className="px-8 py-2.5 bg-foreground text-white font-inter font-medium text-sm rounded-lg hover:bg-foreground/90 transition-colors shadow-sm flex items-center gap-2 disabled:opacity-80">
+          <button onClick={handleProcess} disabled={isProcessing} className="px-8 py-2.5 bg-primary text-primary-foreground font-inter font-medium text-sm rounded-lg hover:opacity-90 transition-colors shadow-sm flex items-center gap-2 disabled:opacity-80">
             {isProcessing ? "Connecting to Fardar..." : `Confirm Dispatch`}
           </button>
         </div>

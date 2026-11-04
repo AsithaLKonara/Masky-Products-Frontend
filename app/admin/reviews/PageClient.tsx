@@ -359,7 +359,7 @@ export default function AdminReviewsPage() {
                                 setReplyingToId(null);
                               }} 
                               disabled={!replyText.trim()}
-                              className="px-3 py-1.5 bg-foreground text-white text-xs font-semibold rounded hover:bg-foreground/90 disabled:opacity-50 transition-colors"
+                              className="px-3 py-1.5 bg-primary text-primary-foreground text-xs font-semibold rounded hover:opacity-90 disabled:opacity-50 transition-colors cursor-pointer"
                             >
                               Post Reply
                             </button>
@@ -408,9 +408,9 @@ export default function AdminReviewsPage() {
 
       {/* Floating Bulk Action Bar */}
       {selectedIds.length > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-foreground text-white px-6 py-4 rounded-full shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-10 z-40">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-foreground text-background px-6 py-4 rounded-full shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-10 z-40">
           <span className="font-inter font-medium text-sm">{selectedIds.length} selected</span>
-          <div className="w-px h-6 bg-foreground/80"></div>
+          <div className="w-px h-6 bg-background/30"></div>
           <button
             onClick={bulkApprove}
             className="font-inter font-semibold text-sm bg-emerald-500 text-white px-4 py-2 rounded-full hover:bg-emerald-400 transition-colors flex items-center gap-2"

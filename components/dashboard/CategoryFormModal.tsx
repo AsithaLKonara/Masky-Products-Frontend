@@ -188,7 +188,7 @@ export default function CategoryFormModal({ isOpen, onClose, categoryToEdit }: C
           <button
             onClick={handleSave}
             disabled={!name.trim() || createCategoryMutation.isPending || updateCategoryMutation.isPending}
-            className="px-5 py-2 bg-foreground text-white rounded-lg font-inter font-medium text-sm hover:bg-foreground/90 transition-colors shadow-md shadow-foreground/10 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-5 py-2 bg-primary text-primary-foreground rounded-lg font-inter font-medium text-sm hover:opacity-90 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           >
             {createCategoryMutation.isPending || updateCategoryMutation.isPending ? "Saving..." : "Save Category"}
           </button>

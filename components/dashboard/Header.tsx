@@ -131,7 +131,7 @@ export default function Header({
         {/* Primary Action Button: "+ New Product" */}
         <button
           onClick={() => router.push("/admin/products?action=new")}
-          className="flex items-center gap-1.5 bg-foreground text-background hover:opacity-90 font-inter font-semibold text-xs px-3.5 py-2 rounded-xl transition-all shadow-sm active:scale-95"
+          className="flex items-center gap-1.5 bg-primary text-primary-foreground hover:opacity-90 font-inter font-semibold text-xs px-3.5 py-2 rounded-xl transition-all shadow-sm active:scale-95 cursor-pointer"
         >
           <Plus size={14} strokeWidth={2.5} />
           <span>New Product</span>

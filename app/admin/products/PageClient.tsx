@@ -493,7 +493,7 @@ function ProductVariantsBarcodeModal({
             <button
               onClick={() => handleBulkPrint()}
               disabled={variantsWithBarcodes.length === 0}
-              className="flex items-center gap-2 px-4 py-2 bg-foreground text-white font-inter font-medium text-sm rounded-lg hover:bg-foreground/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-inter font-medium text-sm rounded-lg hover:opacity-90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
             >
               <Printer size={15} />
               Print All ({variantsWithBarcodes.length})
@@ -514,7 +514,7 @@ function ProductVariantsBarcodeModal({
                 onClick={() => setLabelSizeId(s.id)}
                 className={`flex flex-col items-start px-3 py-1.5 rounded-lg border text-left transition-all text-xs font-inter cursor-pointer ${
                   labelSizeId === s.id
-                    ? 'bg-foreground border-foreground text-white'
+                    ? 'bg-primary border-primary text-primary-foreground'
                     : 'bg-surface border-border text-foreground/80 hover:border-border'
                 }`}
               >
@@ -543,7 +543,7 @@ function ProductVariantsBarcodeModal({
                     onClick={() => setSelectedVariantIdx(i)}
                     className={`w-full text-left px-4 py-3 border-b border-border/50 transition-colors text-sm font-inter cursor-pointer ${
                       selectedVariantIdx === i
-                        ? 'bg-foreground text-white'
+                        ? 'bg-primary text-primary-foreground'
                         : 'hover:bg-surface-elevated text-foreground/80'
                     }`}
                   >

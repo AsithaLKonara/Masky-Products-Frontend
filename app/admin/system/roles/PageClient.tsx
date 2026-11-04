@@ -229,7 +229,7 @@ export default function AccessControlPage() {
             setUserModalOpen(true);
           }
         }}
-        className="bg-foreground text-white hover:bg-foreground/90 active:scale-95 px-5 py-2 rounded-lg font-inter text-sm font-semibold transition-all whitespace-nowrap shadow-md shadow-stone-900/20 flex items-center gap-2"
+        className="bg-primary text-primary-foreground hover:opacity-90 active:scale-95 px-5 py-2 rounded-lg font-inter text-sm font-semibold transition-all whitespace-nowrap shadow-md shadow-stone-900/20 flex items-center gap-2 cursor-pointer"
       >
         <Plus size={16} /> {activeTab === "roles" ? "Create Role" : "Invite User"}
       </button>

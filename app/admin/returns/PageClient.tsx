@@ -337,13 +337,13 @@ export default function AdminReturnsPage() {
       </div>
 
       {selectedRMAs.length > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-foreground text-white px-6 py-4 rounded-full shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-10 z-40">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-foreground text-background px-6 py-4 rounded-full shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-10 z-40">
           <span className="font-inter font-medium text-sm">{selectedRMAs.length} selected</span>
-          <div className="w-px h-6 bg-foreground/80" />
-          <button onClick={() => setShowBulkModal(true)} className="font-inter font-semibold text-sm bg-surface text-foreground px-4 py-2 rounded-full hover:bg-surface-elevated transition-colors flex items-center gap-2">
+          <div className="w-px h-6 bg-background/30" />
+          <button onClick={() => setShowBulkModal(true)} className="font-inter font-semibold text-sm bg-primary text-primary-foreground px-4 py-2 rounded-full hover:opacity-90 transition-colors flex items-center gap-2">
             <RefreshCw size={14} /> Process Bulk Return
           </button>
-          <button onClick={() => setSelectedRMAs([])} className="text-muted/70 hover:text-white transition-colors"><X size={18} /></button>
+          <button onClick={() => setSelectedRMAs([])} className="text-muted hover:text-background transition-colors"><X size={18} /></button>
         </div>
       )}
 

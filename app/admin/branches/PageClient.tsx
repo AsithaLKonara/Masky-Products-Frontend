@@ -105,7 +105,7 @@ export default function BranchesPage() {
               setEditingBranch(null);
               setIsModalOpen(true);
             }}
-            className="bg-foreground text-white hover:bg-foreground/90 px-4 py-2.5 rounded-lg font-inter text-sm font-medium transition-colors"
+            className="bg-primary text-primary-foreground hover:opacity-90 px-4 py-2.5 rounded-lg font-inter text-sm font-medium transition-colors cursor-pointer"
           >
             + Add Branch
           </button>

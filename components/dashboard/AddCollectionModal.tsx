@@ -223,7 +223,7 @@ export default function AddCollectionModal({ isOpen, onClose, collectionToEdit }
           <button
             onClick={handleSave}
             disabled={!title.trim() || createMutation.isPending || updateMutation.isPending}
-            className="px-8 py-2.5 bg-foreground text-white font-inter font-medium text-sm rounded-lg hover:bg-foreground/90 transition-colors shadow-sm flex items-center gap-2 disabled:opacity-50"
+            className="px-8 py-2.5 bg-primary text-primary-foreground font-inter font-medium text-sm rounded-lg hover:opacity-90 transition-colors shadow-sm flex items-center gap-2 disabled:opacity-50 cursor-pointer"
           >
             {createMutation.isPending || updateMutation.isPending ? "Saving..." : "Save Collection"}
           </button>

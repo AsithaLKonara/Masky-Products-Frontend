@@ -1119,7 +1119,7 @@ function BannersTab() {
       )}
       <div className="flex gap-3 justify-end border-t border-border/50 pt-4">
         <button onClick={cancelEdit} disabled={isSaving} className="px-4 py-2 border border-border text-foreground/80 rounded-lg font-inter text-sm hover:bg-surface-elevated disabled:opacity-50">Cancel</button>
-        <button onClick={saveEdit} disabled={isSaving} className="px-4 py-2 bg-foreground text-white rounded-lg font-inter text-sm hover:bg-foreground/90 flex items-center gap-2 disabled:opacity-50"><Save size={14}/>{isSaving ? "Saving..." : "Save"}</button>
+        <button onClick={saveEdit} disabled={isSaving} className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-inter text-sm hover:opacity-90 flex items-center gap-2 disabled:opacity-50"><Save size={14}/>{isSaving ? "Saving..." : "Save"}</button>
       </div>
     </div>
   );
@@ -1128,7 +1128,7 @@ function BannersTab() {
     <div className="flex flex-col gap-4">
       <div className="flex justify-between items-center">
         <p className="font-inter text-sm text-muted">Manage promotional banners. Multiple banners can be live at the same time — ANNOUNCEMENT banners show in the topbar, PROMO banners appear on the homepage.</p>
-        <button onClick={() => { const nb: any = { id: `new-${Date.now()}`, text: "New announcement", link: "/", bgColor: "#1c1c1c", active: false, type: "PROMO", showOverlay: true}; startEdit(nb); }} className="flex items-center gap-2 bg-foreground text-white px-4 py-2 rounded-lg font-inter font-medium text-sm hover:bg-foreground/90 transition-colors shadow-sm">
+        <button onClick={() => { const nb: any = { id: `new-${Date.now()}`, text: "New announcement", link: "/", bgColor: "#1c1c1c", active: false, type: "PROMO", showOverlay: true}; startEdit(nb); }} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg font-inter font-medium text-sm hover:opacity-90 transition-colors shadow-sm">
           <Plus size={16}/> Add Banner
         </button>
       </div>
@@ -1281,7 +1281,7 @@ function HomepageTab() {
                 </div>
                 <div className="flex gap-3 justify-end border-t border-border/50 pt-4">
                   <button onClick={cancelEdit} className="px-4 py-2 border border-border text-foreground/80 rounded-lg font-inter text-sm hover:bg-surface-elevated">Cancel</button>
-                  <button onClick={saveEdit} className="px-4 py-2 bg-foreground text-white rounded-lg font-inter text-sm hover:bg-foreground/90 flex items-center gap-2"><Save size={14}/>Save</button>
+                  <button onClick={saveEdit} className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-inter text-sm hover:opacity-90 flex items-center gap-2"><Save size={14}/>Save</button>
                 </div>
               </div>
             ) : (
@@ -1400,7 +1400,7 @@ function PagesTab() {
           </div>
           <div className="flex gap-3">
             <button onClick={cancelEdit} className="px-4 py-2 border border-border text-foreground/80 rounded-lg font-inter text-sm hover:bg-surface-elevated">Cancel</button>
-            <button onClick={saveEdit} className="px-4 py-2 bg-foreground text-white rounded-lg font-inter text-sm hover:bg-foreground/90 flex items-center gap-2"><Save size={14}/>Save Page</button>
+            <button onClick={saveEdit} className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-inter text-sm hover:opacity-90 flex items-center gap-2"><Save size={14}/>Save Page</button>
           </div>
         </div>
         
@@ -1484,7 +1484,7 @@ function PagesTab() {
     <div className="flex flex-col gap-4">
       <div className="flex justify-between items-center">
         <p className="font-inter text-sm text-muted">Edit static pages that replace WordPress content. These appear on the public storefront.</p>
-        <button onClick={() => { const np: any = { id: `new-${Date.now()}`, title: "New Page", slug: "new-page", content: ""}; startEdit(np); }} className="flex items-center gap-2 bg-foreground text-white px-4 py-2 rounded-lg font-inter font-medium text-sm hover:bg-foreground/90 transition-colors shadow-sm">
+        <button onClick={() => { const np: any = { id: `new-${Date.now()}`, title: "New Page", slug: "new-page", content: ""}; startEdit(np); }} className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg font-inter font-medium text-sm hover:opacity-90 transition-colors shadow-sm">
           <Plus size={16}/> Add Page
         </button>
       </div>
@@ -1507,7 +1507,7 @@ function PagesTab() {
                 <a href={`/${page.slug}`} target="_blank" rel="noreferrer" className="p-1.5 text-muted/70 hover:text-foreground hover:bg-surface-elevated rounded-lg transition-colors" title="Preview on site">
                   <ExternalLink size={14}/>
                 </a>
-                <button onClick={() => deleteStaticPage.mutateAsync(page.id)} className="p-1.5 text-muted/70 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                <button onClick={() => deleteStaticPage.mutateAsync(page.id)} className="p-1.5 text-muted/70 hover:text-red-400 hover:bg-red-950/40 rounded-lg transition-colors">
                   <Trash2 size={14}/>
                 </button>
               </div>
@@ -1515,7 +1515,7 @@ function PagesTab() {
             <p className="font-inter text-xs text-muted leading-relaxed line-clamp-3">{page.content}</p>
             <div className="flex items-center justify-between pt-2 border-t border-border/50">
               <span className="font-inter text-xs text-muted/70">Last edited: {new Date(page.lastEdited).toLocaleDateString()}</span>
-              <button onClick={() => startEdit(page)} className="flex items-center gap-1.5 px-3 py-1.5 bg-foreground text-white font-inter font-medium text-xs rounded-lg hover:bg-foreground/90 transition-colors shadow-sm">
+              <button onClick={() => startEdit(page)} className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground font-inter font-medium text-xs rounded-lg hover:opacity-90 transition-colors shadow-sm">
                 <Edit3 size={12}/> Edit
               </button>
             </div>
@@ -1993,7 +1993,7 @@ export default function AdminCMSPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg font-inter font-semibold text-sm transition-all cursor-pointer ${
                 activeTab === tab.id
-                  ? "bg-foreground text-background shadow-sm"
+                  ? "bg-primary text-primary-foreground shadow-sm"
                   : "text-muted hover:bg-surface-elevated hover:text-foreground"
               }`}
             >

@@ -871,7 +871,7 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                     <button 
                       type="button" 
                       onClick={applyStockToAll}
-                      className="h-[42px] px-6 bg-foreground text-white rounded-lg text-sm font-medium hover:bg-foreground/90 transition-colors whitespace-nowrap mb-[2px] cursor-pointer"
+                      className="h-[42px] px-6 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:opacity-90 transition-colors whitespace-nowrap mb-[2px] cursor-pointer"
                     >
                       Apply to All Variants
                     </button>

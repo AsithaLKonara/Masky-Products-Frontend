@@ -114,7 +114,7 @@ export default function AuditLogDetailModal({ log, onClose }: AuditLogDetailModa
         </div>
 
         <div className="p-6 border-t border-border bg-surface flex justify-end shrink-0">
-          <button onClick={onClose} className="px-5 py-2.5 bg-foreground text-white font-inter font-medium text-sm rounded-lg hover:bg-foreground/90 transition-colors shadow-sm">
+          <button onClick={onClose} className="px-5 py-2.5 bg-primary text-primary-foreground font-inter font-medium text-sm rounded-lg hover:opacity-90 transition-colors shadow-sm">
             Close Details
           </button>
         </div>

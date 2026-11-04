@@ -158,7 +158,7 @@ export default function BranchModal({
           <button 
             type="submit" 
             onClick={handleSubmit}
-            className="px-6 py-2 bg-black text-white text-sm font-medium rounded-lg hover:bg-foreground/90 transition disabled:opacity-50"
+            className="px-6 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:opacity-90 transition disabled:opacity-50"
             disabled={isPending}
           >
             {isPending ? "Saving..." : branchToEdit ? "Update Branch" : "Create Branch"}

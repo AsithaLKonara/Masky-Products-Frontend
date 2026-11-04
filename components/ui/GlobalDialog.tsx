@@ -60,7 +60,7 @@ export default function GlobalDialog() {
           )}
           <button
             onClick={() => close(true)}
-            className="px-5 py-2 font-inter font-medium text-sm text-white bg-foreground hover:bg-foreground/90 rounded-lg transition-colors shadow-sm"
+            className="px-5 py-2 font-inter font-medium text-sm text-primary-foreground bg-primary hover:opacity-90 rounded-lg transition-colors shadow-sm cursor-pointer"
           >
             {type === 'confirm' ? 'Confirm' : 'Okay'}
           </button>

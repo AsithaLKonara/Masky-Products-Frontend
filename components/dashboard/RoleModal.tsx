@@ -278,7 +278,7 @@ export default function RoleModal({ isOpen, onClose, onSuccess, initialData }: R
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-surface-elevated shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-foreground flex items-center justify-center text-white">
+            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center text-primary-foreground">
               <Shield size={18} />
             </div>
             <div>
@@ -354,7 +354,7 @@ export default function RoleModal({ isOpen, onClose, onSuccess, initialData }: R
                 <button
                   type="button"
                   onClick={() => MODULE_GROUPS.forEach(g => toggleGroupAll(g, true))}
-                  className="px-3 py-1 text-xs font-inter font-semibold bg-foreground text-white rounded-lg hover:opacity-80 transition-colors"
+                  className="px-3 py-1 text-xs font-inter font-semibold bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-colors cursor-pointer"
                 >
                   Grant All
                 </button>
@@ -442,7 +442,7 @@ export default function RoleModal({ isOpen, onClose, onSuccess, initialData }: R
             <button
               onClick={handleSave}
               disabled={loading || !name.trim()}
-              className="px-5 py-2 bg-foreground text-white rounded-lg font-inter font-medium text-sm hover:bg-foreground/90 transition-colors shadow-md shadow-foreground/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-5 py-2 bg-primary text-primary-foreground rounded-lg font-inter font-medium text-sm hover:opacity-90 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {loading && <Loader2 size={14} className="animate-spin" />}
               {initialData ? "Save Permissions" : "Create Role"}

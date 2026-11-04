@@ -370,7 +370,7 @@ export default function SettingsPage() {
                     type="button" 
                     onClick={handleCreateCustom}
                     disabled={createSetting.isPending}
-                    className="h-10 px-4 bg-primary text-white text-sm font-medium rounded-md hover:bg-foreground/90 transition-colors flex items-center gap-2"
+                    className="h-10 px-4 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:opacity-90 transition-colors flex items-center gap-2"
                   >
                     <Plus size={16} />
                     Add

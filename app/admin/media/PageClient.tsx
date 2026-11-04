@@ -74,7 +74,7 @@ function AssignToSection({ file }: { file: MediaFile }) {
         onClick={handleAssign}
         disabled={!destination}
         className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg font-inter font-semibold text-xs transition-all disabled:opacity-40 ${
-          assigned ? "bg-emerald-600 text-white" : "bg-foreground text-white hover:bg-foreground/80"
+          assigned ? "bg-emerald-600 text-white" : "bg-primary text-primary-foreground hover:opacity-90"
         }`}
       >
         {assigned ? (
@@ -163,12 +163,12 @@ function DetailPanel({ file, onClose, onDelete }: DetailPanelProps) {
 
       {/* Actions */}
       <div className="p-5 border-t border-border bg-surface flex gap-3 shrink-0">
-        <a href={file.url} download className="flex-1 flex items-center justify-center gap-2 bg-foreground text-white py-2.5 rounded-lg font-inter font-medium text-sm hover:bg-foreground/90 transition-colors shadow-sm">
+        <a href={file.url} download className="flex-1 flex items-center justify-center gap-2 bg-primary text-primary-foreground py-2.5 rounded-lg font-inter font-medium text-sm hover:opacity-90 transition-colors shadow-sm">
           <Download size={15}/> Download
         </a>
         <button
           onClick={() => { onDelete(file.id); onClose(); }}
-          className="px-4 py-2.5 border border-red-200 text-red-600 bg-red-50 rounded-lg font-inter font-medium text-sm hover:bg-red-100 transition-colors"
+          className="px-4 py-2.5 border border-red-800/40 text-red-400 bg-red-950/30 rounded-lg font-inter font-medium text-sm hover:bg-red-900/40 transition-colors"
         >
           <Trash2 size={15}/>
         </button>
@@ -532,16 +532,16 @@ export default function AdminMediaPage() {
 
       {/* Floating Bulk Action Bar */}
       {selectedIds.length > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-foreground text-white px-6 py-4 rounded-full shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-10 z-40">
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-foreground text-background px-6 py-4 rounded-full shadow-2xl flex items-center gap-6 animate-in slide-in-from-bottom-10 z-40">
           <span className="font-inter font-medium text-sm">{selectedIds.length} file{selectedIds.length !== 1 ? "s" : ""} selected</span>
-          <div className="w-px h-6 bg-foreground/80"/>
+          <div className="w-px h-6 bg-background/30"/>
           <button
             onClick={bulkDelete}
-            className="font-inter font-semibold text-sm bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-400 transition-colors flex items-center gap-2"
+            className="font-inter font-semibold text-sm bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-400 transition-colors flex items-center gap-2 cursor-pointer"
           >
             <Trash2 size={14}/> Delete Selected
           </button>
-          <button onClick={() => setSelectedIds([])} className="text-muted/70 hover:text-white transition-colors">
+          <button onClick={() => setSelectedIds([])} className="text-muted hover:text-background transition-colors cursor-pointer">
             <X size={18}/>
           </button>
         </div>

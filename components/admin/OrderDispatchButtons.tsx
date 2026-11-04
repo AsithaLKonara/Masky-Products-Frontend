@@ -28,7 +28,7 @@ export default function OrderDispatchButtons({ orderId, customerName, address, p
 
         <button 
           onClick={() => setShowFardarModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-foreground hover:bg-foreground/90 text-white text-sm font-semibold font-inter rounded-lg transition-colors shadow-sm"
+          className="flex items-center gap-2 px-4 py-2 bg-primary hover:opacity-90 text-primary-foreground text-sm font-semibold font-inter rounded-lg transition-colors shadow-sm"
         >
           <Truck size={14} /> Dispatch via Fardar
         </button>

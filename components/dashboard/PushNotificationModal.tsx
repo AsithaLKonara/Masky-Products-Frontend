@@ -211,7 +211,7 @@ export default function PushNotificationModal({ isOpen, onClose }: PushNotificat
             <button
               onClick={handleSend}
               disabled={isSending || !title.trim() || !body.trim()}
-              className="px-5 py-2 bg-foreground text-white rounded-lg font-inter font-medium text-sm hover:bg-foreground/90 transition-colors shadow-md shadow-foreground/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-5 py-2 bg-primary text-primary-foreground rounded-lg font-inter font-medium text-sm hover:opacity-90 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               <Bell size={14} /> {isSending ? "Sending..." : "Send Now"}
             </button>

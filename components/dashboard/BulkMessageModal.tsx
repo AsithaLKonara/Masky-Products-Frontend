@@ -177,7 +177,7 @@ export default function BulkMessageModal({ isOpen, onClose }: BulkMessageModalPr
             <button
               onClick={handleSend}
               disabled={isSending || numberCount === 0 || message.length === 0}
-              className="px-6 py-2 bg-foreground hover:bg-foreground/90 text-white text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-6 py-2 bg-primary hover:opacity-90 text-primary-foreground text-sm font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer"
             >
               {isSending ? "Sending..." : "Send SMS"}
             </button>
