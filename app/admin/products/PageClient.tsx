@@ -272,7 +272,7 @@ export default function ProductsPage() {
       </select>
       <button
         onClick={handleAdd}
-        className="bg-[#203C2B] text-white hover:bg-[#2d523c] active:scale-95 px-5 py-2 rounded-lg font-inter text-sm font-semibold transition-all whitespace-nowrap ml-auto shadow-sm flex items-center gap-2 cursor-pointer"
+        className="bg-primary text-primary-foreground hover:opacity-90 active:scale-95 px-5 py-2 rounded-lg font-inter text-sm font-semibold transition-all whitespace-nowrap ml-auto shadow-sm flex items-center gap-2 cursor-pointer"
       >
         + Add Product
       </button>
@@ -297,16 +297,16 @@ export default function ProductsPage() {
 
         {/* Expiry Alert Notification Banner */}
         {(expiredProducts.length > 0 || expiringSoonProducts.length > 0) && (
-          <div className="mb-6 p-4 rounded-2xl bg-[#FFFBF0] border border-[#E7D6A8] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="mb-6 p-4 rounded-2xl bg-amber-950/20 border border-amber-800/40 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-start md:items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-amber-500/15 text-amber-800 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-full bg-amber-500/15 text-amber-400 flex items-center justify-center shrink-0">
                 <AlertCircle size={22} />
               </div>
               <div>
-                <h4 className="font-inter font-bold text-sm text-[#203C2B]">
+                <h4 className="font-inter font-bold text-sm text-foreground">
                   Shelf Life & Expiry Attention Required
                 </h4>
-                <p className="font-inter text-xs text-[#62695A] mt-0.5">
+                <p className="font-inter text-xs text-muted mt-0.5">
                   {expiredProducts.length > 0 && (
                     <span className="text-red-700 font-semibold mr-2">
                       🚨 {expiredProducts.length} product batch has expired.
@@ -345,7 +345,7 @@ export default function ProductsPage() {
               {expiryFilter !== 'ALL' && (
                 <button
                   onClick={() => setExpiryFilter('ALL')}
-                  className="px-3 py-1.5 rounded-lg text-xs font-inter text-[#203C2B] bg-white border border-[#DCDCCB] hover:bg-surface-elevated cursor-pointer"
+                  className="px-3 py-1.5 rounded-lg text-xs font-inter text-foreground bg-surface border border-border hover:bg-surface-elevated cursor-pointer"
                 >
                   Show All ({products.length})
                 </button>
@@ -574,7 +574,7 @@ function ProductVariantsBarcodeModal({
                         <BarcodeLib value={getDisplayCode(selectedVariant.barcode)} format="CODE128" width={activeSize.bW} height={activeSize.bH} displayValue fontSize={10} margin={3} />
                       </div>
                     </div>
-                    <button onClick={() => handleSinglePrint()} className="flex items-center gap-2 px-5 py-2.5 bg-[#203C2B] text-white font-inter font-semibold text-sm rounded-lg hover:bg-[#2d523c] transition-colors cursor-pointer">
+                    <button onClick={() => handleSinglePrint()} className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-inter font-semibold text-sm rounded-lg hover:opacity-90 transition-colors cursor-pointer">
                       <Printer size={15} /> Print This Barcode
                     </button>
                   </div>

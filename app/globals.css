@@ -161,9 +161,63 @@
     background: var(--scrollbar-track);
   }
 
-  .dashboard-theme {
-    background-color: var(--canvas);
-    color: var(--foreground);
+  /* ── Enterprise Dark Dashboard Theme Scope ── */
+  .dashboard-theme,
+  .dashboard-theme.dark,
+  .dark .dashboard-theme {
+    /* Obsidian Slate & Deep Zinc Palette */
+    --background: #0B0F17;
+    --foreground: #F8FAFC;
+
+    /* Depth Surfaces for Dark Mode */
+    --surface: #111827;
+    --surface-elevated: #1F2937;
+    --surface-subtle: #0E1522;
+
+    --primary: #3B82F6;
+    --primary-hover: #2563EB;
+    --primary-foreground: #FFFFFF;
+
+    --secondary: #1F2937;
+    --secondary-foreground: #F8FAFC;
+
+    --accent: #3B82F6;
+    --accent-soft: rgba(59, 130, 246, 0.15);
+
+    --text-primary: #F8FAFC;
+    --text-secondary: #94A3B8;
+
+    --muted: #94A3B8;
+    --muted-foreground: #64748B;
+    --border: #1F2937;
+    --ring: #3B82F6;
+
+    --success: #10B981;
+    --success-soft: rgba(16, 185, 129, 0.15);
+
+    --warning: #F59E0B;
+    --warning-soft: rgba(245, 158, 11, 0.15);
+
+    --error: #EF4444;
+    --error-soft: rgba(239, 68, 68, 0.15);
+
+    --info: #3B82F6;
+    --info-soft: rgba(59, 130, 246, 0.15);
+
+    --chart-1: #3B82F6;
+    --chart-2: #10B981;
+    --chart-3: #F59E0B;
+    --chart-4: #8B5CF6;
+    --chart-5: #06B6D4;
+
+    /* Theme-Adaptive Scrollbar Tokens (Dark Mode) */
+    --scrollbar-track: #0B0F17;
+    --scrollbar-thumb: #1E293B;
+    --scrollbar-thumb-hover: #334155;
+
+    background-color: #0B0F17 !important;
+    color: #F8FAFC !important;
+    color-scheme: dark;
     min-height: 100vh;
   }
 }

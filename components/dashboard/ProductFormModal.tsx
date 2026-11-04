@@ -487,10 +487,10 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                 </div>
 
                 {/* Production Dates & Shelf Life Alert Card */}
-                <div className="bg-[#FAF9F5] border border-[#DCDCCB] rounded-2xl p-5 flex flex-col gap-4">
+                <div className="bg-surface-elevated border border-border rounded-2xl p-5 flex flex-col gap-4">
                   <div className="flex items-center gap-2">
-                    <Calendar size={18} className="text-[#203C2B]" />
-                    <h3 className="font-inter font-bold text-sm text-[#203C2B]">Production Batch & Shelf Life Dates</h3>
+                    <Calendar size={18} className="text-primary" />
+                    <h3 className="font-inter font-bold text-sm text-foreground">Production Batch & Shelf Life Dates</h3>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -584,9 +584,9 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                   {errors.tags && <span className="text-red-500 text-xs">{errors.tags.message}</span>}
                 </div>
 
-                <div className="flex items-center gap-3 bg-[#FEF6E4] border border-[#DCDCCB] rounded-xl p-4">
-                  <Info size={16} className="text-[#203C2B] shrink-0" />
-                  <p className="text-xs font-inter text-[#203C2B]">After configuring basic info, move to <strong>Custom Variants</strong> to define packaging weights (e.g. 100g, 250g, 500g).</p>
+                <div className="flex items-center gap-3 bg-surface-elevated border border-border rounded-xl p-4">
+                  <Info size={16} className="text-primary shrink-0" />
+                  <p className="text-xs font-inter text-foreground">After configuring basic info, move to <strong>Custom Variants</strong> to define packaging weights (e.g. 100g, 250g, 500g).</p>
                 </div>
               </div>
             )}
@@ -635,11 +635,11 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
             {activeTab === "variants" && (
               <div className="flex flex-col gap-6">
                 {/* Presets Card */}
-                <div className="bg-[#FAF9F5] border border-[#DCDCCB] rounded-2xl p-5 flex flex-col gap-3">
+                <div className="bg-surface-elevated border border-border rounded-2xl p-5 flex flex-col gap-3">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-inter font-bold text-sm text-[#203C2B]">Custom Variant Presets</h3>
-                      <p className="font-inter text-xs text-[#62695A] mt-0.5">Click any weight or package preset to immediately add it to your product catalog:</p>
+                      <h3 className="font-inter font-bold text-sm text-foreground">Custom Variant Presets</h3>
+                      <p className="font-inter text-xs text-muted mt-0.5">Click any weight or package preset to immediately add it to your product catalog:</p>
                     </div>
                   </div>
 
@@ -654,8 +654,8 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                           disabled={isAdded}
                           className={`px-3.5 py-2 rounded-xl text-xs font-inter font-medium border transition-all flex items-center gap-1.5 ${
                             isAdded
-                              ? "bg-[#203C2B] text-white border-[#203C2B] cursor-default opacity-90 shadow-2xs"
-                              : "bg-white text-[#203C2B] border-[#DCDCCB] hover:border-[#203C2B] hover:bg-[#FEF6E4] cursor-pointer"
+                              ? "bg-primary text-white border-primary cursor-default opacity-90 shadow-2xs"
+                              : "bg-surface text-foreground border-border hover:border-primary hover:bg-surface-elevated cursor-pointer"
                           }`}
                         >
                           {isAdded ? "✓ " : "+ "}
@@ -666,7 +666,7 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                   </div>
 
                   {/* Custom Add Row */}
-                  <div className="flex items-center gap-2 pt-3 border-t border-[#DCDCCB]/60 mt-2">
+                  <div className="flex items-center gap-2 pt-3 border-t border-border mt-2">
                     <input
                       type="text"
                       value={customVariantInput}
@@ -678,7 +678,7 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                     <button
                       type="button"
                       onClick={() => addVariantWithLabel(customVariantInput)}
-                      className="px-4 py-2.5 rounded-lg bg-[#203C2B] text-[#FFFCF4] font-inter text-xs font-semibold hover:bg-[#2d523c] transition-colors whitespace-nowrap cursor-pointer flex items-center gap-1.5"
+                      className="px-4 py-2.5 rounded-lg bg-primary text-primary-foreground font-inter text-xs font-semibold hover:opacity-90 transition-colors whitespace-nowrap cursor-pointer flex items-center gap-1.5"
                     >
                       <Plus size={14} /> Add Variant
                     </button>
@@ -792,10 +792,10 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                     </table>
                   </div>
                 ) : (
-                  <div className="border-2 border-dashed border-[#DCDCCB] rounded-2xl p-12 flex flex-col items-center gap-3 text-center bg-[#FAF9F5]/50">
-                    <Layers size={36} className="text-[#71865B]" />
-                    <p className="font-inter text-[#203C2B] font-semibold text-sm">No Custom Variants Added</p>
-                    <p className="font-inter text-xs text-[#62695A] max-w-sm">Click one of the packaging presets above (like 100g Pouch, 250g Pouch) or enter a custom variant to configure weights and prices.</p>
+                  <div className="border-2 border-dashed border-border rounded-2xl p-12 flex flex-col items-center gap-3 text-center bg-surface-elevated/50">
+                    <Layers size={36} className="text-primary" />
+                    <p className="font-inter text-foreground font-semibold text-sm">No Custom Variants Added</p>
+                    <p className="font-inter text-xs text-muted max-w-sm">Click one of the packaging presets above (like 100g Pouch, 250g Pouch) or enter a custom variant to configure weights and prices.</p>
                   </div>
                 )}
               </div>
@@ -850,9 +850,9 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
             {/* ────────── INVENTORY ────────── */}
             {activeTab === "inventory" && (
               <div className="flex flex-col gap-6 max-w-[700px]">
-                <div className="bg-[#FAF9F5] border border-[#DCDCCB] rounded-xl p-4 flex gap-3">
-                  <AlertCircle size={16} className="text-[#203C2B] shrink-0 mt-0.5" />
-                  <p className="text-xs font-inter text-[#203C2B]">Individual branch stock is maintained directly inside the <strong>Custom Variants</strong> tab. Use this panel to batch-apply initial stock across all variants.</p>
+                <div className="bg-surface-elevated border border-border rounded-xl p-4 flex gap-3">
+                  <AlertCircle size={16} className="text-primary shrink-0 mt-0.5" />
+                  <p className="text-xs font-inter text-foreground">Individual branch stock is maintained directly inside the <strong>Custom Variants</strong> tab. Use this panel to batch-apply initial stock across all variants.</p>
                 </div>
 
                 <div className="flex flex-col gap-4 bg-surface border border-border rounded-xl p-5">
@@ -888,7 +888,7 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                     type="checkbox"
                     checked={sizeGuideEnabled}
                     onChange={e => setSizeGuideEnabled(e.target.checked)}
-                    className="w-4 h-4 accent-stone-900"
+                    className="w-4 h-4 accent-primary"
                   />
                   <div>
                     <span className="font-inter text-sm font-semibold text-foreground">Enable Product Specification & Storage Guide</span>
@@ -929,7 +929,7 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                           type="checkbox"
                           checked={selectedPaymentMethods.includes(gw)}
                           onChange={() => togglePayment(gw)}
-                          className="w-4 h-4 accent-stone-900"
+                          className="w-4 h-4 accent-primary"
                         />
                         <span className="font-inter text-sm font-semibold text-foreground">{gw}</span>
                       </div>
@@ -978,12 +978,12 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
                   {errors.metaDesc && <span className="text-red-500 text-xs">{errors.metaDesc.message}</span>}
                 </div>
 
-                <div className="bg-[#FAF9F5] border border-[#DCDCCB] rounded-xl p-4 flex flex-col gap-1.5">
+                <div className="bg-surface-elevated border border-border rounded-xl p-4 flex flex-col gap-1.5">
                   <p className="text-[10px] text-muted font-inter uppercase tracking-wider">Search Engine Preview</p>
-                  <a href="#" className="font-medium text-[#203C2B] text-sm hover:underline truncate">
+                  <a href="#" className="font-medium text-primary text-sm hover:underline truncate">
                     {metaTitle || productName || "Masky Mushroom Product"} — Masky Product Sri Lanka
                   </a>
-                  <p className="text-xs text-[#62695A] font-inter line-clamp-2">
+                  <p className="text-xs text-muted font-inter line-clamp-2">
                     {metaDesc || "Fresh and dehydrated mushroom harvests with certified laboratory purity and sustainable organic cultivation."}
                   </p>
                 </div>
@@ -1003,7 +1003,7 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
             <button
               type="submit"
               disabled={createProductMutation.isPending || updateProductMutation.isPending}
-              className="px-8 py-2.5 bg-[#203C2B] text-white rounded-lg font-inter font-medium text-sm hover:bg-[#2d523c] transition-colors shadow-md disabled:opacity-50 flex items-center gap-2 cursor-pointer"
+              className="px-8 py-2.5 bg-primary text-primary-foreground rounded-lg font-inter font-medium text-sm hover:opacity-90 transition-colors shadow-md disabled:opacity-50 flex items-center gap-2 cursor-pointer"
             >
               {(createProductMutation.isPending || updateProductMutation.isPending) ? "Saving..." : "Save Product"}
             </button>
@@ -1016,22 +1016,22 @@ export default function ProductFormModal({ isOpen, onClose, productToEdit }: Pro
           font-family: var(--font-inter);
           font-size: 0.75rem;
           font-weight: 600;
-          color: #44403c;
+          color: var(--muted);
         }
         .input {
-          border: 1px solid #e7e5e4;
+          border: 1px solid var(--border);
           border-radius: 0.5rem;
           padding: 0.625rem 0.75rem;
           font-size: 0.875rem;
           outline: none;
-          background: white;
+          background: var(--surface);
           width: 100%;
-          color: #1c1917;
+          color: var(--foreground);
           transition: border-color 0.15s;
         }
         .input:focus {
-          border-color: #71865B;
-          box-shadow: 0 0 0 2px rgba(113, 134, 91, 0.2);
+          border-color: var(--primary);
+          box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
         }
       `}</style>
       
@@ -1100,7 +1100,7 @@ function VariantBarcodePrintModal({ barcode, label, onClose }: { barcode: string
         </div>
         <div className="p-4 border-t border-border bg-surface-elevated flex justify-end gap-3">
           <button onClick={onClose} className="px-4 py-2 bg-surface border border-border text-foreground/80 font-inter font-medium text-sm rounded-lg hover:bg-surface-elevated transition-colors">Cancel</button>
-          <button onClick={() => handlePrint()} className="px-5 py-2 bg-[#203C2B] text-white font-inter font-medium text-sm rounded-lg hover:bg-[#2d523c] transition-colors flex items-center gap-2">
+          <button onClick={() => handlePrint()} className="px-5 py-2 bg-primary text-primary-foreground font-inter font-medium text-sm rounded-lg hover:opacity-90 transition-colors flex items-center gap-2">
             <Printer size={15} /> Print Label
           </button>
         </div>
@@ -1142,7 +1142,7 @@ function BulkBarcodePrintModal({ variants, onClose }: { variants: { barcode: str
         </div>
         <div className="p-4 border-t border-border bg-surface-elevated flex justify-end gap-3 shrink-0">
           <button onClick={onClose} className="px-4 py-2 bg-surface border border-border text-foreground/80 font-inter font-medium text-sm rounded-lg hover:bg-surface-elevated transition-colors">Cancel</button>
-          <button onClick={() => handlePrint()} className="px-5 py-2 bg-[#203C2B] text-white font-inter font-medium text-sm rounded-lg hover:bg-[#2d523c] transition-colors flex items-center gap-2">
+          <button onClick={() => handlePrint()} className="px-5 py-2 bg-primary text-primary-foreground font-inter font-medium text-sm rounded-lg hover:opacity-90 transition-colors flex items-center gap-2">
             <Printer size={15} /> Print All {variants.length} Labels
           </button>
         </div>

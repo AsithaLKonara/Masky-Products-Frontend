@@ -193,7 +193,7 @@ function HeroTab() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
             <h3 className="font-inter font-bold text-base text-foreground flex items-center gap-2">
-              <Layout size={18} className="text-[#203C2B]" />
+              <Layout size={18} className="text-emerald-400" />
               Hero Section Display Mode
             </h3>
             <p className="font-inter text-xs text-muted mt-1">
@@ -201,7 +201,7 @@ function HeroTab() {
             </p>
           </div>
           {configSaved && (
-            <span className="text-emerald-600 font-inter text-xs font-semibold flex items-center gap-1 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200">
+            <span className="text-emerald-400 font-inter text-xs font-semibold flex items-center gap-1 bg-emerald-950/40 px-3 py-1.5 rounded-full border border-emerald-800/40">
               <Check size={14} /> Mode Saved
             </span>
           )}
@@ -214,14 +214,14 @@ function HeroTab() {
             onClick={() => handleModeChange("slider")}
             className={`relative flex flex-col p-5 rounded-xl border-2 cursor-pointer transition-all ${
               activeMode === "slider"
-                ? "border-[#203C2B] bg-[#203C2B]/5 shadow-sm"
+                ? "border-emerald-500 bg-emerald-950/20 shadow-sm"
                 : "border-border/70 hover:border-border hover:bg-surface-elevated/50"
             }`}
           >
             <div className="flex items-center justify-between mb-3">
               <div
                 className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                  activeMode === "slider" ? "bg-[#203C2B] text-white" : "bg-muted/15 text-muted"
+                  activeMode === "slider" ? "bg-emerald-600 text-white" : "bg-surface-elevated text-muted"
                 }`}
               >
                 <Sliders size={20} />
@@ -232,7 +232,7 @@ function HeroTab() {
                 value="slider"
                 checked={activeMode === "slider"}
                 onChange={() => handleModeChange("slider")}
-                className="w-4 h-4 text-[#203C2B] accent-[#203C2B] cursor-pointer"
+                className="w-4 h-4 text-emerald-500 accent-emerald-500 cursor-pointer"
               />
             </div>
             <p className="font-inter font-bold text-sm text-foreground">Interactive 3D Slider</p>
@@ -240,7 +240,7 @@ function HeroTab() {
               Keep current interactive 3D luxury product carousel 100% same with full slide management.
             </p>
             {activeMode === "slider" && (
-              <span className="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold text-[#203C2B] uppercase tracking-wider font-inter">
+              <span className="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400 uppercase tracking-wider font-inter">
                 <Check size={13} /> Active on storefront
               </span>
             )}
@@ -251,14 +251,14 @@ function HeroTab() {
             onClick={() => handleModeChange("video")}
             className={`relative flex flex-col p-5 rounded-xl border-2 cursor-pointer transition-all ${
               activeMode === "video"
-                ? "border-[#203C2B] bg-[#203C2B]/5 shadow-sm"
+                ? "border-emerald-500 bg-emerald-950/20 shadow-sm"
                 : "border-border/70 hover:border-border hover:bg-surface-elevated/50"
             }`}
           >
             <div className="flex items-center justify-between mb-3">
               <div
                 className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                  activeMode === "video" ? "bg-[#203C2B] text-white" : "bg-muted/15 text-muted"
+                  activeMode === "video" ? "bg-emerald-600 text-white" : "bg-surface-elevated text-muted"
                 }`}
               >
                 <Video size={20} />
@@ -269,7 +269,7 @@ function HeroTab() {
                 value="video"
                 checked={activeMode === "video"}
                 onChange={() => handleModeChange("video")}
-                className="w-4 h-4 text-[#203C2B] accent-[#203C2B] cursor-pointer"
+                className="w-4 h-4 text-emerald-500 accent-emerald-500 cursor-pointer"
               />
             </div>
             <p className="font-inter font-bold text-sm text-foreground">Cinematic Video</p>
@@ -277,7 +277,7 @@ function HeroTab() {
               Full-width video background with luxury overlay, typography, and call-to-action buttons.
             </p>
             {activeMode === "video" && (
-              <span className="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold text-[#203C2B] uppercase tracking-wider font-inter">
+              <span className="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400 uppercase tracking-wider font-inter">
                 <Check size={13} /> Active on storefront
               </span>
             )}
@@ -288,14 +288,14 @@ function HeroTab() {
             onClick={() => handleModeChange("photo")}
             className={`relative flex flex-col p-5 rounded-xl border-2 cursor-pointer transition-all ${
               activeMode === "photo"
-                ? "border-[#203C2B] bg-[#203C2B]/5 shadow-sm"
+                ? "border-emerald-500 bg-emerald-950/20 shadow-sm"
                 : "border-border/70 hover:border-border hover:bg-surface-elevated/50"
             }`}
           >
             <div className="flex items-center justify-between mb-3">
               <div
                 className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                  activeMode === "photo" ? "bg-[#203C2B] text-white" : "bg-muted/15 text-muted"
+                  activeMode === "photo" ? "bg-emerald-600 text-white" : "bg-surface-elevated text-muted"
                 }`}
               >
                 <Columns2 size={20} />
@@ -306,7 +306,7 @@ function HeroTab() {
                 value="photo"
                 checked={activeMode === "photo"}
                 onChange={() => handleModeChange("photo")}
-                className="w-4 h-4 text-[#203C2B] accent-[#203C2B] cursor-pointer"
+                className="w-4 h-4 text-emerald-500 accent-emerald-500 cursor-pointer"
               />
             </div>
             <p className="font-inter font-bold text-sm text-foreground">Two-Column Photo Split</p>
@@ -314,7 +314,7 @@ function HeroTab() {
               Left side holds typography & CTAs; right side holds an editorial luxury showcase photo.
             </p>
             {activeMode === "photo" && (
-              <span className="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold text-[#203C2B] uppercase tracking-wider font-inter">
+              <span className="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400 uppercase tracking-wider font-inter">
                 <Check size={13} /> Active on storefront
               </span>
             )}
@@ -356,7 +356,7 @@ function HeroTab() {
               </div>
               <div className="flex items-center gap-3">
                 {slideSaved && (
-                  <span className="text-emerald-600 font-inter text-xs font-semibold flex items-center gap-1 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                  <span className="text-emerald-400 font-inter text-xs font-semibold flex items-center gap-1 bg-emerald-950/40 px-3 py-1 rounded-full border border-emerald-800/40">
                     <Check size={14} /> Saved
                   </span>
                 )}
@@ -585,7 +585,7 @@ function HeroTab() {
                               <ChevronDown size={14} />
                             </button>
                           </div>
-                          <div className="relative w-14 h-14 rounded-lg bg-[#EAE8DC] dark:bg-stone-800 overflow-hidden border border-border/60 shrink-0">
+                          <div className="relative w-14 h-14 rounded-lg bg-surface-elevated overflow-hidden border border-border/60 shrink-0">
                             {slide.image && (
                               <Image
                                 src={slide.image}
@@ -608,7 +608,7 @@ function HeroTab() {
                             onClick={() => toggleActive(slide.id)}
                             className={`p-2 rounded-lg transition-colors ${
                               slide.active
-                                ? "text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-400 hover:bg-emerald-100"
+                                ? "text-emerald-400 bg-emerald-950/40 border border-emerald-800/40 hover:bg-emerald-900/50"
                                 : "text-muted hover:bg-surface-elevated"
                             }`}
                             title={slide.active ? "Slide is active" : "Slide is inactive"}
@@ -628,7 +628,7 @@ function HeroTab() {
                                 deleteHeroSlide.mutateAsync(slide.id);
                               }
                             }}
-                            className="p-2 text-muted/70 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg transition-colors"
+                            className="p-2 text-muted/70 hover:text-red-400 hover:bg-red-950/40 rounded-lg transition-colors"
                             title="Delete Slide"
                           >
                             <Trash2 size={16} />
@@ -1028,9 +1028,9 @@ function BannersTab() {
   const [showMediaPicker, setShowMediaPicker] = useState(false);
 
   const TYPE_COLORS: Record<string, string> = {
-    PROMO: "bg-purple-100 text-purple-700",
-    SALE: "bg-orange-100 text-orange-700",
-    ANNOUNCEMENT: "bg-blue-100 text-blue-700",
+    PROMO: "bg-purple-950/40 text-purple-300 border border-purple-800/40",
+    SALE: "bg-amber-950/40 text-amber-300 border border-amber-800/40",
+    ANNOUNCEMENT: "bg-blue-950/40 text-blue-300 border border-blue-800/40",
   };
 
   const startEdit = (b: Banner) => { setEditingId(b.id); setEditData({...b}); };
@@ -1154,13 +1154,17 @@ function BannersTab() {
                 <div className="flex items-center gap-2 shrink-0">
                   <button
                     onClick={() => toggleActive(banner)}
-                    className={`flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-full transition-colors ${banner.active ? 'bg-emerald-100 text-emerald-700 hover:bg-red-50 hover:text-red-600' : 'bg-surface-elevated text-muted hover:bg-emerald-50 hover:text-emerald-700'}`}
+                    className={`flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-full transition-colors ${
+                      banner.active
+                        ? 'bg-emerald-950/50 text-emerald-400 border border-emerald-800/40 hover:bg-red-950/40 hover:text-red-400'
+                        : 'bg-surface-elevated text-muted border border-border hover:bg-emerald-950/30 hover:text-emerald-400'
+                    }`}
                     title={banner.active ? 'Click to deactivate' : 'Click to set live'}
                   >
                     {banner.active ? 'LIVE' : 'Set Live'}
                   </button>
                   <button onClick={() => startEdit(banner)} className="p-2 text-muted/70 hover:text-foreground hover:bg-surface-elevated rounded-lg transition-colors"><Edit3 size={15}/></button>
-                  <button onClick={() => deleteBanner.mutateAsync(banner.id)} className="p-2 text-muted/70 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><Trash2 size={15}/></button>
+                  <button onClick={() => deleteBanner.mutateAsync(banner.id)} className="p-2 text-muted/70 hover:text-red-400 hover:bg-red-950/40 rounded-lg transition-colors"><Trash2 size={15}/></button>
                 </div>
               </div>
             )}
@@ -1296,7 +1300,7 @@ function HomepageTab() {
                 </div>
                 <button
                   onClick={() => toggleVisible(sec.id)}
-                  className={`flex items-center gap-2 px-3 py-1.5 text-xs font-bold font-inter rounded-full border transition-all ${sec.visible ? 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100' : 'bg-surface-elevated border-border text-muted hover:bg-surface-elevated'}`}
+                  className={`flex items-center gap-2 px-3 py-1.5 text-xs font-bold font-inter rounded-full border transition-all ${sec.visible ? 'bg-emerald-950/40 border-emerald-800/40 text-emerald-400 hover:bg-emerald-900/50' : 'bg-surface-elevated border-border text-muted hover:bg-surface-elevated'}`}
                 >
                   {sec.visible ? <Eye size={12}/> : <EyeOff size={12}/>}
                   {sec.visible ? "Visible" : "Hidden"}
@@ -1486,7 +1490,7 @@ function PagesTab() {
       </div>
       
       {saved && (
-        <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-lg font-inter text-sm flex items-center gap-2">
+        <div className="bg-emerald-950/40 border border-emerald-800/40 text-emerald-300 px-4 py-3 rounded-lg font-inter text-sm flex items-center gap-2">
           <Check size={16}/> Page saved successfully.
         </div>
       )}
@@ -1766,12 +1770,12 @@ function GazetteTab() {
                     </td>
                     <td className="py-3.5 px-4">
                       {sub.status === "ACTIVE" ? (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 font-medium text-[11px]">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-medium text-[11px]">
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                           Active
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-stone-500/10 border border-stone-500/20 text-stone-600 font-medium text-[11px]">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-muted/10 border border-muted/20 text-muted font-medium text-[11px]">
                           Unsubscribed
                         </span>
                       )}
@@ -1920,7 +1924,7 @@ function GazetteTab() {
               </div>
 
               {broadcastResult && (
-                <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 font-inter text-xs flex items-center gap-2">
+                <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-inter text-xs flex items-center gap-2">
                   <CheckCircle size={15} />
                   <span>{broadcastResult}</span>
                 </div>
