@@ -23,12 +23,8 @@ export default function ProductCard({ product, imageUrl = PLACEHOLDER_IMAGE, pri
   const uniqueSizes = product?.variants 
     ? Array.from(new Set(product.variants.map((v: any) => v.size).filter(Boolean))).slice(0, 4) as string[]
     : [];
-  const uniqueColors = product?.variants
-    ? Array.from(new Set(product.variants.map((v: any) => v.color).filter(Boolean))) as string[]
-    : [];
     
   const [selectedSize, setSelectedSize] = useState<string | null>(uniqueSizes.length === 1 ? uniqueSizes[0] : null);
-  const [selectedColor, setSelectedColor] = useState<string | null>(uniqueColors.length === 1 ? uniqueColors[0] : null);
 
   const router = useRouter();
   const sessionId = useCartStore((state) => state.sessionId);
@@ -95,12 +91,23 @@ export default function ProductCard({ product, imageUrl = PLACEHOLDER_IMAGE, pri
   
   const inStockVariants = product?.variants?.filter((v: any) => v.stockStatus === 'instock') || [];
   const inStockSizes = new Set(inStockVariants.map((v: any) => v.size));
-  const inStockColors = new Set(inStockVariants.map((v: any) => v.color));
 
-  const needsSelection = (uniqueSizes.length > 1 && !selectedSize) || (uniqueColors.length > 1 && !selectedColor);
+  const needsSelection = uniqueSizes.length > 1 && !selectedSize;
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    // Don't navigate if user clicked an interactive child button or pill
+    if (target.closest('button') || target.closest('[data-interactive="true"]')) {
+      return;
+    }
+    if (productUrl && productUrl !== '#') {
+      router.push(productUrl);
+    }
+  };
 
   return (
     <div 
+      onClick={handleCardClick}
       className="group flex flex-col w-full max-w-[245px] rounded-2xl cursor-pointer overflow-hidden transition-all duration-300 hover:-translate-y-1"
       style={{
         background: "rgba(255, 252, 244, 0.62)",
@@ -156,68 +163,38 @@ export default function ProductCard({ product, imageUrl = PLACEHOLDER_IMAGE, pri
         {/* Bottom Overlays */}
         <div className="absolute bottom-0 w-full flex flex-col z-20 pointer-events-none">
           {/* Variant Selector (Hover or Active) */}
-          {(displaySizes.length > 0 || uniqueColors.length > 0) && (
+          {displaySizes.length > 0 && (
             <div 
               className={`flex flex-col items-center justify-center min-h-[36px] py-2 w-full bg-black/40 backdrop-blur-md transition-all duration-300 pointer-events-auto gap-2 ${
                 (isHovered || showVariantSelector) ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0 pointer-events-none'
               }`}
             >
-              {/* Colors */}
-              {uniqueColors.length > 0 && (
-                <div className="flex flex-wrap justify-center gap-[6px] px-2 w-full">
-                  {uniqueColors.map((color: string) => {
-                    const isAvailable = inStockColors.has(color);
-                    const isSelected = selectedColor === color;
-                    return (
-                      <div 
-                        key={color} 
-                        onClick={(e) => { 
-                          e.stopPropagation(); 
-                          e.preventDefault();
-                          if (isAvailable) setSelectedColor(color); 
-                        }} 
-                        className={`w-[18px] h-[18px] rounded-full transition-all flex items-center justify-center ${
-                          !isAvailable ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'
-                        } ${isSelected ? 'ring-2 ring-white ring-offset-1 ring-offset-black/50' : 'ring-1 ring-white/50 hover:ring-white'}`}
-                        style={{ backgroundColor: color.toLowerCase() }}
-                        title={color}
-                      />
-                    );
-                  })}
-                </div>
-              )}
-
               {/* Sizes */}
-              {displaySizes.length > 0 && (
-                <div className="flex flex-wrap justify-center gap-[4px] px-2 w-full">
-                  {displaySizes.map((size: string) => {
-                    // Check if this size is available for the selected color (if any)
-                    const isAvailableForColor = selectedColor 
-                      ? inStockVariants.some((v: any) => v.size === size && v.color === selectedColor)
-                      : inStockSizes.has(size);
-                    
-                    const isSelected = selectedSize === size;
-                    return (
-                      <div 
-                        key={size} 
-                        onClick={(e) => { 
-                          e.stopPropagation(); 
-                          e.preventDefault();
-                          if (isAvailableForColor) setSelectedSize(size); 
-                        }} 
-                        className={`flex justify-center items-center px-1.5 min-w-[28px] h-[20px] rounded-full transition-colors ${
-                          !isAvailableForColor ? 'bg-black/50 border border-white/10 cursor-not-allowed opacity-50' : 
-                          isSelected ? 'bg-white border border-white cursor-pointer' : 'bg-black/80 border border-white/20 cursor-pointer hover:bg-black'
-                        }`}
-                      >
-                        <span className={`font-inter font-bold text-[10px] truncate max-w-[50px] ${
-                          isSelected ? 'text-black' : 'text-white'
-                        }`}>{size}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+              <div className="flex flex-wrap justify-center gap-[4px] px-2 w-full">
+                {displaySizes.map((size: string) => {
+                  const isAvailable = inStockSizes.has(size);
+                  const isSelected = selectedSize === size;
+                  return (
+                    <div 
+                      key={size}
+                      data-interactive="true"
+                      onClick={(e) => { 
+                        e.stopPropagation(); 
+                        e.preventDefault();
+                        if (isAvailable) setSelectedSize(size); 
+                      }} 
+                      className={`flex justify-center items-center px-1.5 min-w-[28px] h-[20px] rounded-full transition-colors ${
+                        !isAvailable ? 'bg-black/50 border border-white/10 cursor-not-allowed opacity-50' : 
+                        isSelected ? 'bg-white border border-white cursor-pointer' : 'bg-black/80 border border-white/20 cursor-pointer hover:bg-black'
+                      }`}
+                    >
+                      <span className={`font-inter font-bold text-[10px] truncate max-w-[50px] ${
+                        isSelected ? 'text-black' : 'text-white'
+                      }`}>{size}</span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
           
@@ -233,12 +210,10 @@ export default function ProductCard({ product, imageUrl = PLACEHOLDER_IMAGE, pri
                 return;
               }
 
-              const variantToAdd = (selectedSize || selectedColor) 
+              const variantToAdd = selectedSize
                 ? product?.variants?.find((v: any) => 
-                    (!uniqueSizes.length || v.size === selectedSize) && 
-                    (!uniqueColors.length || v.color === selectedColor) &&
-                    v.stockStatus === 'instock'
-                  ) 
+                    v.size === selectedSize && v.stockStatus === 'instock'
+                  ) || defaultVariant
                 : defaultVariant;
 
               if (inStock && variantToAdd) {

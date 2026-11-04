@@ -21,3 +21,4 @@ config.bat
 # Playwright test artifacts & screenshots
 tests/screenshots/
 test-results/
+*.tsbuildinfo

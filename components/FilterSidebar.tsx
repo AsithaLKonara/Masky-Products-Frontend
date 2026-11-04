@@ -21,11 +21,9 @@ export default function FilterSidebar({ isOpen = true, onToggle }: FilterSidebar
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     categories: true,
     price: true,
-    colors: true,
     size: true,
   });
 
-  const selectedColor = searchParams.get("color") || "";
   const selectedSize = searchParams.get("size") || "";
   const searchQuery = searchParams.get("search") || "";
   const [localSearch, setLocalSearch] = useState(searchQuery);
@@ -95,42 +93,11 @@ export default function FilterSidebar({ isOpen = true, onToggle }: FilterSidebar
   
   const { data: filters } = useProductFilters();
   
-  const COLOR_MAP: Record<string, string> = {
-    black: '#000000', white: '#FFFFFF', red: '#EF4444', blue: '#3B82F6', green: '#22C55E',
-    yellow: '#EAB308', purple: '#A855F7', pink: '#EC4899', orange: '#F97316', gray: '#6B7280',
-    grey: '#6B7280', brown: '#8B4513', navy: '#1E3A8A', teal: '#14B8A6', maroon: '#7F1D1D',
-    olive: '#4D7C0F', silver: '#D1D5DB', gold: '#F59E0B', beige: '#F5F5DC', mustard: '#EAB308',
-    burgundy: '#800020', ash: '#B2BEB5'
-  };
+  // Dynamic real pack sizes directly from product variant attributes in the API
+  const rawSizes = filters?.sizes || [];
+  const sizes = Array.from(new Set(rawSizes.filter(Boolean)));
 
-  const getHexColor = (colorName: string) => {
-    const normalized = colorName.toLowerCase().replace(/ /g, '');
-    if (COLOR_MAP[normalized]) return COLOR_MAP[normalized];
-    for (const [key, hex] of Object.entries(COLOR_MAP)) {
-      if (normalized.includes(key)) return hex;
-    }
-    return null;
-  };
-  
-  const rawColors = filters?.colors?.filter((color: string) => !color.includes(',') && isNaN(Number(color))) || [];
-  
-  const colors = rawColors
-    .map((color: string) => {
-      const hex = getHexColor(color);
-      if (!hex) return null;
-      return {
-        id: color,
-        hex,
-        border: hex === '#FFFFFF' || hex.toLowerCase() === '#f5f5dc'
-      };
-    })
-    .filter(Boolean)
-    .slice(0, 14) as { id: string; hex: string; border: boolean }[];
-
-  const allowedSizes = ["S", "M", "L", "XL", "UK 08", "UK 10", "UK 12", "Free Size"];
-  const sizes = allowedSizes.filter(size => filters?.sizes?.includes(size) || ["S", "M", "L", "XL"].includes(size));
-
-  const hasActiveFilters = Boolean(selectedColor || selectedSize || searchQuery || minPriceParam || maxPriceParam);
+  const hasActiveFilters = Boolean(selectedSize || searchQuery || minPriceParam || maxPriceParam);
 
   if (!isOpen) {
     return (
@@ -282,40 +249,7 @@ export default function FilterSidebar({ isOpen = true, onToggle }: FilterSidebar
 
       <div className="w-full h-px bg-[#DCDCCB]/70" />
 
-      {/* Colors Section */}
-      <div className="flex flex-col w-full gap-3">
-        <div 
-          className="flex justify-between items-center cursor-pointer group"
-          onClick={() => toggleSection("colors")}
-        >
-          <h3 className="font-poppins font-semibold text-[11px] uppercase tracking-[0.16em] text-[#62695A] group-hover:text-[#203C2B] transition-colors">
-            Color Palette
-          </h3>
-          {openSections.colors ? <ChevronUp size={16} className="text-[#62695A]" /> : <ChevronDown size={16} className="text-[#62695A]" />}
-        </div>
-        
-        {openSections.colors && (
-          <div className="flex flex-wrap gap-2.5 w-full pt-1">
-            {colors.map((color) => (
-              <button
-                key={color.id}
-                onClick={() => updateParam("color", color.id)}
-                className={`relative w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 cursor-pointer shadow-2xs ${
-                  color.border ? "border border-[#DCDCCB]" : ""
-                } ${selectedColor === color.id ? "ring-2 ring-offset-2 ring-[#203C2B]" : "hover:ring-1 hover:ring-[#71865B]/60"}`}
-                style={{ backgroundColor: color.hex }}
-                title={color.id}
-              >
-                {selectedColor === color.id && (
-                  <Check size={14} className={color.id === "white" ? "text-[#203C2B]" : "text-white"} />
-                )}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
 
-      <div className="w-full h-px bg-[#DCDCCB]/70" />
 
       {/* Size Section */}
       <div className="flex flex-col w-full gap-3">

@@ -26,15 +26,14 @@ export default function ShopContent({ initialData }: { initialData?: PaginatedRe
 
   const searchParams = useSearchParams();
   const search = searchParams.get("search") || undefined;
-  const color = searchParams.get("color") || undefined;
   const size = searchParams.get("size") || undefined;
   const minPrice = searchParams.get("minPrice") ? Number(searchParams.get("minPrice")) : undefined;
   const maxPrice = searchParams.get("maxPrice") ? Number(searchParams.get("maxPrice")) : undefined;
 
   // Pagination logic
   const skip = (currentPage - 1) * itemsPerPage;
-  const filters = { skip, take: itemsPerPage, search, color, size, minPrice, maxPrice };
-  const hasFilters = Boolean(search || color || size || minPrice !== undefined || maxPrice !== undefined);
+  const filters = { skip, take: itemsPerPage, search, size, minPrice, maxPrice };
+  const hasFilters = Boolean(search || size || minPrice !== undefined || maxPrice !== undefined);
   
   const { data: response, isLoading } = useProducts(filters, (skip === 0 && !hasFilters) ? initialData : undefined);
   
@@ -144,14 +143,7 @@ export default function ShopContent({ initialData }: { initialData?: PaginatedRe
               </span>
             )}
 
-            {color && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 border border-[#DCDCCB] text-[#203C2B] text-xs font-poppins">
-                Color: {color}
-                <button onClick={() => clearFilter('color')} className="hover:text-red-500 cursor-pointer">
-                  <X size={12} />
-                </button>
-              </span>
-            )}
+
 
             {size && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 border border-[#DCDCCB] text-[#203C2B] text-xs font-poppins">
