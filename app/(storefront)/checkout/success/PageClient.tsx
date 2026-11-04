@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { CheckCircle2, ChevronRight, Package, Loader2, Sparkles } from "lucide-react";
 import { useOrderConfirmation } from "@/hooks/useOrders";
 import CategoryBar from "@/components/CategoryBar";
+import { api } from "@/services/api";
 
 function CheckoutSuccessContent() {
   const searchParams = useSearchParams();
@@ -35,8 +36,8 @@ function CheckoutSuccessContent() {
     if (order.paymentMethod?.toUpperCase() !== 'COD' && (order.paymentStatus === 'UNPAID' || order.paymentStatus === 'PENDING')) {
       const interval = setInterval(async () => {
         try {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/payments/status/${order.orderNumber}`);
-          const data = await res.json();
+          const res = await api.get(`/payments/status/${order.orderNumber}`);
+          const data = res.data;
           if (data.success && (data.paymentStatus === 'PAID' || data.paymentStatus === 'FAILED' || data.paymentStatus === 'COD_PENDING')) {
             window.location.reload();
           }

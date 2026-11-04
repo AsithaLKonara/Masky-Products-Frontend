@@ -25,6 +25,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { useBarcodeScanner } from "@/hooks/useBarcodeScanner";
 import { globalDialog } from "@/store/dialog.store";
 import { useAuthStore } from "@/store/auth.store";
+import { api } from "@/services/api";
 
 export default function POSPage() {
   const router = useRouter();
@@ -65,9 +66,8 @@ export default function POSPage() {
     if (pollingOrder) {
       interval = setInterval(async () => {
         try {
-          const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-          const res = await fetch(`${baseUrl}/api/payments/status/${pollingOrder.orderNumber}`);
-          const data = await res.json();
+          const res = await api.get(`/payments/status/${pollingOrder.orderNumber}`);
+          const data = res.data;
           if (data.paymentStatus === 'PAID') {
             clearInterval(interval);
             setPollingOrder(null);

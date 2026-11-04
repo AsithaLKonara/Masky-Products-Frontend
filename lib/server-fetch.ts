@@ -8,14 +8,21 @@ export interface ServerFetchOptions extends Omit<RequestInit, 'body'> {
 export async function serverFetch<T>(endpoint: string, options?: ServerFetchOptions): Promise<T> {
   // During static build, if no real API URL is configured, bail out immediately
   // so the build doesn't hang waiting for a non-existent server.
-  const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "");
+  let apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "");
   if (!apiUrl) {
     // Return null-ish so pages can gracefully skip SSG data
     return undefined as unknown as T;
   }
+  if (!apiUrl.endsWith('/api/v1')) {
+    apiUrl = `${apiUrl}/api/v1`;
+  }
 
-  // Ensure endpoint starts with a slash
-  let url = endpoint.startsWith('/') ? `${apiUrl}${endpoint}` : `${apiUrl}/${endpoint}`;
+  // Ensure endpoint starts with a slash and avoid duplicate /api/v1 prefix
+  let cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  if (cleanEndpoint.startsWith('/api/v1/')) {
+    cleanEndpoint = cleanEndpoint.replace('/api/v1', '');
+  }
+  let url = `${apiUrl}${cleanEndpoint}`;
 
   // Append a hardcoded cache buster to completely bypass the stale Next.js fetch cache key
   const cacheBuster = "cb=20260824v3";

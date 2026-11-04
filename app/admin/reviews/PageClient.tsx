@@ -85,7 +85,8 @@ export default function AdminReviewsPage() {
     if (filter !== "ALL") query.set("status", filter);
     if (debouncedSearch) query.set("search", debouncedSearch);
     
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+    let apiUrl = (process.env.NEXT_PUBLIC_API_URL || '/api/v1').replace(/\/+$/, '');
+    if (!apiUrl.endsWith('/api/v1')) apiUrl = `${apiUrl}/api/v1`;
     
     try {
       const res = await fetch(`${apiUrl}/reviews/export?${query.toString()}`, {

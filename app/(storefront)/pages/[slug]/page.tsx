@@ -6,23 +6,15 @@ import type { Metadata } from "next";
 import { Sparkles } from "lucide-react";
 import CategoryBar from "@/components/CategoryBar";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import { serverFetch } from "@/lib/server-fetch";
 
 // Force dynamic since we're fetching from a backend API
 export const dynamic = "force-dynamic";
 
 async function getPageData(slug: string) {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
-    const res = await fetch(`${baseUrl}/cms/pages/slug/${slug}`, {
-      cache: "no-store"
-    });
-    
-    if (!res.ok) {
-      if (res.status === 404) return null;
-      throw new Error(`Failed to fetch page: ${res.statusText}`);
-    }
-    
-    return await res.json();
+    const page = await serverFetch<any>(`/cms/pages/slug/${slug}`);
+    return page || null;
   } catch (error) {
     console.error("Error fetching static page:", error);
     return null;

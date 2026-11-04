@@ -2,9 +2,11 @@ import axios from "axios";
 
 // Use relative URL for client-side to go through Next.js proxy, absolute for server-side
 const isServer = typeof window === 'undefined';
-const baseURL = isServer 
-  ? (process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:5000/api/v1") 
-  : "/api/v1";
+let serverBaseUrl = (process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:5000/api/v1").replace(/\/+$/, "");
+if (!serverBaseUrl.endsWith('/api/v1')) {
+  serverBaseUrl = `${serverBaseUrl}/api/v1`;
+}
+const baseURL = isServer ? serverBaseUrl : "/api/v1";
 
 export const api = axios.create({
   baseURL,

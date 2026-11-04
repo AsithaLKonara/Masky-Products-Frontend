@@ -46,7 +46,11 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   async rewrites() {
-    const apiDest = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000/api/v1';
+    let apiDest = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000/api/v1';
+    apiDest = apiDest.replace(/\/+$/, '');
+    if (!apiDest.endsWith('/api/v1')) {
+      apiDest = `${apiDest}/api/v1`;
+    }
     return [
       {
         source: '/api/v1/:path*',
