@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Play, Pause, Sparkles, Leaf, ShieldCheck } from "lucide-react";
@@ -13,6 +13,11 @@ interface HeroVideoProps {
 export default function HeroVideo({ config }: HeroVideoProps) {
   const [isPlaying, setIsPlaying] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const layout = document.getElementById("storefront-layout");
+    if (layout) layout.style.paddingTop = "0px";
+  }, []);
 
   const videoUrl = config?.videoUrl?.trim() || "";
   const posterUrl = config?.posterUrl?.trim() || "/hero-image/Product1.png";
@@ -41,6 +46,7 @@ export default function HeroVideo({ config }: HeroVideoProps) {
 
   return (
     <section 
+      id="hero-section"
       data-testid="hero-video-section"
       className="relative w-full min-h-[700px] md:min-h-[800px] lg:min-h-[860px] flex items-center justify-center overflow-hidden bg-[#1A261D]"
     >

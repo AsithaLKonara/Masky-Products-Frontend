@@ -16,9 +16,14 @@ export default function PromoBanner() {
       .then(res => {
         const activeBanners = (res.data.data || res.data).filter((b: any) => b.active && b.type !== 'PROMO');
         setBanners(activeBanners);
-        if (activeBanners.length === 0) {
-          const layout = document.getElementById("storefront-layout");
-          if (layout) layout.style.paddingTop = "0px";
+        const layout = document.getElementById("storefront-layout");
+        if (layout) {
+          const isVideoOrPhoto = document.querySelector("[data-testid='hero-video-section'], [data-testid='hero-photo-section']");
+          if (activeBanners.length > 0 && !isVideoOrPhoto) {
+            layout.style.paddingTop = "34px";
+          } else if (isVideoOrPhoto) {
+            layout.style.paddingTop = "0px";
+          }
         }
       })
       .catch(console.error);

@@ -9,6 +9,7 @@ import { useCart as useOldCart } from "@/components/CartProvider";
 import { useCartStore } from "@/store/useCartStore";
 import { useAuthStore } from "@/store/auth.store";
 import { useCart } from "@/hooks/useCart";
+import { useCms } from "@/hooks/useCms";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -24,6 +25,7 @@ export default function Navbar() {
   const openDrawer = useCartStore((state) => state.openDrawer);
   const { isAuthenticated, isAdmin } = useAuthStore();
   const { data: cart } = useCart(sessionId);
+  const { heroConfig } = useCms();
   const [mounted, setMounted] = useState(false);
   
   useEffect(() => {
@@ -58,20 +60,26 @@ export default function Navbar() {
   }, [isHome]);
 
   const isHeroState = isHome && !isScrolled && !isMobileMenuOpen && !isSearchOpen;
+  const isVideoHero = isHome && heroConfig?.mode === "video";
+  const isVideoHeroActive = isVideoHero && isHeroState;
 
-  // Styling: transparent on hero section, frosted glass little white when scrolled
+  // Styling: frosted blur background when only on video hero, transparent on other heroes, frosted glass white when scrolled
   const navBgClass = isAuth
     ? "bg-black/20 backdrop-blur-md border-b border-white/5"
+    : isVideoHeroActive
+    ? "bg-[#142318]/70 backdrop-blur-md border-b border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.35)]"
     : isHeroState
     ? "bg-transparent border-b border-transparent shadow-none"
     : "bg-white/80 backdrop-blur-md border-b border-white/50 shadow-[0_4px_24px_rgba(0,0,0,0.04)]";
 
   const textColorClass = isAuth
     ? "text-stone-50"
+    : isVideoHeroActive
+    ? "text-[#FFFCF4]"
     : "text-[#203C2B]";
 
-  const hoverBgClass = isAuth
-    ? "hover:bg-white/10"
+  const hoverBgClass = isAuth || isVideoHeroActive
+    ? "hover:bg-white/15"
     : "hover:bg-[#203C2B]/10";
 
   const authText = mounted && isAuthenticated ? "DASHBOARD" : "LOGIN/REGISTER";
@@ -92,9 +100,9 @@ export default function Navbar() {
               {isMobileMenuOpen ? <X size={22} className={textColorClass} /> : <Menu size={22} className={textColorClass} />}
             </button>
           </div>
-          <Link href="/" className="flex items-center gap-2 group">
+          <Link href="/" className={`flex items-center gap-2 group ${textColorClass}`}>
             <span className={`font-signature font-bold tracking-[0.18em] text-lg md:text-xl uppercase transition-colors ${textColorClass}`}>
-              MASKY <span className="font-light tracking-[0.22em] text-xs md:text-sm opacity-85">PRODUCT</span>
+              MASKY <span className={`font-light tracking-[0.22em] text-xs md:text-sm ${isVideoHeroActive ? "text-[#DCDCCB]" : "opacity-85"}`}>PRODUCT</span>
             </span>
           </Link>
         </div>
@@ -109,8 +117,12 @@ export default function Navbar() {
                 href={link.href} 
                 className={`px-4 py-1.5 rounded-full transition-all duration-300 ${
                   isActive 
-                    ? "bg-[#627254] text-[#FFFCF4] shadow-sm font-semibold" 
-                    : `${textColorClass} hover:text-[#203C2B] hover:bg-stone-200/40`
+                    ? isVideoHeroActive
+                      ? "bg-white/20 text-[#FFFCF4] backdrop-blur-sm border border-white/25 shadow-sm font-semibold"
+                      : "bg-[#627254] text-[#FFFCF4] shadow-sm font-semibold" 
+                    : isVideoHeroActive
+                      ? "text-[#FFFCF4] hover:text-white hover:bg-white/15"
+                      : `${textColorClass} hover:text-[#203C2B] hover:bg-stone-200/40`
                 }`}
               >
                 {link.name}
@@ -124,7 +136,11 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center mr-1">
             <Link 
               href={authHref} 
-              className={`font-poppins font-medium text-[11px] tracking-wider uppercase transition-all px-3 py-1.5 rounded-full hover:bg-stone-200/40 ${textColorClass}`}
+              className={`font-poppins font-medium text-[11px] tracking-wider uppercase transition-all px-3 py-1.5 rounded-full ${
+                isVideoHeroActive
+                  ? "text-[#FFFCF4] hover:text-white hover:bg-white/15"
+                  : `${textColorClass} hover:bg-stone-200/40`
+              }`}
             >
               {authText}
             </Link>
@@ -146,18 +162,24 @@ export default function Navbar() {
           
           <button 
             onClick={openDrawer} 
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all border border-[#DCDCCB] bg-[#FFFCF4]/80 hover:bg-[#FFFCF4] shadow-sm ${hoverBgClass}`}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all shadow-sm ${
+              isVideoHeroActive
+                ? "border border-white/20 bg-white/15 hover:bg-white/25 backdrop-blur-md text-[#FFFCF4]"
+                : `border border-[#DCDCCB] bg-[#FFFCF4]/80 hover:bg-[#FFFCF4] ${hoverBgClass}`
+            }`}
             aria-label="Shopping Cart"
           >
             <div className="relative">
-              <ShoppingCart size={17} className={textColorClass} />
+              <ShoppingCart size={17} className={isVideoHeroActive ? "text-[#FFFCF4]" : textColorClass} />
               {itemCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-[#203C2B] text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                <span className={`absolute -top-2 -right-2 text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center ${
+                  isVideoHeroActive ? "bg-[#D9C99B] text-[#203C2B]" : "bg-[#203C2B] text-white"
+                }`}>
                   {itemCount}
                 </span>
               )}
             </div>
-            <span className={`hidden sm:inline font-semibold text-[11px] font-poppins ${textColorClass}`}>
+            <span className={`hidden sm:inline font-semibold text-[11px] font-poppins ${isVideoHeroActive ? "text-[#FFFCF4]" : textColorClass}`}>
               Rs: {subtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
           </button>

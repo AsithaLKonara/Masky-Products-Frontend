@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Leaf, Sparkles, ShieldCheck, HeartHandshake, CheckCircle2 } from "lucide-react";
@@ -11,6 +11,10 @@ interface HeroPhotoSplitProps {
 }
 
 export default function HeroPhotoSplit({ config }: HeroPhotoSplitProps) {
+  useEffect(() => {
+    const layout = document.getElementById("storefront-layout");
+    if (layout) layout.style.paddingTop = "0px";
+  }, []);
   const imageUrl = config?.imageUrl?.trim() || "/hero-image/Product1.png";
   const eyebrow = config?.eyebrow || "100% ORGANIC HIGHLAND HARVEST";
   const title = config?.title || "Pure Artisanal Mushrooms";
@@ -27,6 +31,7 @@ export default function HeroPhotoSplit({ config }: HeroPhotoSplitProps) {
 
   return (
     <section 
+      id="hero-section"
       data-testid="hero-photo-section"
       className="relative w-full min-h-[720px] lg:min-h-[820px] bg-[#FEF6E4] flex items-center overflow-hidden py-16 sm:py-20 lg:py-24"
     >
