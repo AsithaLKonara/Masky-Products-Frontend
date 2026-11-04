@@ -34,7 +34,10 @@ function HeroTab() {
   const [editData, setEditData] = useState<Partial<HeroSlide>>({});
   const [slideSaved, setSlideSaved] = useState(false);
   const [configSaved, setConfigSaved] = useState(false);
+  const [isSavingSlide, setIsSavingSlide] = useState(false);
+  const [slideError, setSlideError] = useState<string | null>(null);
   const [pickerTarget, setPickerTarget] = useState<"slide" | "video" | "videoPoster" | "photo" | null>(null);
+  const slidesSectionRef = useRef<HTMLDivElement>(null);
 
   const activeMode = heroConfig?.mode || "slider";
 
@@ -103,19 +106,39 @@ function HeroTab() {
   const cancelEdit = () => {
     setEditingId(null);
     setEditData({});
+    setSlideError(null);
   };
 
   const saveEdit = async () => {
-    const { id, createdAt, updatedAt, lastEdited, ...updateData } = editData as any;
-    if (editingId && !editingId.startsWith("new-")) {
-      await updateHeroSlide.mutateAsync({ id: editingId, data: updateData });
-    } else {
-      await createHeroSlide.mutateAsync(updateData);
+    try {
+      setIsSavingSlide(true);
+      setSlideError(null);
+      const { id, createdAt, updatedAt, lastEdited, ...updateData } = editData as any;
+      
+      if (!updateData.title || !updateData.title.trim()) {
+        setSlideError("Please enter a title for the slide.");
+        setIsSavingSlide(false);
+        return;
+      }
+      if (!updateData.image || !updateData.image.trim()) {
+        updateData.image = "/hero-image/Product1.png";
+      }
+
+      if (editingId && !editingId.startsWith("new-")) {
+        await updateHeroSlide.mutateAsync({ id: editingId, data: updateData });
+      } else {
+        await createHeroSlide.mutateAsync(updateData);
+      }
+      setEditingId(null);
+      setEditData({});
+      setSlideSaved(true);
+      setTimeout(() => setSlideSaved(false), 2500);
+    } catch (err: any) {
+      console.error("Save slide failed:", err);
+      setSlideError(err?.response?.data?.error || err?.message || "Failed to save slide.");
+    } finally {
+      setIsSavingSlide(false);
     }
-    setEditingId(null);
-    setEditData({});
-    setSlideSaved(true);
-    setTimeout(() => setSlideSaved(false), 2000);
   };
 
   const toggleActive = async (id: string) => {
@@ -139,20 +162,24 @@ function HeroTab() {
   };
 
   const addSlide = () => {
+    setSlideError(null);
     const newSlide: any = {
       id: `new-${Date.now()}`,
-      title: "New Slide",
-      subtitle: "Collection Edition",
-      description: "Description of the slide collection.",
-      eyebrow: "THE COLLECTION",
+      title: "New Gourmet Harvest",
+      subtitle: "Artisan Mushroom Selection",
+      description: "Sun-kissed organic mushrooms delicately prepared for peak culinary umami.",
+      eyebrow: "ORGANIC HARVEST",
       cta: "Explore Now",
       ctaLink: "/shop",
       image: "/hero-image/Product1.png",
       accentColor: "#71865B",
-      active: false,
-      order: heroSlides.length + 1,
+      active: true,
+      order: (heroSlides?.length || 0) + 1,
     };
     startEdit(newSlide);
+    setTimeout(() => {
+      slidesSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }, 50);
   };
 
   if (isLoadingHero || isLoadingHeroConfig) {
@@ -296,222 +323,326 @@ function HeroTab() {
       </div>
 
       {/* ─── Mode 1: Interactive 3D Slider Slides Manager ─────────── */}
-      {activeMode === "slider" && (
-        <div className="flex flex-col gap-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <h4 className="font-inter font-bold text-sm text-foreground">Carousel Slides</h4>
-              <p className="font-inter text-xs text-muted mt-0.5">
-                Manage the slides shown in the 3D rotating carousel.
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              {slideSaved && (
-                <span className="text-emerald-600 font-inter text-xs font-semibold flex items-center gap-1 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-                  <Check size={14} /> Saved
-                </span>
-              )}
-              <button
-                onClick={addSlide}
-                className="flex items-center gap-2 bg-[#203C2B] text-white px-4 py-2 rounded-lg font-inter font-medium text-sm hover:bg-[#16291e] transition-colors shadow-sm"
-              >
-                <Plus size={16} /> Add Slide
-              </button>
-            </div>
-          </div>
+      {activeMode === "slider" && (() => {
+        const isCreatingNew = Boolean(editingId && editingId.startsWith("new-"));
+        const sortedSlides = [...heroSlides].sort((a: HeroSlide, b: HeroSlide) => a.order - b.order);
+        const displayedSlides: HeroSlide[] = isCreatingNew
+          ? [
+              {
+                id: editingId as string,
+                title: editData.title || "",
+                subtitle: editData.subtitle || "",
+                description: editData.description || "",
+                eyebrow: (editData as any).eyebrow || "",
+                cta: editData.cta || "",
+                ctaLink: editData.ctaLink || "",
+                image: editData.image || "/hero-image/Product1.png",
+                accentColor: editData.accentColor || "#71865B",
+                active: editData.active ?? true,
+                order: editData.order ?? (heroSlides.length + 1),
+              },
+              ...sortedSlides,
+            ]
+          : sortedSlides;
 
-          <div className="flex flex-col gap-3">
-            {[...heroSlides]
-              .sort((a: HeroSlide, b: HeroSlide) => a.order - b.order)
-              .map((slide: HeroSlide) => (
-                <div
-                  key={slide.id}
-                  className={`bg-surface border rounded-xl shadow-sm overflow-hidden ${
-                    slide.active ? "border-border" : "border-border/50 opacity-70"
-                  }`}
+        return (
+          <div ref={slidesSectionRef} className="flex flex-col gap-4">
+            <div className="flex justify-between items-center">
+              <div>
+                <h4 className="font-inter font-bold text-sm text-foreground">Carousel Slides</h4>
+                <p className="font-inter text-xs text-muted mt-0.5">
+                  Manage the slides shown in the 3D rotating carousel.
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                {slideSaved && (
+                  <span className="text-emerald-600 font-inter text-xs font-semibold flex items-center gap-1 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                    <Check size={14} /> Saved
+                  </span>
+                )}
+                <button
+                  onClick={addSlide}
+                  id="add-slide-btn"
+                  className="flex items-center gap-2 bg-[#203C2B] text-white px-4 py-2 rounded-lg font-inter font-medium text-sm hover:bg-[#16291e] transition-colors shadow-sm"
                 >
-                  {editingId === slide.id ? (
-                    <div className="p-5 flex flex-col gap-4">
-                      <p className="font-inter text-xs text-muted font-semibold uppercase tracking-wider border-b border-border/40 pb-2">
-                        Content
-                      </p>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-1.5">
-                          <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
-                            Title (Headline)
-                          </label>
-                          <input
-                            value={editData.title || ""}
-                            onChange={(e) => setEditData((p) => ({ ...p, title: e.target.value }))}
-                            className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
-                            placeholder="e.g. Champagne"
-                          />
-                        </div>
-                        <div className="flex flex-col gap-1.5">
-                          <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
-                            Subtitle (Italic line)
-                          </label>
-                          <input
-                            value={editData.subtitle || ""}
-                            onChange={(e) => setEditData((p) => ({ ...p, subtitle: e.target.value }))}
-                            className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
-                            placeholder="e.g. Cream Edition"
-                          />
-                        </div>
-                        <div className="flex flex-col gap-1.5 md:col-span-2">
-                          <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
-                            Eyebrow Text
-                          </label>
-                          <input
-                            value={(editData as any).eyebrow || ""}
-                            onChange={(e) => setEditData((p) => ({ ...p, eyebrow: e.target.value }))}
-                            className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
-                            placeholder="e.g. THE SIGNATURE COLLECTION"
-                          />
-                        </div>
-                        <div className="flex flex-col gap-1.5 md:col-span-2">
-                          <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
-                            Description
-                          </label>
-                          <textarea
-                            value={editData.description || ""}
-                            onChange={(e) => setEditData((p) => ({ ...p, description: e.target.value }))}
-                            className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary h-20 resize-none"
-                            placeholder="Short narrative text shown below title..."
-                          />
-                        </div>
-                      </div>
+                  <Plus size={16} /> Add Slide
+                </button>
+              </div>
+            </div>
 
-                      <p className="font-inter text-xs text-muted font-semibold uppercase tracking-wider border-b border-border/40 pb-2 mt-2">
-                        Buttons & Call-to-Action
-                      </p>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-1.5">
-                          <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
-                            Primary CTA Text
-                          </label>
-                          <input
-                            value={editData.cta || ""}
-                            onChange={(e) => setEditData((p) => ({ ...p, cta: e.target.value }))}
-                            className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
-                            placeholder="e.g. Explore Collection"
-                          />
-                        </div>
-                        <div className="flex flex-col gap-1.5">
-                          <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
-                            Primary CTA Link
-                          </label>
-                          <input
-                            value={editData.ctaLink || ""}
-                            onChange={(e) => setEditData((p) => ({ ...p, ctaLink: e.target.value }))}
-                            className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"
-                            placeholder="e.g. /shop"
-                          />
-                        </div>
-                      </div>
+            {displayedSlides.length === 0 ? (
+              <div className="bg-surface border border-dashed border-border rounded-xl p-8 text-center flex flex-col items-center justify-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-surface-elevated flex items-center justify-center text-muted">
+                  <Sliders size={24} />
+                </div>
+                <div>
+                  <p className="font-inter font-semibold text-sm text-foreground">No slides configured yet</p>
+                  <p className="font-inter text-xs text-muted mt-1">
+                    Add your first rotating 3D carousel slide for the storefront homepage.
+                  </p>
+                </div>
+                <button
+                  onClick={addSlide}
+                  className="mt-2 flex items-center gap-2 bg-[#203C2B] text-white px-4 py-2 rounded-lg font-inter font-medium text-sm hover:bg-[#16291e] transition-colors"
+                >
+                  <Plus size={16} /> Add First Slide
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {displayedSlides.map((slide: HeroSlide) => (
+                  <div
+                    key={slide.id}
+                    className={`bg-surface border rounded-xl shadow-sm overflow-hidden transition-all ${
+                      editingId === slide.id
+                        ? "border-[#203C2B] ring-1 ring-[#203C2B]/30"
+                        : slide.active
+                        ? "border-border"
+                        : "border-border/50 opacity-70"
+                    }`}
+                  >
+                    {editingId === slide.id ? (
+                      <div className="p-5 flex flex-col gap-4">
+                        {slide.id.startsWith("new-") && (
+                          <div className="flex items-center justify-between pb-3 border-b border-border/40">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#203C2B]/10 text-[#203C2B] border border-[#203C2B]/20">
+                                New Slide (Draft)
+                              </span>
+                              <span className="text-xs text-muted">Fill out the slide details and click Save Slide</span>
+                            </div>
+                          </div>
+                        )}
 
-                      <p className="font-inter text-xs text-muted font-semibold uppercase tracking-wider border-b border-border/40 pb-2 mt-2">
-                        Media
-                      </p>
-                      <div className="flex flex-col gap-2">
-                        <div className="flex gap-2">
-                          <input
-                            value={editData.image || ""}
-                            onChange={(e) => setEditData((p) => ({ ...p, image: e.target.value }))}
-                            placeholder="/hero-image/Product1.png"
-                            className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary flex-1 font-mono text-xs"
-                          />
+                        {slideError && (
+                          <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-inter flex items-center gap-2">
+                            <AlertCircle size={15} />
+                            {slideError}
+                          </div>
+                        )}
+
+                        <p className="font-inter text-xs text-muted font-semibold uppercase tracking-wider border-b border-border/40 pb-2">
+                          Content
+                        </p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="flex flex-col gap-1.5">
+                            <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                              Title (Headline) *
+                            </label>
+                            <input
+                              value={editData.title || ""}
+                              onChange={(e) => setEditData((p) => ({ ...p, title: e.target.value }))}
+                              className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary bg-background"
+                              placeholder="e.g. Champagne"
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1.5">
+                            <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                              Subtitle (Italic line)
+                            </label>
+                            <input
+                              value={editData.subtitle || ""}
+                              onChange={(e) => setEditData((p) => ({ ...p, subtitle: e.target.value }))}
+                              className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary bg-background"
+                              placeholder="e.g. Cream Edition"
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1.5 md:col-span-2">
+                            <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                              Eyebrow Text
+                            </label>
+                            <input
+                              value={(editData as any).eyebrow || ""}
+                              onChange={(e) => setEditData((p) => ({ ...p, eyebrow: e.target.value }))}
+                              className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary bg-background"
+                              placeholder="e.g. THE SIGNATURE COLLECTION"
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1.5 md:col-span-2">
+                            <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                              Description
+                            </label>
+                            <textarea
+                              value={editData.description || ""}
+                              onChange={(e) => setEditData((p) => ({ ...p, description: e.target.value }))}
+                              className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary h-20 resize-none bg-background"
+                              placeholder="Short narrative text shown below title..."
+                            />
+                          </div>
+                        </div>
+
+                        <p className="font-inter text-xs text-muted font-semibold uppercase tracking-wider border-b border-border/40 pb-2 mt-2">
+                          Buttons & Call-to-Action
+                        </p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="flex flex-col gap-1.5">
+                            <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                              Primary CTA Text
+                            </label>
+                            <input
+                              value={editData.cta || ""}
+                              onChange={(e) => setEditData((p) => ({ ...p, cta: e.target.value }))}
+                              className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary bg-background"
+                              placeholder="e.g. Explore Collection"
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1.5">
+                            <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                              Primary CTA Link
+                            </label>
+                            <input
+                              value={editData.ctaLink || ""}
+                              onChange={(e) => setEditData((p) => ({ ...p, ctaLink: e.target.value }))}
+                              className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary bg-background"
+                              placeholder="e.g. /shop"
+                            />
+                          </div>
+                        </div>
+
+                        <p className="font-inter text-xs text-muted font-semibold uppercase tracking-wider border-b border-border/40 pb-2 mt-2">
+                          Media & Visibility
+                        </p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="flex flex-col gap-2 md:col-span-2">
+                            <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                              Slide Image URL *
+                            </label>
+                            <div className="flex gap-2">
+                              <input
+                                value={editData.image || ""}
+                                onChange={(e) => setEditData((p) => ({ ...p, image: e.target.value }))}
+                                placeholder="/hero-image/Product1.png"
+                                className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary flex-1 font-mono text-xs bg-background"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setPickerTarget("slide")}
+                                className="px-3 py-2 bg-surface-elevated border border-border rounded-lg text-xs font-inter font-medium hover:bg-border/30 transition-colors flex items-center gap-1.5"
+                              >
+                                <ImageIcon size={14} /> Browse Media
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3 pt-2">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={editData.active ?? false}
+                                onChange={(e) => setEditData((p) => ({ ...p, active: e.target.checked }))}
+                                className="w-4 h-4 rounded text-[#203C2B] accent-[#203C2B] cursor-pointer"
+                              />
+                              <span className="font-inter text-xs font-semibold text-foreground">
+                                Set Slide Active (Visible on Storefront)
+                              </span>
+                            </label>
+                          </div>
+                        </div>
+
+                        <div className="flex gap-3 justify-end border-t border-border/50 pt-4">
                           <button
                             type="button"
-                            onClick={() => setPickerTarget("slide")}
-                            className="px-3 py-2 bg-surface-elevated border border-border rounded-lg text-xs font-inter font-medium hover:bg-border/30 transition-colors flex items-center gap-1.5"
+                            onClick={cancelEdit}
+                            disabled={isSavingSlide}
+                            className="px-4 py-2 border border-border text-foreground/80 rounded-lg font-inter text-sm hover:bg-surface-elevated transition-colors disabled:opacity-50"
                           >
-                            <ImageIcon size={14} /> Browse Media
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="flex gap-3 justify-end border-t border-border/50 pt-4">
-                        <button
-                          onClick={cancelEdit}
-                          className="px-4 py-2 border border-border text-foreground/80 rounded-lg font-inter text-sm hover:bg-surface-elevated transition-colors"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          onClick={saveEdit}
-                          className="px-4 py-2 bg-[#203C2B] text-white rounded-lg font-inter text-sm hover:bg-[#16291e] transition-colors flex items-center gap-2"
-                        >
-                          <Save size={14} /> Save Slide
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="p-4 flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-3">
-                        <div className="flex flex-col gap-1">
-                          <button
-                            onClick={() => moveSlide(slide.id, "up")}
-                            className="p-1 hover:bg-surface-elevated rounded text-muted hover:text-foreground"
-                          >
-                            <ChevronUp size={14} />
+                            Cancel
                           </button>
                           <button
-                            onClick={() => moveSlide(slide.id, "down")}
-                            className="p-1 hover:bg-surface-elevated rounded text-muted hover:text-foreground"
+                            type="button"
+                            onClick={saveEdit}
+                            disabled={isSavingSlide}
+                            className="px-4 py-2 bg-[#203C2B] text-white rounded-lg font-inter text-sm hover:bg-[#16291e] transition-colors flex items-center gap-2 disabled:opacity-50 shadow-sm"
                           >
-                            <ChevronDown size={14} />
+                            {isSavingSlide ? (
+                              <>
+                                <RefreshCw size={14} className="animate-spin" /> Saving...
+                              </>
+                            ) : (
+                              <>
+                                <Save size={14} /> Save Slide
+                              </>
+                            )}
                           </button>
                         </div>
-                        <div className="relative w-14 h-14 rounded-lg bg-[#EAE8DC] overflow-hidden border border-border/60 shrink-0">
-                          {slide.image && (
-                            <Image
-                              src={slide.image}
-                              alt={slide.title}
-                              fill
-                              className="object-contain p-1"
-                            />
-                          )}
-                        </div>
-                        <div>
-                          <p className="font-inter font-semibold text-sm text-foreground">{slide.title}</p>
-                          <p className="font-inter text-xs text-muted">
-                            {slide.subtitle} • CTA: {slide.cta || "None"}
-                          </p>
-                        </div>
                       </div>
+                    ) : (
+                      <div className="p-4 flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex flex-col gap-1">
+                            <button
+                              onClick={() => moveSlide(slide.id, "up")}
+                              className="p-1 hover:bg-surface-elevated rounded text-muted hover:text-foreground"
+                              title="Move Up"
+                            >
+                              <ChevronUp size={14} />
+                            </button>
+                            <button
+                              onClick={() => moveSlide(slide.id, "down")}
+                              className="p-1 hover:bg-surface-elevated rounded text-muted hover:text-foreground"
+                              title="Move Down"
+                            >
+                              <ChevronDown size={14} />
+                            </button>
+                          </div>
+                          <div className="relative w-14 h-14 rounded-lg bg-[#EAE8DC] dark:bg-stone-800 overflow-hidden border border-border/60 shrink-0">
+                            {slide.image && (
+                              <Image
+                                src={slide.image}
+                                alt={slide.title}
+                                fill
+                                className="object-contain p-1"
+                              />
+                            )}
+                          </div>
+                          <div>
+                            <p className="font-inter font-semibold text-sm text-foreground">{slide.title}</p>
+                            <p className="font-inter text-xs text-muted">
+                              {slide.subtitle || "No subtitle"} • CTA: {slide.cta || "None"}
+                            </p>
+                          </div>
+                        </div>
 
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => toggleActive(slide.id)}
-                          className={`p-2 rounded-lg transition-colors ${
-                            slide.active
-                              ? "text-emerald-700 bg-emerald-50 hover:bg-emerald-100"
-                              : "text-muted hover:bg-surface-elevated"
-                          }`}
-                        >
-                          {slide.active ? <Eye size={16} /> : <EyeOff size={16} />}
-                        </button>
-                        <button
-                          onClick={() => startEdit(slide)}
-                          className="p-2 text-muted hover:text-foreground hover:bg-surface-elevated rounded-lg transition-colors"
-                        >
-                          <Edit3 size={16} />
-                        </button>
-                        <button
-                          onClick={() => deleteHeroSlide.mutateAsync(slide.id)}
-                          className="p-2 text-muted/70 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => toggleActive(slide.id)}
+                            className={`p-2 rounded-lg transition-colors ${
+                              slide.active
+                                ? "text-emerald-700 bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-400 hover:bg-emerald-100"
+                                : "text-muted hover:bg-surface-elevated"
+                            }`}
+                            title={slide.active ? "Slide is active" : "Slide is inactive"}
+                          >
+                            {slide.active ? <Eye size={16} /> : <EyeOff size={16} />}
+                          </button>
+                          <button
+                            onClick={() => startEdit(slide)}
+                            className="p-2 text-muted hover:text-foreground hover:bg-surface-elevated rounded-lg transition-colors"
+                            title="Edit Slide"
+                          >
+                            <Edit3 size={16} />
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (window.confirm("Are you sure you want to delete this slide?")) {
+                                deleteHeroSlide.mutateAsync(slide.id);
+                              }
+                            }}
+                            className="p-2 text-muted/70 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg transition-colors"
+                            title="Delete Slide"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-              ))}
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* ─── Mode 2: Cinematic Video Hero Settings ─────────── */}
       {activeMode === "video" && (
