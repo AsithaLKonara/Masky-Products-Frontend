@@ -90,3 +90,4 @@ export function CatalogGridSkeleton({ count = 8 }: { count?: number }) {
     </div>
   );
 }
+
