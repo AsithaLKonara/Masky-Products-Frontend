@@ -33,27 +33,25 @@ export default function WishlistSidePanel({ isOpen, onClose }: { isOpen: boolean
   return (
     <>
       {/* Backdrop */}
-      <div 
-        className={`fixed inset-0 bg-[#F5F5F4]/40 backdrop-blur-[4px] z-[100] transition-opacity duration-300 ${
-          isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
+      <div
+        className={`fixed inset-0 bg-[#F5F5F4]/40 backdrop-blur-[4px] z-[100] transition-opacity duration-300 ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          }`}
         onClick={onClose}
       />
 
       {/* Side Panel */}
-      <div 
-        className={`fixed top-0 right-0 h-[100dvh] w-full max-w-[380px] bg-white z-[101] shadow-2xl transition-transform duration-500 ease-in-out transform ${
-          isOpen ? "translate-x-0" : "translate-x-full"
-        } flex flex-col`}
+      <div
+        className={`fixed top-0 right-0 h-[100dvh] w-full max-w-[380px] bg-white z-[101] shadow-2xl transition-transform duration-500 ease-in-out transform ${isOpen ? "translate-x-0" : "translate-x-full"
+          } flex flex-col`}
       >
-        
+
         <div className="flex flex-col flex-1 gap-[1px]">
           {/* Header */}
           <div className="flex items-center justify-between py-6 px-6 border-b border-stone-100 flex-shrink-0">
             <h2 className="font-poppins font-light text-xl text-stone-900 tracking-wide">
               My Wishlist {wishlistItems.length > 0 && `(${wishlistItems.length})`}
             </h2>
-            <button 
+            <button
               onClick={onClose}
               className="flex justify-center items-center p-2 -mr-2 text-stone-400 hover:text-stone-900 transition-colors"
             >
@@ -75,7 +73,7 @@ export default function WishlistSidePanel({ isOpen, onClose }: { isOpen: boolean
 
                 if (variant?.featuredImage) imageUrl = variant.featuredImage;
                 else if (variant?.gallery?.[0]) imageUrl = variant.gallery[0];
-                
+
                 const price = getEffectivePrice(variant);
 
                 return (

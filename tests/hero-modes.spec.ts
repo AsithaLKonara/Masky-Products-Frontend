@@ -13,8 +13,10 @@ test.describe('Task 1: Hero Section CMS Modes', () => {
     });
 
     await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(2000);
+
     const section = page.locator('section').first();
-    await expect(section).toBeVisible({ timeout: 15000 });
+    await expect(section).toBeVisible();
 
     await page.screenshot({
       path: '/Users/asithalakmal/.gemini/antigravity/brain/fce6e67c-1026-4cd4-b305-4a0830372871/hero-mode-slider-desktop.png',
@@ -30,7 +32,7 @@ test.describe('Task 1: Hero Section CMS Modes', () => {
         body: JSON.stringify({
           mode: 'photo',
           photoConfig: {
-            imageUrl: '/hero-image/Product1.png',
+            imageUrl: '/isolated-oyster-mushroom-cutout-on-white-background-free-png.webp',
             eyebrow: '100% ORGANIC HIGHLAND HARVEST',
             title: 'Pure Artisanal Mushrooms',
             subtitle: 'Dehydrated & Fresh Gourmet Fungi',
@@ -49,7 +51,7 @@ test.describe('Task 1: Hero Section CMS Modes', () => {
 
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     const photoHero = page.locator('[data-testid="hero-photo-section"]');
-    await expect(photoHero).toBeVisible({ timeout: 15000 });
+    await expect(photoHero).toBeVisible({ timeout: 10000 });
     await expect(photoHero.getByText('Pure Artisanal Mushrooms')).toBeVisible();
 
     await page.screenshot({
@@ -84,7 +86,7 @@ test.describe('Task 1: Hero Section CMS Modes', () => {
 
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     const videoHero = page.locator('[data-testid="hero-video-section"]');
-    await expect(videoHero).toBeVisible({ timeout: 15000 });
+    await expect(videoHero).toBeVisible({ timeout: 10000 });
     await expect(videoHero.getByText('Gourmet Dehydrated Mushrooms')).toBeVisible();
 
     await page.screenshot({

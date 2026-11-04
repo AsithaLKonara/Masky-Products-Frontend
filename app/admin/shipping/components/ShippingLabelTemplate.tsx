@@ -2,14 +2,14 @@ import React from 'react';
 import Image from 'next/image';
 
 export default function ShippingLabelTemplate({ order, index, total, storeName, storeAddress, storePhone }: { order: any; index?: number; total?: number; storeName?: string; storeAddress?: string; storePhone?: string; }) {
-  const customerName = order.customer 
+  const customerName = order.customer
     ? `${order.customer.firstName || ''} ${order.customer.lastName || ''}`
-    : order.shippingAddress?.firstName 
+    : order.shippingAddress?.firstName
       ? `${order.shippingAddress.firstName} ${order.shippingAddress.lastName}`
       : 'Guest';
 
   const customerPhone = order.customer?.phone || order.shippingAddress?.phone || 'N/A';
-  const customerAddress = order.shippingAddress 
+  const customerAddress = order.shippingAddress
     ? `${order.shippingAddress.addressLine1} ${order.shippingAddress.addressLine2 || ''}`
     : 'No shipping address provided';
   const city = order.shippingAddress?.city || 'Unknown City';
@@ -18,7 +18,7 @@ export default function ShippingLabelTemplate({ order, index, total, storeName, 
   return (
     <div className="w-[384px] h-[576px] overflow-hidden border-2 border-black p-3 bg-white font-mono text-sm relative print:w-[4in] print:h-[6in] print:border-none print:m-0 print:p-3 print:overflow-hidden mx-auto flex flex-col">
       <div className="absolute top-3 right-3 font-bold text-lg tracking-widest z-10">FARDAR</div>
-      
+
       <div className="border-b-2 border-black pb-2 mb-2 flex items-center h-[50px]">
         <span className="font-bold text-xl tracking-[0.15em] uppercase">MASKY PRODUCT</span>
       </div>
@@ -91,15 +91,15 @@ export default function ShippingLabelTemplate({ order, index, total, storeName, 
 
       {order.trackingNumber && (
         <div className="border-2 border-black p-2 bg-white flex flex-col items-center justify-center mt-2">
-          <img 
-            src={`https://bwipjs-api.metafloor.com/?bcid=code128&text=${order.trackingNumber}&scaleX=2&scaleY=1.5`} 
-            alt="Barcode" 
+          <img
+            src={`https://bwipjs-api.metafloor.com/?bcid=code128&text=${order.trackingNumber}&scaleX=2&scaleY=1.5`}
+            alt="Barcode"
             className="w-[80%] h-14 object-contain"
           />
           <p className="font-bold text-sm tracking-widest mt-1">{order.trackingNumber}</p>
         </div>
       )}
-      
+
       <div className="absolute bottom-1 right-2 text-[9px] text-gray-400 italic print:hidden bg-white px-1">
         {total ? `Label ${index} of ${total}` : 'Preview'}
       </div>
