@@ -371,14 +371,20 @@ export default function HeroSlider() {
                 }}
               >
                 <Image
-                  src={slide.image || "/hero-image/Product1.png"}
+                  src={slide.image || `/hero-image/Product${(slideIndex % 5) + 1}.png`}
                   alt={slide.title || "Product"}
                   fill
                   priority={isCenter}
                   sizes={isMobile ? "70vw" : "28vw"}
                   className="object-contain select-none"
                   style={{ pointerEvents: "none" }}
-                  onError={(e) => { (e.target as HTMLImageElement).src = "/hero-image/Product1.png"; }}
+                  onError={(e) => {
+                    const fallbackImg = `/hero-image/Product${(slideIndex % 5) + 1}.png`;
+                    const target = e.target as HTMLImageElement;
+                    if (!target.src.endsWith(fallbackImg)) {
+                      target.src = fallbackImg;
+                    }
+                  }}
                 />
 
                 {/* Soft ground contact shadow */}

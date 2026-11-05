@@ -390,7 +390,7 @@ function HeroTab() {
               </div>
             ) : (
               <div className="flex flex-col gap-3">
-                {displayedSlides.map((slide: HeroSlide) => (
+                {displayedSlides.map((slide: HeroSlide, slideIdx: number) => (
                   <div
                     key={slide.id}
                     className={`bg-surface border rounded-xl shadow-sm overflow-hidden transition-all ${
@@ -507,7 +507,25 @@ function HeroTab() {
                             <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
                               Slide Image URL *
                             </label>
-                            <div className="flex gap-2">
+                            <div className="flex gap-2 items-center">
+                              {editData.image && (
+                                <div className="relative w-10 h-10 rounded-lg bg-surface-elevated overflow-hidden border border-border/60 shrink-0">
+                                  <Image
+                                    src={editData.image}
+                                    alt="Preview"
+                                    fill
+                                    unoptimized
+                                    className="object-contain p-0.5"
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      const fallback = `/hero-image/Product1.png`;
+                                      if (!target.src.endsWith(fallback)) {
+                                        target.src = fallback;
+                                      }
+                                    }}
+                                  />
+                                </div>
+                              )}
                               <input
                                 value={editData.image || ""}
                                 onChange={(e) => setEditData((p) => ({ ...p, image: e.target.value }))}
@@ -517,7 +535,7 @@ function HeroTab() {
                               <button
                                 type="button"
                                 onClick={() => setPickerTarget("slide")}
-                                className="px-3 py-2 bg-surface-elevated border border-border rounded-lg text-xs font-inter font-medium hover:bg-border/30 transition-colors flex items-center gap-1.5"
+                                className="px-3 py-2 bg-surface-elevated border border-border rounded-lg text-xs font-inter font-medium hover:bg-border/30 transition-colors flex items-center gap-1.5 shrink-0"
                               >
                                 <ImageIcon size={14} /> Browse Media
                               </button>
@@ -591,7 +609,15 @@ function HeroTab() {
                                 src={slide.image}
                                 alt={slide.title}
                                 fill
+                                unoptimized
                                 className="object-contain p-1"
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement;
+                                  const fallback = `/hero-image/Product${(slideIdx % 5) + 1}.png`;
+                                  if (!target.src.endsWith(fallback)) {
+                                    target.src = fallback;
+                                  }
+                                }}
                               />
                             )}
                           </div>
