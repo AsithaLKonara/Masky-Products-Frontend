@@ -3,16 +3,14 @@
 import { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function DashboardLayoutClient({ children, session }: { children: React.ReactNode, session?: any }) {
+  const { theme } = useTheme();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
-    // Ensure admin dashboard always has dark mode class active on html root
-    if (typeof document !== "undefined") {
-      document.documentElement.classList.add("dark");
-    }
     try {
       const saved = localStorage.getItem("masky_sidebar_collapsed");
       if (saved !== null) {
@@ -40,7 +38,7 @@ export default function DashboardLayoutClient({ children, session }: { children:
   };
 
   return (
-    <div className="dashboard-theme dark flex h-screen w-full bg-background text-foreground overflow-hidden relative">
+    <div className={`dashboard-theme ${theme === "dark" ? "dark" : ""} flex h-screen w-full bg-background text-foreground overflow-hidden relative`}>
       
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
