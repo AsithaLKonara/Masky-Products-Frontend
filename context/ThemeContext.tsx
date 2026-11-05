@@ -36,11 +36,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const applyTheme = (t: Theme) => {
     if (typeof document !== "undefined") {
-      // If we are currently inside /admin, always enforce dark class on html root
-      if (typeof window !== "undefined" && window.location.pathname.startsWith("/admin")) {
-        document.documentElement.classList.add("dark");
-        return;
-      }
       if (t === "dark") {
         document.documentElement.classList.add("dark");
       } else {
