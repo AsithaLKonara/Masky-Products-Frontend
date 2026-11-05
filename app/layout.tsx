@@ -36,9 +36,13 @@ export const metadata: Metadata = {
   },
   description: 'Pieces edited for quiet luxury — cut clean, worn easy.',
   icons: {
-    icon: '/icon.png',
-    shortcut: '/icon.png',
-    apple: '/icon.png',
+    icon: [
+      { url: '/logo/favicon.png', type: 'image/png' },
+      { url: '/logo/favicon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/logo/favicon.png', sizes: '192x192', type: 'image/png' },
+    ],
+    shortcut: '/logo/favicon.png',
+    apple: '/logo/favicon.png',
   },
   openGraph: {
     title: 'MASKY PRODUCT',

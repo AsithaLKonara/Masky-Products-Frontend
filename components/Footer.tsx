@@ -83,14 +83,15 @@ export default function Footer() {
           {/* Brand Col */}
           <div className="flex flex-col items-start gap-4 lg:col-span-4">
             {/* Logo */}
-            <div className="flex flex-col">
-              <span className="font-signature font-bold text-2xl text-[#FFFCF4] tracking-[0.2em] uppercase">
-                MASKY <span className="font-light tracking-[0.25em] text-sm text-[#A8B995]">PRODUCT</span>
-              </span>
-              <span className="font-poppins text-[10px] uppercase tracking-[0.28em] text-[#FFFCF4]/60 mt-0.5">
-                Botanical Delicacies
-              </span>
-            </div>
+            <Link href="/" className="inline-block group" aria-label="MASKY PRODUCT Home">
+              <Image
+                src="/logo/VCFB%20VFC.png"
+                alt="MASKY PRODUCT - Botanical Delicacies"
+                width={120}
+                height={132}
+                className="w-20 md:w-24 h-auto object-contain transition-transform duration-300 group-hover:scale-105"
+              />
+            </Link>
 
             <p className="font-poppins font-light text-xs sm:text-sm text-[#FFFCF4]/75 leading-relaxed max-w-[340px] mt-1">
               Curating 100% organic, artisan-harvested dehydrated gourmet mushrooms and delicacies with quiet luxury, earthy integrity, and culinary purity.

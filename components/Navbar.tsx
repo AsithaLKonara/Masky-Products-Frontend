@@ -100,10 +100,15 @@ export default function Navbar() {
               {isMobileMenuOpen ? <X size={22} className={textColorClass} /> : <Menu size={22} className={textColorClass} />}
             </button>
           </div>
-          <Link href="/" className={`flex items-center gap-2 group ${textColorClass}`}>
-            <span className={`font-signature font-bold tracking-[0.18em] text-lg md:text-xl uppercase transition-colors ${textColorClass}`}>
-              MASKY <span className={`font-light tracking-[0.22em] text-xs md:text-sm ${isVideoHeroActive ? "text-[#DCDCCB]" : "opacity-85"}`}>PRODUCT</span>
-            </span>
+          <Link href="/" className="flex items-center group py-1" aria-label="MASKY PRODUCT Home">
+            <Image
+              src="/logo/logo.png"
+              alt="MASKY PRODUCT"
+              width={184}
+              height={38}
+              priority
+              className="h-8 md:h-10 w-auto object-contain transition-transform duration-200 group-hover:scale-[1.02]"
+            />
           </Link>
         </div>
 
