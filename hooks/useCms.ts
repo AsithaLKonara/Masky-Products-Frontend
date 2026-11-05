@@ -88,6 +88,16 @@ export function useCms() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['sections'] })
   });
 
+  const reorderHomepageSections = useMutation({
+    mutationFn: (orders: { id: string; order: number }[]) => cmsService.reorderHomepageSections(orders),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['sections'] })
+  });
+
+  const resetHomepageSections = useMutation({
+    mutationFn: () => cmsService.resetHomepageSections(),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['sections'] })
+  });
+
   const deleteHomepageSection = useMutation({
     mutationFn: (id: string) => cmsService.deleteHomepageSection(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['sections'] })
@@ -121,7 +131,7 @@ export function useCms() {
     heroConfig, isLoadingHeroConfig, updateHeroConfig,
     heroSlides, isLoadingHero, createHeroSlide, updateHeroSlide, deleteHeroSlide,
     banners, isLoadingBanners, createBanner, updateBanner, deleteBanner,
-    sections, isLoadingSections, createHomepageSection, updateHomepageSection, deleteHomepageSection,
+    sections, isLoadingSections, createHomepageSection, updateHomepageSection, deleteHomepageSection, reorderHomepageSections, resetHomepageSections,
     pages, isLoadingPages, createStaticPage, updateStaticPage, deleteStaticPage
   };
 }

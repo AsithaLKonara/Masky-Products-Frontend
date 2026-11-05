@@ -98,6 +98,8 @@ export const cmsService = {
 
   // Homepage Sections
   getHomepageSections: () => api.get<HomepageSection[]>('/cms/sections'),
+  reorderHomepageSections: (orders: { id: string; order: number }[]) => api.put<HomepageSection[]>('/cms/sections/reorder', { orders }),
+  resetHomepageSections: () => api.post<HomepageSection[]>('/cms/sections/reset'),
   createHomepageSection: (data: Partial<HomepageSection>) => api.post<HomepageSection>('/cms/sections', data),
   updateHomepageSection: (id: string, data: Partial<HomepageSection>) => api.put<HomepageSection>(`/cms/sections/${id}`, data),
   deleteHomepageSection: (id: string) => api.delete(`/cms/sections/${id}`),

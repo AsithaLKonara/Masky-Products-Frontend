@@ -1217,15 +1217,90 @@ function BannersTab() {
   );
 }
 
+const SECTION_METADATA: Record<string, { title: string; subtitle: string; badge: string; icon: string }> = {
+  CollectionsSection: {
+    title: "Gourmet Harvest Categories",
+    subtitle: "Category showcase grid (Fresh, Dehydrated, Ready-to-Eat & Frozen)",
+    badge: "Categories Grid",
+    icon: "🍄",
+  },
+  NewArrivalsSection: {
+    title: "New Harvest Arrivals",
+    subtitle: "Real-time latest mushroom harvest arrivals & small batches",
+    badge: "New Products",
+    icon: "🌿",
+  },
+  CuratedCollectionsSection: {
+    title: "Curated Harvest Collections",
+    subtitle: "Curated gourmet bundles, gift boxes & chef reserves",
+    badge: "Featured Bundles",
+    icon: "📦",
+  },
+  OfferCollectionSection: {
+    title: "Limited Seasonal Offers",
+    subtitle: "Special pricing, discount tags & seasonal harvest promotions",
+    badge: "Limited Deals",
+    icon: "🏷️",
+  },
+  AdBannerSection: {
+    title: "Editorial Showcase Banner",
+    subtitle: "Visual brand editorial banner celebrating highland cultivation",
+    badge: "Brand Banner",
+    icon: "📢",
+  },
+  BrandStorySection: {
+    title: "The Masky Heritage & Story",
+    subtitle: "Deep-rooted farm values, botanical wellness & sustainability",
+    badge: "Brand Narrative",
+    icon: "📖",
+  },
+  TestimonialSection: {
+    title: "Customer & Chef Endorsements",
+    subtitle: "Verified reviews, chef accolades & culinary trust",
+    badge: "Testimonials",
+    icon: "⭐",
+  },
+};
+
 function HomepageTab() {
-  const { sections, isLoadingSections, updateHomepageSection, createHomepageSection, deleteHomepageSection } = useCms();
+  const {
+    sections,
+    isLoadingSections,
+    updateHomepageSection,
+    createHomepageSection,
+    deleteHomepageSection,
+    reorderHomepageSections,
+    resetHomepageSections,
+  } = useCms();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<Partial<HomepageSection>>({});
   const [showMediaPicker, setShowMediaPicker] = useState(false);
+  const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  useEffect(() => {
+    if (actionMessage) {
+      const t = setTimeout(() => setActionMessage(null), 3000);
+      return () => clearTimeout(t);
+    }
+  }, [actionMessage]);
 
   const toggleVisible = async (id: string) => {
     const sec = sections.find((s: HomepageSection) => s.id === id);
-    if (sec) await updateHomepageSection.mutateAsync({ id, data: { visible: !sec.visible } });
+    if (!sec) return;
+    try {
+      setIsProcessing(true);
+      await updateHomepageSection.mutateAsync({
+        id,
+        data: { visible: !sec.visible },
+      });
+      setActionMessage(`Updated "${sec.name}" visibility.`);
+    } catch (err: any) {
+      console.error(err);
+      setActionMessage("Failed to update visibility.");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const move = async (id: string, dir: "up" | "down") => {
@@ -1233,122 +1308,322 @@ function HomepageTab() {
     const idx = sorted.findIndex((s: HomepageSection) => s.id === id);
     const swapIdx = dir === "up" ? idx - 1 : idx + 1;
     if (swapIdx < 0 || swapIdx >= sorted.length) return;
-    
-    const current = sorted[idx];
-    const swap = sorted[swapIdx];
-    
-    await Promise.all([
-      updateHomepageSection.mutateAsync({ id: current.id, data: { order: swap.order } }),
-      updateHomepageSection.mutateAsync({ id: swap.id, data: { order: current.order } })
-    ]);
+
+    try {
+      setIsProcessing(true);
+      const newItems = [...sorted];
+      const [moved] = newItems.splice(idx, 1);
+      newItems.splice(swapIdx, 0, moved);
+
+      const payload = newItems.map((item, index) => ({
+        id: item.id,
+        order: index + 1,
+      }));
+
+      await reorderHomepageSections.mutateAsync(payload);
+      setActionMessage("Section order updated successfully.");
+    } catch (err: any) {
+      console.error(err);
+      setActionMessage("Failed to reorder sections.");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
-  const startEdit = (sec: HomepageSection) => { setEditingId(sec.id); setEditData({...sec}); };
-  const cancelEdit = () => { setEditingId(null); setEditData({}); };
-  const saveEdit = async () => {
-    const { id, createdAt, updatedAt, lastEdited, ...updateData } = editData as any;
-    if (editingId && !editingId.startsWith('new-')) {
-      await updateHomepageSection.mutateAsync({ id: editingId, data: updateData });
-    } else {
-      await createHomepageSection.mutateAsync(updateData);
+  const handleReset = async () => {
+    if (confirm("Reset homepage sections to canonical defaults? This will restore the recommended 7-section order.")) {
+      try {
+        setIsProcessing(true);
+        await resetHomepageSections.mutateAsync();
+        setActionMessage("Homepage layout reset to defaults.");
+      } catch (err: any) {
+        console.error(err);
+        setActionMessage("Failed to reset layout.");
+      } finally {
+        setIsProcessing(false);
+      }
     }
+  };
+
+  const startEdit = (sec: HomepageSection) => {
+    setEditingId(sec.id);
+    setEditData({ ...sec });
+  };
+
+  const cancelEdit = () => {
     setEditingId(null);
     setEditData({});
   };
 
-  if (isLoadingSections) return <div className="p-8 text-center text-muted font-inter">Loading sections...</div>;
+  const saveEdit = async () => {
+    const { id, createdAt, updatedAt, lastEdited, ...updateData } = editData as any;
+    try {
+      setIsProcessing(true);
+      if (editingId && !editingId.startsWith("new-")) {
+        await updateHomepageSection.mutateAsync({ id: editingId, data: updateData });
+      } else {
+        await createHomepageSection.mutateAsync(updateData);
+      }
+      setEditingId(null);
+      setEditData({});
+      setActionMessage("Section updated successfully.");
+    } catch (err: any) {
+      console.error(err);
+      setActionMessage("Failed to save section edits.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  if (isLoadingSections) {
+    return (
+      <div className="p-12 text-center text-muted font-inter flex flex-col items-center justify-center gap-3">
+        <RefreshCw className="w-6 h-6 animate-spin text-primary" />
+        <p className="text-sm">Loading homepage sections...</p>
+      </div>
+    );
+  }
+
+  const sortedSections = [...sections].sort((a: HomepageSection, b: HomepageSection) => a.order - b.order);
+  const liveCount = sortedSections.filter((s) => s.visible).length;
+  const hiddenCount = sortedSections.length - liveCount;
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex justify-between items-center">
-        <p className="font-inter text-sm text-muted">Drag to reorder or toggle visibility of each homepage section.</p>
+    <div className="flex flex-col gap-6">
+      {/* Top action bar */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-surface/50 border border-border p-4 rounded-xl">
+        <div>
+          <h3 className="font-inter font-bold text-base text-foreground flex items-center gap-2">
+            Homepage Section Flow
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-primary/10 text-primary font-semibold border border-primary/20">
+              {liveCount} Live • {hiddenCount} Inactive
+            </span>
+          </h3>
+          <p className="font-inter text-xs text-muted mt-1">
+            Reorder sections using the Up/Down controls or toggle section visibility. Changes sync immediately to the storefront.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <button
+            type="button"
+            onClick={handleReset}
+            disabled={isProcessing}
+            className="flex items-center gap-2 px-3.5 py-2 text-xs font-semibold font-inter rounded-lg border border-border bg-surface-elevated text-foreground/80 hover:text-foreground hover:bg-border/60 transition-all disabled:opacity-50"
+          >
+            <RefreshCw size={13} className={isProcessing ? "animate-spin" : ""} />
+            Reset to Defaults
+          </button>
+        </div>
       </div>
-      <div className="flex flex-col gap-3">
-        {[...sections].sort((a: HomepageSection, b: HomepageSection) => a.order - b.order).map((sec: HomepageSection, idx: number) => (
-          <div key={sec.id} className={`bg-surface border rounded-xl shadow-sm overflow-hidden ${sec.visible ? 'border-border' : 'border-border/50 opacity-60'}`}>
-            {editingId === sec.id ? (
-              <div className="p-4 flex flex-col gap-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Section Name</label>
-                    <input readOnly value={editData.name||""} className="border border-border bg-surface-elevated rounded-lg px-3 py-2 text-sm font-inter outline-none text-muted cursor-not-allowed"/>
-                  </div>
-                  <div className="flex flex-col gap-1.5 md:col-span-2">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Description</label>
-                    <input value={editData.description||""} onChange={e=>setEditData(p=>({...p,description:e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary"/>
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Section Type</label>
-                    <select value={editData.type||"STATIC"} onChange={e=>setEditData(p=>({...p,type:e.target.value}))} className="border border-border rounded-lg px-3 py-2 text-sm font-inter outline-none focus:ring-1 focus:ring-primary">
-                      <option value="STATIC">Static / Custom</option>
-                      <option value="FEATURED_PRODUCTS">Featured Products</option>
-                      <option value="CATEGORY_GRID">Category Grid</option>
-                      <option value="NEW_ARRIVALS">New Arrivals</option>
-                    </select>
-                  </div>
-                  <div className="flex flex-col gap-1.5 md:col-span-2">
-                    <div className="flex justify-between items-center mb-1">
-                      <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">Config JSON</label>
-                      <button type="button" onClick={() => setShowMediaPicker(true)} className="text-xs font-medium text-foreground/80 bg-surface-elevated hover:bg-border px-2 py-1 rounded flex items-center gap-1 border border-border">
-                        <ImageIcon size={12}/> Pick Image for Config
+
+      {actionMessage && (
+        <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/10 border border-primary/20 text-xs font-inter text-primary animate-fade-in">
+          <CheckCircle size={14} />
+          <span>{actionMessage}</span>
+        </div>
+      )}
+
+      {/* Sections List */}
+      {sortedSections.length === 0 ? (
+        <div className="p-12 text-center bg-surface border border-dashed border-border rounded-xl flex flex-col items-center justify-center gap-4">
+          <div className="w-12 h-12 rounded-full bg-surface-elevated border border-border flex items-center justify-center text-muted">
+            <Layout size={24} />
+          </div>
+          <div>
+            <h4 className="font-inter font-bold text-foreground text-sm">No Sections Initialized</h4>
+            <p className="font-inter text-xs text-muted max-w-sm mt-1">
+              Initialize the standard 7 homepage sections to start managing the layout flow and visibility.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={handleReset}
+            disabled={isProcessing}
+            className="px-4 py-2 bg-primary text-primary-foreground text-xs font-semibold rounded-lg hover:opacity-90 flex items-center gap-2"
+          >
+            <RefreshCw size={14} />
+            Initialize Default Sections
+          </button>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {sortedSections.map((sec: HomepageSection, idx: number) => {
+            const meta = SECTION_METADATA[sec.name] || {
+              title: sec.name,
+              subtitle: sec.description || "Custom homepage section",
+              badge: sec.type || "STATIC",
+              icon: "📄",
+            };
+
+            return (
+              <div
+                key={sec.id}
+                className={`bg-surface border rounded-xl shadow-sm transition-all overflow-hidden ${
+                  sec.visible
+                    ? "border-border hover:border-border/80"
+                    : "border-border/40 opacity-60 bg-surface/40"
+                }`}
+              >
+                {editingId === sec.id ? (
+                  <div className="p-5 flex flex-col gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="flex flex-col gap-1.5">
+                        <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                          Section Identifier (Code)
+                        </label>
+                        <input
+                          readOnly
+                          value={editData.name || ""}
+                          className="border border-border bg-surface-elevated rounded-lg px-3 py-2 text-sm font-mono outline-none text-muted cursor-not-allowed"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1.5">
+                        <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                          Section Type
+                        </label>
+                        <select
+                          value={editData.type || "STATIC"}
+                          onChange={(e) => setEditData((p) => ({ ...p, type: e.target.value }))}
+                          className="border border-border bg-surface-elevated rounded-lg px-3 py-2 text-sm font-inter text-foreground outline-none focus:ring-1 focus:ring-primary"
+                        >
+                          <option value="STATIC">Static / Custom</option>
+                          <option value="FEATURED_PRODUCTS">Featured Products</option>
+                          <option value="CATEGORY_GRID">Category Grid</option>
+                          <option value="NEW_ARRIVALS">New Arrivals</option>
+                        </select>
+                      </div>
+                      <div className="flex flex-col gap-1.5 md:col-span-2">
+                        <label className="font-inter text-xs font-semibold text-muted uppercase tracking-wider">
+                          Description / Editorial Notes
+                        </label>
+                        <input
+                          value={editData.description || ""}
+                          onChange={(e) => setEditData((p) => ({ ...p, description: e.target.value }))}
+                          className="border border-border bg-surface-elevated rounded-lg px-3 py-2 text-sm font-inter text-foreground outline-none focus:ring-1 focus:ring-primary"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-3 justify-end border-t border-border/50 pt-4">
+                      <button
+                        type="button"
+                        onClick={cancelEdit}
+                        className="px-4 py-2 border border-border text-foreground/80 rounded-lg font-inter text-xs font-medium hover:bg-surface-elevated"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={saveEdit}
+                        disabled={isProcessing}
+                        className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-inter text-xs font-medium hover:opacity-90 flex items-center gap-1.5"
+                      >
+                        <Save size={13} />
+                        Save Changes
                       </button>
                     </div>
-                    <textarea 
-                      value={typeof editData.config === 'string' ? editData.config : JSON.stringify(editData.config||{}, null, 2)} 
-                      onChange={e=>{
-                        try { setEditData(p=>({...p,config:JSON.parse(e.target.value)})); } 
-                        catch(err) { setEditData(p=>({...p,config:e.target.value as any})); }
-                      }} 
-                      rows={4} 
-                      className="border border-border rounded-lg px-3 py-2 text-sm font-mono outline-none focus:ring-1 focus:ring-primary" 
-                      placeholder='{"count": 8, "categoryId": "..."}' 
-                    />
                   </div>
-                </div>
-                <div className="flex gap-3 justify-end border-t border-border/50 pt-4">
-                  <button onClick={cancelEdit} className="px-4 py-2 border border-border text-foreground/80 rounded-lg font-inter text-sm hover:bg-surface-elevated">Cancel</button>
-                  <button onClick={saveEdit} className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-inter text-sm hover:opacity-90 flex items-center gap-2"><Save size={14}/>Save</button>
-                </div>
+                ) : (
+                  <div className="p-4 md:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    {/* Left: Reorder controls + Position + Title info */}
+                    <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                      {/* Reorder Up / Down */}
+                      <div className="flex flex-col gap-1 shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => move(sec.id, "up")}
+                          disabled={idx === 0 || isProcessing}
+                          title="Move section up"
+                          className="p-1 rounded hover:bg-surface-elevated text-muted hover:text-foreground disabled:opacity-20 disabled:pointer-events-none transition-colors border border-border/40"
+                        >
+                          <ChevronUp size={13} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => move(sec.id, "down")}
+                          disabled={idx === sortedSections.length - 1 || isProcessing}
+                          title="Move section down"
+                          className="p-1 rounded hover:bg-surface-elevated text-muted hover:text-foreground disabled:opacity-20 disabled:pointer-events-none transition-colors border border-border/40"
+                        >
+                          <ChevronDown size={13} />
+                        </button>
+                      </div>
+
+                      {/* Numeric Order Badge */}
+                      <div className="w-9 h-9 rounded-lg bg-surface-elevated border border-border flex items-center justify-center shrink-0">
+                        <span className="font-inter font-bold text-sm text-foreground/90">
+                          {idx + 1}
+                        </span>
+                      </div>
+
+                      {/* Icon */}
+                      <span className="text-xl shrink-0 select-none">{meta.icon}</span>
+
+                      {/* Section Name & Subtitle */}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="font-inter font-bold text-sm text-foreground">
+                            {meta.title}
+                          </p>
+                          <span className="font-mono text-[11px] px-2 py-0.5 rounded bg-surface-elevated border border-border text-muted font-medium">
+                            {sec.name}
+                          </span>
+                          <span className="font-inter text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-semibold">
+                            {meta.badge}
+                          </span>
+                        </div>
+                        <p className="font-inter text-xs text-muted/80 mt-1 line-clamp-1">
+                          {sec.description || meta.subtitle}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Right: Visibility Toggle & Edit */}
+                    <div className="flex items-center gap-3 shrink-0 self-end md:self-auto w-full md:w-auto justify-end border-t md:border-t-0 pt-3 md:pt-0 border-border/40">
+                      <button
+                        type="button"
+                        onClick={() => toggleVisible(sec.id)}
+                        disabled={isProcessing}
+                        className={`flex items-center gap-2 px-3 py-1.5 text-xs font-semibold font-inter rounded-full border transition-all ${
+                          sec.visible
+                            ? "bg-emerald-950/40 border-emerald-800/50 text-emerald-400 hover:bg-emerald-900/50"
+                            : "bg-surface-elevated border-border text-muted hover:text-foreground hover:bg-border/60"
+                        }`}
+                      >
+                        {sec.visible ? <Eye size={13} className="text-emerald-400" /> : <EyeOff size={13} />}
+                        <span>{sec.visible ? "Live on Storefront" : "Inactive (Hidden)"}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => startEdit(sec)}
+                        title="Edit section metadata"
+                        className="p-2 text-muted hover:text-foreground hover:bg-surface-elevated rounded-lg transition-colors border border-border/50"
+                      >
+                        <Edit3 size={14} />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="p-4 flex items-center gap-4 transition-all">
-                <div className="flex flex-col gap-1 text-border">
-                  <button onClick={() => move(sec.id, "up")} className="hover:text-foreground/80 transition-colors"><ChevronUp size={14}/></button>
-                  <button onClick={() => move(sec.id, "down")} className="hover:text-foreground/80 transition-colors"><ChevronDown size={14}/></button>
-                </div>
-                <GripVertical size={16} className="text-border shrink-0"/>
-                <div className="w-8 h-8 bg-surface-elevated rounded-lg flex items-center justify-center shrink-0">
-                  <span className="font-inter font-bold text-sm text-muted">{idx + 1}</span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-inter font-bold text-sm text-foreground">{sec.name}</p>
-                  <p className="font-inter text-xs text-muted/70">{sec.description}</p>
-                </div>
-                <button
-                  onClick={() => toggleVisible(sec.id)}
-                  className={`flex items-center gap-2 px-3 py-1.5 text-xs font-bold font-inter rounded-full border transition-all ${sec.visible ? 'bg-emerald-950/40 border-emerald-800/40 text-emerald-400 hover:bg-emerald-900/50' : 'bg-surface-elevated border-border text-muted hover:bg-surface-elevated'}`}
-                >
-                  {sec.visible ? <Eye size={12}/> : <EyeOff size={12}/>}
-                  {sec.visible ? "Visible" : "Hidden"}
-                </button>
-                <button onClick={() => startEdit(sec)} className="p-2 text-muted/70 hover:text-foreground hover:bg-surface-elevated rounded-lg transition-colors"><Edit3 size={15}/></button>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
       {showMediaPicker && (
         <MediaPickerModal
           title="Select Section Image"
           onClose={() => setShowMediaPicker(false)}
           onSelect={(url) => {
-            setEditData(p => {
+            setEditData((p) => {
               let currentConfig = {};
-              if (typeof p.config === 'object' && p.config !== null) {
+              if (typeof p.config === "object" && p.config !== null) {
                 currentConfig = p.config;
-              } else if (typeof p.config === 'string') {
-                try { currentConfig = JSON.parse(p.config); } catch (e) {}
+              } else if (typeof p.config === "string") {
+                try {
+                  currentConfig = JSON.parse(p.config);
+                } catch (e) {}
               }
               return { ...p, config: { ...currentConfig, image: url } };
             });
